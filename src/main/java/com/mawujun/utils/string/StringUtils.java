@@ -37,10 +37,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import com.mawujun.utils.CollectionUtils;
 import com.mawujun.utils.ObjectUtils;
 
-
-
-
-public class StringUtils   extends org.apache.commons.lang3.StringUtils{
+public class StringUtils extends org.apache.commons.lang3.StringUtils {
 	private static final String FOLDER_SEPARATOR = "/";
 
 	private static final String WINDOWS_FOLDER_SEPARATOR = "\\";
@@ -51,21 +48,95 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 
 	private static final char EXTENSION_SEPARATOR = '.';
 
-
-	//---------------------------------------------------------------------
-	// General convenience methods for working with Strings
-	//---------------------------------------------------------------------
+	public static final char UNDERLINE = '_';
 
 	/**
-	 * Check that the given CharSequence is neither <code>null</code> nor of length 0.
-	 * Note: Will return <code>true</code> for a CharSequence that purely consists of whitespace.
-	 * <p><pre>
+	 * 驼峰转换为下环线
+	 * @author mawujun email:160649888@163.com qq:16064988
+	 * @param param
+	 * @return
+	 */
+	public static String camelToUnderline(String param) {
+		if (param == null || "".equals(param.trim())) {
+			return "";
+		}
+		int len = param.length();
+		StringBuilder sb = new StringBuilder(len);
+		for (int i = 0; i < len; i++) {
+			char c = param.charAt(i);
+			if (Character.isUpperCase(c)) {
+				sb.append(UNDERLINE);
+				sb.append(Character.toLowerCase(c));
+			} else {
+				sb.append(c);
+			}
+		}
+		return sb.toString();
+	}
+	/**
+	 * 下划线 转换为驼峰
+	 * @author mawujun email:160649888@163.com qq:16064988
+	 * @param param
+	 * @return
+	 */
+	public static String underlineToCamel(String param) {
+		if (param == null || "".equals(param.trim())) {
+			return "";
+		}
+		int len = param.length();
+		StringBuilder sb = new StringBuilder(len);
+		for (int i = 0; i < len; i++) {
+			char c = param.charAt(i);
+			if (c == UNDERLINE) {
+				if (++i < len) {
+					sb.append(Character.toUpperCase(param.charAt(i)));
+				}
+			} else {
+				sb.append(c);
+			}
+		}
+		return sb.toString();
+	}
+	/**
+	 * 下划线 转换为驼峰
+	 * @author mawujun email:160649888@163.com qq:16064988
+	 * @param param
+	 * @return
+	 */
+	public static String underlineToCamel2(String param) {
+		if (param == null || "".equals(param.trim())) {
+			return "";
+		}
+		StringBuilder sb = new StringBuilder(param);
+		Matcher mc = Pattern.compile("_").matcher(param);
+		int i = 0;
+		while (mc.find()) {
+			int position = mc.end() - (i++);
+			// String.valueOf(Character.toUpperCase(sb.charAt(position)));
+			sb.replace(position - 1, position + 1, sb.substring(position, position + 1).toUpperCase());
+		}
+		return sb.toString();
+	}
+
+	// ---------------------------------------------------------------------
+	// General convenience methods for working with Strings
+	// ---------------------------------------------------------------------
+
+	/**
+	 * Check that the given CharSequence is neither <code>null</code> nor of
+	 * length 0. Note: Will return <code>true</code> for a CharSequence that
+	 * purely consists of whitespace.
+	 * <p>
+	 * 
+	 * <pre>
 	 * StringUtils.hasLength(null) = false
 	 * StringUtils.hasLength("") = false
 	 * StringUtils.hasLength(" ") = true
 	 * StringUtils.hasLength("Hello") = true
 	 * </pre>
-	 * @param str the CharSequence to check (may be <code>null</code>)
+	 * 
+	 * @param str
+	 *            the CharSequence to check (may be <code>null</code>)
 	 * @return <code>true</code> if the CharSequence is not null and has length
 	 * @see #hasText(String)
 	 */
@@ -75,8 +146,11 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 
 	/**
 	 * Check that the given String is neither <code>null</code> nor of length 0.
-	 * Note: Will return <code>true</code> for a String that purely consists of whitespace.
-	 * @param str the String to check (may be <code>null</code>)
+	 * Note: Will return <code>true</code> for a String that purely consists of
+	 * whitespace.
+	 * 
+	 * @param str
+	 *            the String to check (may be <code>null</code>)
 	 * @return <code>true</code> if the String is not null and has length
 	 * @see #hasLength(CharSequence)
 	 */
@@ -85,19 +159,24 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	}
 
 	/**
-	 * Check whether the given CharSequence has actual text.
-	 * More specifically, returns <code>true</code> if the string not <code>null</code>,
-	 * its length is greater than 0, and it contains at least one non-whitespace character.
-	 * <p><pre>
+	 * Check whether the given CharSequence has actual text. More specifically,
+	 * returns <code>true</code> if the string not <code>null</code>, its length
+	 * is greater than 0, and it contains at least one non-whitespace character.
+	 * <p>
+	 * 
+	 * <pre>
 	 * StringUtils.hasText(null) = false
 	 * StringUtils.hasText("") = false
 	 * StringUtils.hasText(" ") = false
 	 * StringUtils.hasText("12345") = true
 	 * StringUtils.hasText(" 12345 ") = true
 	 * </pre>
-	 * @param str the CharSequence to check (may be <code>null</code>)
+	 * 
+	 * @param str
+	 *            the CharSequence to check (may be <code>null</code>)
 	 * @return <code>true</code> if the CharSequence is not <code>null</code>,
-	 * its length is greater than 0, and it does not contain whitespace only
+	 *         its length is greater than 0, and it does not contain whitespace
+	 *         only
 	 * @see java.lang.Character#isWhitespace
 	 */
 	public static boolean hasText(CharSequence str) {
@@ -114,12 +193,14 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	}
 
 	/**
-	 * Check whether the given String has actual text.
-	 * More specifically, returns <code>true</code> if the string not <code>null</code>,
-	 * its length is greater than 0, and it contains at least one non-whitespace character.
-	 * @param str the String to check (may be <code>null</code>)
-	 * @return <code>true</code> if the String is not <code>null</code>, its length is
-	 * greater than 0, and it does not contain whitespace only
+	 * Check whether the given String has actual text. More specifically,
+	 * returns <code>true</code> if the string not <code>null</code>, its length
+	 * is greater than 0, and it contains at least one non-whitespace character.
+	 * 
+	 * @param str
+	 *            the String to check (may be <code>null</code>)
+	 * @return <code>true</code> if the String is not <code>null</code>, its
+	 *         length is greater than 0, and it does not contain whitespace only
 	 * @see #hasText(CharSequence)
 	 */
 	public static boolean hasText(String str) {
@@ -128,9 +209,11 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 
 	/**
 	 * Check whether the given CharSequence contains any whitespace characters.
-	 * @param str the CharSequence to check (may be <code>null</code>)
-	 * @return <code>true</code> if the CharSequence is not empty and
-	 * contains at least 1 whitespace character
+	 * 
+	 * @param str
+	 *            the CharSequence to check (may be <code>null</code>)
+	 * @return <code>true</code> if the CharSequence is not empty and contains
+	 *         at least 1 whitespace character
 	 * @see java.lang.Character#isWhitespace
 	 */
 	public static boolean containsWhitespace(CharSequence str) {
@@ -148,9 +231,11 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 
 	/**
 	 * Check whether the given String contains any whitespace characters.
-	 * @param str the String to check (may be <code>null</code>)
-	 * @return <code>true</code> if the String is not empty and
-	 * contains at least 1 whitespace character
+	 * 
+	 * @param str
+	 *            the String to check (may be <code>null</code>)
+	 * @return <code>true</code> if the String is not empty and contains at
+	 *         least 1 whitespace character
 	 * @see #containsWhitespace(CharSequence)
 	 */
 	public static boolean containsWhitespace(String str) {
@@ -159,7 +244,9 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 
 	/**
 	 * Trim leading and trailing whitespace from the given String.
-	 * @param str the String to check
+	 * 
+	 * @param str
+	 *            the String to check
 	 * @return the trimmed String
 	 * @see java.lang.Character#isWhitespace
 	 */
@@ -178,9 +265,11 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	}
 
 	/**
-	 * Trim <i>all</i> whitespace from the given String:
-	 * leading, trailing, and inbetween characters.
-	 * @param str the String to check
+	 * Trim <i>all</i> whitespace from the given String: leading, trailing, and
+	 * inbetween characters.
+	 * 
+	 * @param str
+	 *            the String to check
 	 * @return the trimmed String
 	 * @see java.lang.Character#isWhitespace
 	 */
@@ -193,8 +282,7 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 		while (sb.length() > index) {
 			if (Character.isWhitespace(sb.charAt(index))) {
 				sb.deleteCharAt(index);
-			}
-			else {
+			} else {
 				index++;
 			}
 		}
@@ -203,7 +291,9 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 
 	/**
 	 * Trim leading whitespace from the given String.
-	 * @param str the String to check
+	 * 
+	 * @param str
+	 *            the String to check
 	 * @return the trimmed String
 	 * @see java.lang.Character#isWhitespace
 	 */
@@ -220,7 +310,9 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 
 	/**
 	 * Trim trailing whitespace from the given String.
-	 * @param str the String to check
+	 * 
+	 * @param str
+	 *            the String to check
 	 * @return the trimmed String
 	 * @see java.lang.Character#isWhitespace
 	 */
@@ -236,9 +328,13 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	}
 
 	/**
-	 * Trim all occurences of the supplied leading character from the given String.
-	 * @param str the String to check
-	 * @param leadingCharacter the leading character to be trimmed
+	 * Trim all occurences of the supplied leading character from the given
+	 * String.
+	 * 
+	 * @param str
+	 *            the String to check
+	 * @param leadingCharacter
+	 *            the leading character to be trimmed
 	 * @return the trimmed String
 	 */
 	public static String trimLeadingCharacter(String str, char leadingCharacter) {
@@ -253,9 +349,13 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	}
 
 	/**
-	 * Trim all occurences of the supplied trailing character from the given String.
-	 * @param str the String to check
-	 * @param trailingCharacter the trailing character to be trimmed
+	 * Trim all occurences of the supplied trailing character from the given
+	 * String.
+	 * 
+	 * @param str
+	 *            the String to check
+	 * @param trailingCharacter
+	 *            the trailing character to be trimmed
 	 * @return the trimmed String
 	 */
 	public static String trimTrailingCharacter(String str, char trailingCharacter) {
@@ -269,12 +369,14 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 		return sb.toString();
 	}
 
-
 	/**
-	 * Test if the given String starts with the specified prefix,
-	 * ignoring upper/lower case.
-	 * @param str the String to check
-	 * @param prefix the prefix to look for
+	 * Test if the given String starts with the specified prefix, ignoring
+	 * upper/lower case.
+	 * 
+	 * @param str
+	 *            the String to check
+	 * @param prefix
+	 *            the prefix to look for
 	 * @see java.lang.String#startsWith
 	 */
 	public static boolean startsWithIgnoreCase(String str, String prefix) {
@@ -293,10 +395,13 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	}
 
 	/**
-	 * Test if the given String ends with the specified suffix,
-	 * ignoring upper/lower case.
-	 * @param str the String to check
-	 * @param suffix the suffix to look for
+	 * Test if the given String ends with the specified suffix, ignoring
+	 * upper/lower case.
+	 * 
+	 * @param str
+	 *            the String to check
+	 * @param suffix
+	 *            the suffix to look for
 	 * @see java.lang.String#endsWith
 	 */
 	public static boolean endsWithIgnoreCase(String str, String suffix) {
@@ -316,11 +421,15 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	}
 
 	/**
-	 * Test whether the given string matches the given substring
-	 * at the given index.
-	 * @param str the original string (or StringBuilder)
-	 * @param index the index in the original string to start matching against
-	 * @param substring the substring to match at the given index
+	 * Test whether the given string matches the given substring at the given
+	 * index.
+	 * 
+	 * @param str
+	 *            the original string (or StringBuilder)
+	 * @param index
+	 *            the index in the original string to start matching against
+	 * @param substring
+	 *            the substring to match at the given index
 	 */
 	public static boolean substringMatch(CharSequence str, int index, CharSequence substring) {
 		for (int j = 0; j < substring.length(); j++) {
@@ -334,8 +443,11 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 
 	/**
 	 * Count the occurrences of the substring in string s.
-	 * @param str string to search in. Return 0 if this is null.
-	 * @param sub string to search for. Return 0 if this is null.
+	 * 
+	 * @param str
+	 *            string to search in. Return 0 if this is null.
+	 * @param sub
+	 *            string to search for. Return 0 if this is null.
 	 */
 	public static int countOccurrencesOf(String str, String sub) {
 		if (str == null || sub == null || str.length() == 0 || sub.length() == 0) {
@@ -352,11 +464,15 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	}
 
 	/**
-	 * Replace all occurences of a substring within a string with
-	 * another string.
-	 * @param inString String to examine
-	 * @param oldPattern String to replace
-	 * @param newPattern String to insert
+	 * Replace all occurences of a substring within a string with another
+	 * string.
+	 * 
+	 * @param inString
+	 *            String to examine
+	 * @param oldPattern
+	 *            String to replace
+	 * @param newPattern
+	 *            String to insert
 	 * @return a String with the replacements
 	 */
 	public static String replace(String inString, String oldPattern, String newPattern) {
@@ -381,8 +497,11 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 
 	/**
 	 * Delete all occurrences of the given substring.
-	 * @param inString the original String
-	 * @param pattern the pattern to delete all occurrences of
+	 * 
+	 * @param inString
+	 *            the original String
+	 * @param pattern
+	 *            the pattern to delete all occurrences of
 	 * @return the resulting String
 	 */
 	public static String delete(String inString, String pattern) {
@@ -391,9 +510,12 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 
 	/**
 	 * Delete any character in a given String.
-	 * @param inString the original String
-	 * @param charsToDelete a set of characters to delete.
-	 * E.g. "az\n" will delete 'a's, 'z's and new lines.
+	 * 
+	 * @param inString
+	 *            the original String
+	 * @param charsToDelete
+	 *            a set of characters to delete. E.g. "az\n" will delete 'a's,
+	 *            'z's and new lines.
 	 * @return the resulting String
 	 */
 	public static String deleteAny(String inString, String charsToDelete) {
@@ -410,27 +532,30 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 		return sb.toString();
 	}
 
-
-	//---------------------------------------------------------------------
+	// ---------------------------------------------------------------------
 	// Convenience methods for working with formatted Strings
-	//---------------------------------------------------------------------
+	// ---------------------------------------------------------------------
 
 	/**
 	 * Quote the given String with single quotes.
-	 * @param str the input String (e.g. "myString")
-	 * @return the quoted String (e.g. "'myString'"),
-	 * or <code>null<code> if the input was <code>null</code>
+	 * 
+	 * @param str
+	 *            the input String (e.g. "myString")
+	 * @return the quoted String (e.g. "'myString'"), or
+	 *         <code>null<code> if the input was <code>null</code>
 	 */
 	public static String quote(String str) {
 		return (str != null ? "'" + str + "'" : null);
 	}
 
 	/**
-	 * Turn the given Object into a String with single quotes
-	 * if it is a String; keeping the Object as-is else.
-	 * @param obj the input Object (e.g. "myString")
-	 * @return the quoted String (e.g. "'myString'"),
-	 * or the input object as-is if not a String
+	 * Turn the given Object into a String with single quotes if it is a String;
+	 * keeping the Object as-is else.
+	 * 
+	 * @param obj
+	 *            the input Object (e.g. "myString")
+	 * @return the quoted String (e.g. "'myString'"), or the input object as-is
+	 *         if not a String
 	 */
 	public static Object quoteIfString(Object obj) {
 		return (obj instanceof String ? quote((String) obj) : obj);
@@ -439,7 +564,9 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	/**
 	 * Unqualify a string qualified by a '.' dot character. For example,
 	 * "this.name.is.qualified", returns "qualified".
-	 * @param qualifiedName the qualified name
+	 * 
+	 * @param qualifiedName
+	 *            the qualified name
 	 */
 	public static String unqualify(String qualifiedName) {
 		return unqualify(qualifiedName, '.');
@@ -448,18 +575,22 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	/**
 	 * Unqualify a string qualified by a separator character. For example,
 	 * "this:name:is:qualified" returns "qualified" if using a ':' separator.
-	 * @param qualifiedName the qualified name
-	 * @param separator the separator
+	 * 
+	 * @param qualifiedName
+	 *            the qualified name
+	 * @param separator
+	 *            the separator
 	 */
 	public static String unqualify(String qualifiedName, char separator) {
 		return qualifiedName.substring(qualifiedName.lastIndexOf(separator) + 1);
 	}
 
 	/**
-	 * Capitalize a <code>String</code>, changing the first letter to
-	 * upper case as per {@link Character#toUpperCase(char)}.
-	 * No other letters are changed.
-	 * @param str the String to capitalize, may be <code>null</code>
+	 * Capitalize a <code>String</code>, changing the first letter to upper case
+	 * as per {@link Character#toUpperCase(char)}. No other letters are changed.
+	 * 
+	 * @param str
+	 *            the String to capitalize, may be <code>null</code>
 	 * @return the capitalized String, <code>null</code> if null
 	 */
 	public static String capitalize(String str) {
@@ -467,10 +598,12 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	}
 
 	/**
-	 * Uncapitalize a <code>String</code>, changing the first letter to
-	 * lower case as per {@link Character#toLowerCase(char)}.
-	 * No other letters are changed.
-	 * @param str the String to uncapitalize, may be <code>null</code>
+	 * Uncapitalize a <code>String</code>, changing the first letter to lower
+	 * case as per {@link Character#toLowerCase(char)}. No other letters are
+	 * changed.
+	 * 
+	 * @param str
+	 *            the String to uncapitalize, may be <code>null</code>
 	 * @return the uncapitalized String, <code>null</code> if null
 	 */
 	public static String uncapitalize(String str) {
@@ -484,8 +617,7 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 		StringBuilder sb = new StringBuilder(str.length());
 		if (capitalize) {
 			sb.append(Character.toUpperCase(str.charAt(0)));
-		}
-		else {
+		} else {
 			sb.append(Character.toLowerCase(str.charAt(0)));
 		}
 		sb.append(str.substring(1));
@@ -493,9 +625,11 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	}
 
 	/**
-	 * Extract the filename from the given path,
-	 * e.g. "mypath/myfile.txt" -> "myfile.txt".
-	 * @param path the file path (may be <code>null</code>)
+	 * Extract the filename from the given path, e.g. "mypath/myfile.txt" ->
+	 * "myfile.txt".
+	 * 
+	 * @param path
+	 *            the file path (may be <code>null</code>)
 	 * @return the extracted filename, or <code>null</code> if none
 	 */
 	public static String getFilename(String path) {
@@ -507,9 +641,11 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	}
 
 	/**
-	 * Extract the filename extension from the given path,
-	 * e.g. "mypath/myfile.txt" -> "txt".
-	 * @param path the file path (may be <code>null</code>)
+	 * Extract the filename extension from the given path, e.g.
+	 * "mypath/myfile.txt" -> "txt".
+	 * 
+	 * @param path
+	 *            the file path (may be <code>null</code>)
 	 * @return the extracted filename extension, or <code>null</code> if none
 	 */
 	public static String getFilenameExtension(String path) {
@@ -528,11 +664,13 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	}
 
 	/**
-	 * Strip the filename extension from the given path,
-	 * e.g. "mypath/myfile.txt" -> "mypath/myfile".
-	 * @param path the file path (may be <code>null</code>)
-	 * @return the path with stripped filename extension,
-	 * or <code>null</code> if none
+	 * Strip the filename extension from the given path, e.g.
+	 * "mypath/myfile.txt" -> "mypath/myfile".
+	 * 
+	 * @param path
+	 *            the file path (may be <code>null</code>)
+	 * @return the path with stripped filename extension, or <code>null</code>
+	 *         if none
 	 */
 	public static String stripFilenameExtension(String path) {
 		if (path == null) {
@@ -550,11 +688,14 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	}
 
 	/**
-	 * Apply the given relative path to the given path,
-	 * assuming standard Java folder separation (i.e. "/" separators).
-	 * @param path the path to start from (usually a full file path)
-	 * @param relativePath the relative path to apply
-	 * (relative to the full file path above)
+	 * Apply the given relative path to the given path, assuming standard Java
+	 * folder separation (i.e. "/" separators).
+	 * 
+	 * @param path
+	 *            the path to start from (usually a full file path)
+	 * @param relativePath
+	 *            the relative path to apply (relative to the full file path
+	 *            above)
 	 * @return the full file path that results from applying the relative path
 	 */
 	public static String applyRelativePath(String path, String relativePath) {
@@ -565,18 +706,20 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 				newPath += FOLDER_SEPARATOR;
 			}
 			return newPath + relativePath;
-		}
-		else {
+		} else {
 			return relativePath;
 		}
 	}
 
 	/**
-	 * Normalize the path by suppressing sequences like "path/.." and
-	 * inner simple dots.
-	 * <p>The result is convenient for path comparison. For other uses,
-	 * notice that Windows separators ("\") are replaced by simple slashes.
-	 * @param path the original path
+	 * Normalize the path by suppressing sequences like "path/.." and inner
+	 * simple dots.
+	 * <p>
+	 * The result is convenient for path comparison. For other uses, notice that
+	 * Windows separators ("\") are replaced by simple slashes.
+	 * 
+	 * @param path
+	 *            the original path
 	 * @return the normalized path
 	 */
 	public static String cleanPath(String path) {
@@ -608,17 +751,15 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 			String element = pathArray[i];
 			if (CURRENT_PATH.equals(element)) {
 				// Points to current directory - drop it.
-			}
-			else if (TOP_PATH.equals(element)) {
+			} else if (TOP_PATH.equals(element)) {
 				// Registering top path found.
 				tops++;
-			}
-			else {
+			} else {
 				if (tops > 0) {
-					// Merging path element with element corresponding to top path.
+					// Merging path element with element corresponding to top
+					// path.
 					tops--;
-				}
-				else {
+				} else {
 					// Normal path element found.
 					pathElements.add(0, element);
 				}
@@ -635,8 +776,11 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 
 	/**
 	 * Compare two paths after normalization of them.
-	 * @param path1 first path for comparison
-	 * @param path2 second path for comparison
+	 * 
+	 * @param path1
+	 *            first path for comparison
+	 * @param path2
+	 *            second path for comparison
 	 * @return whether the two paths are equivalent after normalization
 	 */
 	public static boolean pathEquals(String path1, String path2) {
@@ -645,10 +789,14 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 
 	/**
 	 * Parse the given <code>localeString</code> value into a {@link Locale}.
-	 * <p>This is the inverse operation of {@link Locale#toString Locale's toString}.
-	 * @param localeString the locale string, following <code>Locale's</code>
-	 * <code>toString()</code> format ("en", "en_UK", etc);
-	 * also accepts spaces as separators, as an alternative to underscores
+	 * <p>
+	 * This is the inverse operation of {@link Locale#toString Locale's
+	 * toString}.
+	 * 
+	 * @param localeString
+	 *            the locale string, following <code>Locale's</code>
+	 *            <code>toString()</code> format ("en", "en_UK", etc); also
+	 *            accepts spaces as separators, as an alternative to underscores
 	 * @return a corresponding <code>Locale</code> instance
 	 */
 	public static Locale parseLocaleString(String localeString) {
@@ -659,10 +807,12 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 		validateLocalePart(country);
 		String variant = "";
 		if (parts.length >= 2) {
-			// There is definitely a variant, and it is everything after the country
+			// There is definitely a variant, and it is everything after the
+			// country
 			// code sans the separator between the country code and the variant.
 			int endIndexOfCountryCode = localeString.indexOf(country) + country.length();
-			// Strip off any leading '_' and whitespace, what's left is the variant.
+			// Strip off any leading '_' and whitespace, what's left is the
+			// variant.
 			variant = trimLeadingWhitespace(localeString.substring(endIndexOfCountryCode));
 			if (variant.startsWith("_")) {
 				variant = trimLeadingCharacter(variant, '_');
@@ -675,37 +825,40 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 		for (int i = 0; i < localePart.length(); i++) {
 			char ch = localePart.charAt(i);
 			if (ch != '_' && ch != ' ' && !Character.isLetterOrDigit(ch)) {
-				throw new IllegalArgumentException(
-						"Locale part \"" + localePart + "\" contains invalid characters");
+				throw new IllegalArgumentException("Locale part \"" + localePart + "\" contains invalid characters");
 			}
 		}
 	}
 
 	/**
-	 * Determine the RFC 3066 compliant language tag,
-	 * as used for the HTTP "Accept-Language" header.
-	 * @param locale the Locale to transform to a language tag
+	 * Determine the RFC 3066 compliant language tag, as used for the HTTP
+	 * "Accept-Language" header.
+	 * 
+	 * @param locale
+	 *            the Locale to transform to a language tag
 	 * @return the RFC 3066 compliant language tag as String
 	 */
 	public static String toLanguageTag(Locale locale) {
 		return locale.getLanguage() + (hasText(locale.getCountry()) ? "-" + locale.getCountry() : "");
 	}
 
-
-	//---------------------------------------------------------------------
+	// ---------------------------------------------------------------------
 	// Convenience methods for working with String arrays
-	//---------------------------------------------------------------------
+	// ---------------------------------------------------------------------
 
 	/**
 	 * Append the given String to the given String array, returning a new array
 	 * consisting of the input array contents plus the given String.
-	 * @param array the array to append to (can be <code>null</code>)
-	 * @param str the String to append
+	 * 
+	 * @param array
+	 *            the array to append to (can be <code>null</code>)
+	 * @param str
+	 *            the String to append
 	 * @return the new array (never <code>null</code>)
 	 */
 	public static String[] addStringToArray(String[] array, String str) {
 		if (ArrayUtils.isEmpty(array)) {
-			return new String[] {str};
+			return new String[] { str };
 		}
 		String[] newArr = new String[array.length + 1];
 		System.arraycopy(array, 0, newArr, 0, array.length);
@@ -714,12 +867,17 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	}
 
 	/**
-	 * Concatenate the given String arrays into one,
-	 * with overlapping array elements included twice.
-	 * <p>The order of elements in the original arrays is preserved.
-	 * @param array1 the first array (can be <code>null</code>)
-	 * @param array2 the second array (can be <code>null</code>)
-	 * @return the new array (<code>null</code> if both given arrays were <code>null</code>)
+	 * Concatenate the given String arrays into one, with overlapping array
+	 * elements included twice.
+	 * <p>
+	 * The order of elements in the original arrays is preserved.
+	 * 
+	 * @param array1
+	 *            the first array (can be <code>null</code>)
+	 * @param array2
+	 *            the second array (can be <code>null</code>)
+	 * @return the new array (<code>null</code> if both given arrays were
+	 *         <code>null</code>)
 	 */
 	public static String[] concatenateStringArrays(String[] array1, String[] array2) {
 		if (ArrayUtils.isEmpty(array1)) {
@@ -735,14 +893,19 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	}
 
 	/**
-	 * Merge the given String arrays into one, with overlapping
-	 * array elements only included once.
-	 * <p>The order of elements in the original arrays is preserved
-	 * (with the exception of overlapping elements, which are only
-	 * included on their first occurrence).
-	 * @param array1 the first array (can be <code>null</code>)
-	 * @param array2 the second array (can be <code>null</code>)
-	 * @return the new array (<code>null</code> if both given arrays were <code>null</code>)
+	 * Merge the given String arrays into one, with overlapping array elements
+	 * only included once.
+	 * <p>
+	 * The order of elements in the original arrays is preserved (with the
+	 * exception of overlapping elements, which are only included on their first
+	 * occurrence).
+	 * 
+	 * @param array1
+	 *            the first array (can be <code>null</code>)
+	 * @param array2
+	 *            the second array (can be <code>null</code>)
+	 * @return the new array (<code>null</code> if both given arrays were
+	 *         <code>null</code>)
 	 */
 	public static String[] mergeStringArrays(String[] array1, String[] array2) {
 		if (ArrayUtils.isEmpty(array1)) {
@@ -763,7 +926,9 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 
 	/**
 	 * Turn given source String array into sorted array.
-	 * @param array the source array
+	 * 
+	 * @param array
+	 *            the source array
 	 * @return the sorted array (never <code>null</code>)
 	 */
 	public static String[] sortStringArray(String[] array) {
@@ -775,11 +940,13 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	}
 
 	/**
-	 * Copy the given Collection into a String array.
-	 * The Collection must contain String elements only.
-	 * @param collection the Collection to copy
-	 * @return the String array (<code>null</code> if the passed-in
-	 * Collection was <code>null</code>)
+	 * Copy the given Collection into a String array. The Collection must
+	 * contain String elements only.
+	 * 
+	 * @param collection
+	 *            the Collection to copy
+	 * @return the String array (<code>null</code> if the passed-in Collection
+	 *         was <code>null</code>)
 	 */
 	public static String[] toStringArray(Collection<String> collection) {
 		if (collection == null) {
@@ -789,11 +956,13 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	}
 
 	/**
-	 * Copy the given Enumeration into a String array.
-	 * The Enumeration must contain String elements only.
-	 * @param enumeration the Enumeration to copy
-	 * @return the String array (<code>null</code> if the passed-in
-	 * Enumeration was <code>null</code>)
+	 * Copy the given Enumeration into a String array. The Enumeration must
+	 * contain String elements only.
+	 * 
+	 * @param enumeration
+	 *            the Enumeration to copy
+	 * @return the String array (<code>null</code> if the passed-in Enumeration
+	 *         was <code>null</code>)
 	 */
 	public static String[] toStringArray(Enumeration<String> enumeration) {
 		if (enumeration == null) {
@@ -804,9 +973,11 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	}
 
 	/**
-	 * Trim the elements of the given String array,
-	 * calling <code>String.trim()</code> on each of them.
-	 * @param array the original String array
+	 * Trim the elements of the given String array, calling
+	 * <code>String.trim()</code> on each of them.
+	 * 
+	 * @param array
+	 *            the original String array
 	 * @return the resulting array (of the same size) with trimmed elements
 	 */
 	public static String[] trimArrayElements(String[] array) {
@@ -822,9 +993,11 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	}
 
 	/**
-	 * Remove duplicate Strings from the given array.
-	 * Also sorts the array, as it uses a TreeSet.
-	 * @param array the String array
+	 * Remove duplicate Strings from the given array. Also sorts the array, as
+	 * it uses a TreeSet.
+	 * 
+	 * @param array
+	 *            the String array
 	 * @return an array without duplicates, in natural sort order
 	 */
 	public static String[] removeDuplicateStrings(String[] array) {
@@ -839,13 +1012,17 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	}
 
 	/**
-	 * Split a String at the first occurrence of the delimiter.
-	 * Does not include the delimiter in the result.
-	 * @param toSplit the string to split
-	 * @param delimiter to split the string up with
+	 * Split a String at the first occurrence of the delimiter. Does not include
+	 * the delimiter in the result.
+	 * 
+	 * @param toSplit
+	 *            the string to split
+	 * @param delimiter
+	 *            to split the string up with
 	 * @return a two element array with index 0 being before the delimiter, and
-	 * index 1 being after the delimiter (neither element includes the delimiter);
-	 * or <code>null</code> if the delimiter wasn't found in the given input String
+	 *         index 1 being after the delimiter (neither element includes the
+	 *         delimiter); or <code>null</code> if the delimiter wasn't found in
+	 *         the given input String
 	 */
 	public static String[] split(String toSplit, String delimiter) {
 		if (!hasLength(toSplit) || !hasLength(delimiter)) {
@@ -857,40 +1034,52 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 		}
 		String beforeDelimiter = toSplit.substring(0, offset);
 		String afterDelimiter = toSplit.substring(offset + delimiter.length());
-		return new String[] {beforeDelimiter, afterDelimiter};
+		return new String[] { beforeDelimiter, afterDelimiter };
 	}
 
 	/**
-	 * Take an array Strings and split each element based on the given delimiter.
-	 * A <code>Properties</code> instance is then generated, with the left of the
-	 * delimiter providing the key, and the right of the delimiter providing the value.
-	 * <p>Will trim both the key and value before adding them to the
+	 * Take an array Strings and split each element based on the given
+	 * delimiter. A <code>Properties</code> instance is then generated, with the
+	 * left of the delimiter providing the key, and the right of the delimiter
+	 * providing the value.
+	 * <p>
+	 * Will trim both the key and value before adding them to the
 	 * <code>Properties</code> instance.
-	 * @param array the array to process
-	 * @param delimiter to split each element using (typically the equals symbol)
-	 * @return a <code>Properties</code> instance representing the array contents,
-	 * or <code>null</code> if the array to process was null or empty
+	 * 
+	 * @param array
+	 *            the array to process
+	 * @param delimiter
+	 *            to split each element using (typically the equals symbol)
+	 * @return a <code>Properties</code> instance representing the array
+	 *         contents, or <code>null</code> if the array to process was null
+	 *         or empty
 	 */
 	public static Properties splitArrayElementsIntoProperties(String[] array, String delimiter) {
 		return splitArrayElementsIntoProperties(array, delimiter, null);
 	}
 
 	/**
-	 * Take an array Strings and split each element based on the given delimiter.
-	 * A <code>Properties</code> instance is then generated, with the left of the
-	 * delimiter providing the key, and the right of the delimiter providing the value.
-	 * <p>Will trim both the key and value before adding them to the
+	 * Take an array Strings and split each element based on the given
+	 * delimiter. A <code>Properties</code> instance is then generated, with the
+	 * left of the delimiter providing the key, and the right of the delimiter
+	 * providing the value.
+	 * <p>
+	 * Will trim both the key and value before adding them to the
 	 * <code>Properties</code> instance.
-	 * @param array the array to process
-	 * @param delimiter to split each element using (typically the equals symbol)
-	 * @param charsToDelete one or more characters to remove from each element
-	 * prior to attempting the split operation (typically the quotation mark
-	 * symbol), or <code>null</code> if no removal should occur
-	 * @return a <code>Properties</code> instance representing the array contents,
-	 * or <code>null</code> if the array to process was <code>null</code> or empty
+	 * 
+	 * @param array
+	 *            the array to process
+	 * @param delimiter
+	 *            to split each element using (typically the equals symbol)
+	 * @param charsToDelete
+	 *            one or more characters to remove from each element prior to
+	 *            attempting the split operation (typically the quotation mark
+	 *            symbol), or <code>null</code> if no removal should occur
+	 * @return a <code>Properties</code> instance representing the array
+	 *         contents, or <code>null</code> if the array to process was
+	 *         <code>null</code> or empty
 	 */
-	public static Properties splitArrayElementsIntoProperties(
-			String[] array, String delimiter, String charsToDelete) {
+	public static Properties splitArrayElementsIntoProperties(String[] array, String delimiter, String charsToDelete) {
 
 		if (ArrayUtils.isEmpty(array)) {
 			return null;
@@ -912,13 +1101,17 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	/**
 	 * Tokenize the given String into a String array via a StringTokenizer.
 	 * Trims tokens and omits empty tokens.
-	 * <p>The given delimiters string is supposed to consist of any number of
+	 * <p>
+	 * The given delimiters string is supposed to consist of any number of
 	 * delimiter characters. Each of those characters can be used to separate
 	 * tokens. A delimiter is always a single character; for multi-character
 	 * delimiters, consider using <code>delimitedListToStringArray</code>
-	 * @param str the String to tokenize
-	 * @param delimiters the delimiter characters, assembled as String
-	 * (each of those characters is individually considered as delimiter).
+	 * 
+	 * @param str
+	 *            the String to tokenize
+	 * @param delimiters
+	 *            the delimiter characters, assembled as String (each of those
+	 *            characters is individually considered as delimiter).
 	 * @return an array of the tokens
 	 * @see java.util.StringTokenizer
 	 * @see java.lang.String#trim()
@@ -930,25 +1123,30 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 
 	/**
 	 * Tokenize the given String into a String array via a StringTokenizer.
-	 * <p>The given delimiters string is supposed to consist of any number of
+	 * <p>
+	 * The given delimiters string is supposed to consist of any number of
 	 * delimiter characters. Each of those characters can be used to separate
 	 * tokens. A delimiter is always a single character; for multi-character
 	 * delimiters, consider using <code>delimitedListToStringArray</code>
-	 * @param str the String to tokenize
-	 * @param delimiters the delimiter characters, assembled as String
-	 * (each of those characters is individually considered as delimiter)
-	 * @param trimTokens trim the tokens via String's <code>trim</code>
-	 * @param ignoreEmptyTokens omit empty tokens from the result array
-	 * (only applies to tokens that are empty after trimming; StringTokenizer
-	 * will not consider subsequent delimiters as token in the first place).
-	 * @return an array of the tokens (<code>null</code> if the input String
-	 * was <code>null</code>)
+	 * 
+	 * @param str
+	 *            the String to tokenize
+	 * @param delimiters
+	 *            the delimiter characters, assembled as String (each of those
+	 *            characters is individually considered as delimiter)
+	 * @param trimTokens
+	 *            trim the tokens via String's <code>trim</code>
+	 * @param ignoreEmptyTokens
+	 *            omit empty tokens from the result array (only applies to
+	 *            tokens that are empty after trimming; StringTokenizer will not
+	 *            consider subsequent delimiters as token in the first place).
+	 * @return an array of the tokens (<code>null</code> if the input String was
+	 *         <code>null</code>)
 	 * @see java.util.StringTokenizer
 	 * @see java.lang.String#trim()
 	 * @see #delimitedListToStringArray
 	 */
-	public static String[] tokenizeToStringArray(
-			String str, String delimiters, boolean trimTokens, boolean ignoreEmptyTokens) {
+	public static String[] tokenizeToStringArray(String str, String delimiters, boolean trimTokens, boolean ignoreEmptyTokens) {
 
 		if (str == null) {
 			return null;
@@ -969,12 +1167,17 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 
 	/**
 	 * Take a String which is a delimited list and convert it to a String array.
-	 * <p>A single delimiter can consists of more than one character: It will still
-	 * be considered as single delimiter string, rather than as bunch of potential
-	 * delimiter characters - in contrast to <code>tokenizeToStringArray</code>.
-	 * @param str the input String
-	 * @param delimiter the delimiter between elements (this is a single delimiter,
-	 * rather than a bunch individual delimiter characters)
+	 * <p>
+	 * A single delimiter can consists of more than one character: It will still
+	 * be considered as single delimiter string, rather than as bunch of
+	 * potential delimiter characters - in contrast to
+	 * <code>tokenizeToStringArray</code>.
+	 * 
+	 * @param str
+	 *            the input String
+	 * @param delimiter
+	 *            the delimiter between elements (this is a single delimiter,
+	 *            rather than a bunch individual delimiter characters)
 	 * @return an array of the tokens in the list
 	 * @see #tokenizeToStringArray
 	 */
@@ -984,14 +1187,21 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 
 	/**
 	 * Take a String which is a delimited list and convert it to a String array.
-	 * <p>A single delimiter can consists of more than one character: It will still
-	 * be considered as single delimiter string, rather than as bunch of potential
-	 * delimiter characters - in contrast to <code>tokenizeToStringArray</code>.
-	 * @param str the input String
-	 * @param delimiter the delimiter between elements (this is a single delimiter,
-	 * rather than a bunch individual delimiter characters)
-	 * @param charsToDelete a set of characters to delete. Useful for deleting unwanted
-	 * line breaks: e.g. "\r\n\f" will delete all new lines and line feeds in a String.
+	 * <p>
+	 * A single delimiter can consists of more than one character: It will still
+	 * be considered as single delimiter string, rather than as bunch of
+	 * potential delimiter characters - in contrast to
+	 * <code>tokenizeToStringArray</code>.
+	 * 
+	 * @param str
+	 *            the input String
+	 * @param delimiter
+	 *            the delimiter between elements (this is a single delimiter,
+	 *            rather than a bunch individual delimiter characters)
+	 * @param charsToDelete
+	 *            a set of characters to delete. Useful for deleting unwanted
+	 *            line breaks: e.g. "\r\n\f" will delete all new lines and line
+	 *            feeds in a String.
 	 * @return an array of the tokens in the list
 	 * @see #tokenizeToStringArray
 	 */
@@ -1000,15 +1210,14 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 			return new String[0];
 		}
 		if (delimiter == null) {
-			return new String[] {str};
+			return new String[] { str };
 		}
 		List<String> result = new ArrayList<String>();
 		if ("".equals(delimiter)) {
 			for (int i = 0; i < str.length(); i++) {
 				result.add(deleteAny(str.substring(i, i + 1), charsToDelete));
 			}
-		}
-		else {
+		} else {
 			int pos = 0;
 			int delPos;
 			while ((delPos = str.indexOf(delimiter, pos)) != -1) {
@@ -1025,7 +1234,9 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 
 	/**
 	 * Convert a CSV list into an array of Strings.
-	 * @param str the input String
+	 * 
+	 * @param str
+	 *            the input String
 	 * @return an array of Strings, or the empty array in case of empty input
 	 */
 	public static String[] commaDelimitedListToStringArray(String str) {
@@ -1033,9 +1244,11 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	}
 
 	/**
-	 * Convenience method to convert a CSV string list to a set.
-	 * Note that this will suppress duplicates.
-	 * @param str the input String
+	 * Convenience method to convert a CSV string list to a set. Note that this
+	 * will suppress duplicates.
+	 * 
+	 * @param str
+	 *            the input String
 	 * @return a Set of String entries in the list
 	 */
 	public static Set<String> commaDelimitedListToSet(String str) {
@@ -1050,10 +1263,15 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	/**
 	 * Convenience method to return a Collection as a delimited (e.g. CSV)
 	 * String. E.g. useful for <code>toString()</code> implementations.
-	 * @param coll the Collection to display
-	 * @param delim the delimiter to use (probably a ",")
-	 * @param prefix the String to start each element with
-	 * @param suffix the String to end each element with
+	 * 
+	 * @param coll
+	 *            the Collection to display
+	 * @param delim
+	 *            the delimiter to use (probably a ",")
+	 * @param prefix
+	 *            the String to start each element with
+	 * @param suffix
+	 *            the String to end each element with
 	 * @return the delimited String
 	 */
 	public static String collectionToDelimitedString(Collection<?> coll, String delim, String prefix, String suffix) {
@@ -1074,8 +1292,11 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	/**
 	 * Convenience method to return a Collection as a delimited (e.g. CSV)
 	 * String. E.g. useful for <code>toString()</code> implementations.
-	 * @param coll the Collection to display
-	 * @param delim the delimiter to use (probably a ",")
+	 * 
+	 * @param coll
+	 *            the Collection to display
+	 * @param delim
+	 *            the delimiter to use (probably a ",")
 	 * @return the delimited String
 	 */
 	public static String collectionToDelimitedString(Collection<?> coll, String delim) {
@@ -1083,9 +1304,11 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	}
 
 	/**
-	 * Convenience method to return a Collection as a CSV String.
-	 * E.g. useful for <code>toString()</code> implementations.
-	 * @param coll the Collection to display
+	 * Convenience method to return a Collection as a CSV String. E.g. useful
+	 * for <code>toString()</code> implementations.
+	 * 
+	 * @param coll
+	 *            the Collection to display
 	 * @return the delimited String
 	 */
 	public static String collectionToCommaDelimitedString(Collection<?> coll) {
@@ -1095,8 +1318,11 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	/**
 	 * Convenience method to return a String array as a delimited (e.g. CSV)
 	 * String. E.g. useful for <code>toString()</code> implementations.
-	 * @param arr the array to display
-	 * @param delim the delimiter to use (probably a ",")
+	 * 
+	 * @param arr
+	 *            the array to display
+	 * @param delim
+	 *            the delimiter to use (probably a ",")
 	 * @return the delimited String
 	 */
 	public static String arrayToDelimitedString(Object[] arr, String delim) {
@@ -1117,9 +1343,11 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 	}
 
 	/**
-	 * Convenience method to return a String array as a CSV String.
-	 * E.g. useful for <code>toString()</code> implementations.
-	 * @param arr the array to display
+	 * Convenience method to return a String array as a CSV String. E.g. useful
+	 * for <code>toString()</code> implementations.
+	 * 
+	 * @param arr
+	 *            the array to display
 	 * @return the delimited String
 	 */
 	public static String arrayToCommaDelimitedString(Object[] arr) {
@@ -1128,451 +1356,541 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 
 	/**
 	 * 判断一个字符串是不是数子
+	 * 
 	 * @author mawujun email:16064988@163.com qq:16064988
 	 * @param input
 	 * @return
 	 */
-	public static boolean isNumber(String input){  
-        Matcher mer = Pattern.compile("^[0-9]+$").matcher(input);  
-        return mer.find();  
-    }  
-	
-    /**
-     * <p>Joins the elements of the provided {@code Iterable} into
-     * a single String containing the provided elements.</p>
-     *
-     * <p>No delimiter is added before or after the list.
-     * A {@code null} separator is the same as an empty String ("").</p>
-     *
-     * <p>See the examples here: {@link #join(Object[],String)}. </p>
-     *
-     * @param iterable  the {@code Iterable} providing the values to join together, may be null
-     * @param separator  the separator character to use, null treated as ""
-     * @return the joined String, {@code null} if null iterator input
-     * @since 2.3
-     */
-    public static String join(Iterable<?> iterable, String separator) {
-        if (iterable == null) {
-            return null;
-        }
-        return join(iterable.iterator(), separator);
-    }
-    /**
-     * <p>Joins the elements of the provided {@code Iterable} into
-     * a single String containing the provided elements.</p>
-     *
-     * <p>No delimiter is added before or after the list. Null objects or empty
-     * strings within the iteration are represented by empty strings.</p>
-     *
-     * <p>See the examples here: {@link #join(Object[],char)}. </p>
-     *
-     * @param iterable  the {@code Iterable} providing the values to join together, may be null
-     * @param separator  the separator character to use
-     * @return the joined String, {@code null} if null iterator input
-     * @since 2.3
-     */
-    public static String join(Iterable<?> iterable, char separator) {
-        if (iterable == null) {
-            return null;
-        }
-        return join(iterable.iterator(), separator);
-    }
-    
-    /**
-     * <p>Joins the elements of the provided {@code Iterator} into
-     * a single String containing the provided elements.</p>
-     *
-     * <p>No delimiter is added before or after the list.
-     * A {@code null} separator is the same as an empty String ("").</p>
-     *
-     * <p>See the examples here: {@link #join(Object[],String)}. </p>
-     *
-     * @param iterator  the {@code Iterator} of values to join together, may be null
-     * @param separator  the separator character to use, null treated as ""
-     * @return the joined String, {@code null} if null iterator input
-     */
-    public static String join(Iterator<?> iterator, String separator) {
+	public static boolean isNumber(String input) {
+		Matcher mer = Pattern.compile("^[0-9]+$").matcher(input);
+		return mer.find();
+	}
 
-        // handle null, zero and one elements before building a buffer
-        if (iterator == null) {
-            return null;
-        }
-        if (!iterator.hasNext()) {
-            return EMPTY;
-        }
-        Object first = iterator.next();
-        if (!iterator.hasNext()) {
-            return ObjectUtils.toString(first);
-        }
+	/**
+	 * <p>
+	 * Joins the elements of the provided {@code Iterable} into a single String
+	 * containing the provided elements.
+	 * </p>
+	 * 
+	 * <p>
+	 * No delimiter is added before or after the list. A {@code null} separator
+	 * is the same as an empty String ("").
+	 * </p>
+	 * 
+	 * <p>
+	 * See the examples here: {@link #join(Object[],String)}.
+	 * </p>
+	 * 
+	 * @param iterable
+	 *            the {@code Iterable} providing the values to join together,
+	 *            may be null
+	 * @param separator
+	 *            the separator character to use, null treated as ""
+	 * @return the joined String, {@code null} if null iterator input
+	 * @since 2.3
+	 */
+	public static String join(Iterable<?> iterable, String separator) {
+		if (iterable == null) {
+			return null;
+		}
+		return join(iterable.iterator(), separator);
+	}
 
-        // two or more elements
-        StringBuilder buf = new StringBuilder(256); // Java default is 16, probably too small
-        if (first != null) {
-            buf.append(first);
-        }
+	/**
+	 * <p>
+	 * Joins the elements of the provided {@code Iterable} into a single String
+	 * containing the provided elements.
+	 * </p>
+	 * 
+	 * <p>
+	 * No delimiter is added before or after the list. Null objects or empty
+	 * strings within the iteration are represented by empty strings.
+	 * </p>
+	 * 
+	 * <p>
+	 * See the examples here: {@link #join(Object[],char)}.
+	 * </p>
+	 * 
+	 * @param iterable
+	 *            the {@code Iterable} providing the values to join together,
+	 *            may be null
+	 * @param separator
+	 *            the separator character to use
+	 * @return the joined String, {@code null} if null iterator input
+	 * @since 2.3
+	 */
+	public static String join(Iterable<?> iterable, char separator) {
+		if (iterable == null) {
+			return null;
+		}
+		return join(iterable.iterator(), separator);
+	}
 
-        while (iterator.hasNext()) {
-            if (separator != null) {
-                buf.append(separator);
-            }
-            Object obj = iterator.next();
-            if (obj != null) {
-                buf.append(obj);
-            }
-        }
-        return buf.toString();
-    }
-    
-    // Trim
-    //-----------------------------------------------------------------------
-    /**
-     * <p>Removes control characters (char &lt;= 32) from both
-     * ends of this String, handling {@code null} by returning
-     * {@code null}.</p>
-     *
-     * <p>The String is trimmed using {@link String#trim()}.
-     * Trim removes start and end characters &lt;= 32.
-     * To strip whitespace use {@link #strip(String)}.</p>
-     *
-     * <p>To trim your choice of characters, use the
-     * {@link #strip(String, String)} methods.</p>
-     *
-     * <pre>
-     * StringUtils.trim(null)          = null
-     * StringUtils.trim("")            = ""
-     * StringUtils.trim("     ")       = ""
-     * StringUtils.trim("abc")         = "abc"
-     * StringUtils.trim("    abc    ") = "abc"
-     * </pre>
-     *
-     * @param str  the String to be trimmed, may be null
-     * @return the trimmed string, {@code null} if null String input
-     */
-    public static String trim(String str) {
-        return str == null ? null : str.trim();
-    }
+	/**
+	 * <p>
+	 * Joins the elements of the provided {@code Iterator} into a single String
+	 * containing the provided elements.
+	 * </p>
+	 * 
+	 * <p>
+	 * No delimiter is added before or after the list. A {@code null} separator
+	 * is the same as an empty String ("").
+	 * </p>
+	 * 
+	 * <p>
+	 * See the examples here: {@link #join(Object[],String)}.
+	 * </p>
+	 * 
+	 * @param iterator
+	 *            the {@code Iterator} of values to join together, may be null
+	 * @param separator
+	 *            the separator character to use, null treated as ""
+	 * @return the joined String, {@code null} if null iterator input
+	 */
+	public static String join(Iterator<?> iterator, String separator) {
 
-    /**
-     * <p>Removes control characters (char &lt;= 32) from both
-     * ends of this String returning {@code null} if the String is
-     * empty ("") after the trim or if it is {@code null}.
-     *
-     * <p>The String is trimmed using {@link String#trim()}.
-     * Trim removes start and end characters &lt;= 32.
-     * To strip whitespace use {@link #stripToNull(String)}.</p>
-     *
-     * <pre>
-     * StringUtils.trimToNull(null)          = null
-     * StringUtils.trimToNull("")            = null
-     * StringUtils.trimToNull("     ")       = null
-     * StringUtils.trimToNull("abc")         = "abc"
-     * StringUtils.trimToNull("    abc    ") = "abc"
-     * </pre>
-     *
-     * @param str  the String to be trimmed, may be null
-     * @return the trimmed String,
-     *  {@code null} if only chars &lt;= 32, empty or null String input
-     * @since 2.0
-     */
-    public static String trimToNull(String str) {
-        String ts = trim(str);
-        return isEmpty(ts) ? null : ts;
-    }
+		// handle null, zero and one elements before building a buffer
+		if (iterator == null) {
+			return null;
+		}
+		if (!iterator.hasNext()) {
+			return EMPTY;
+		}
+		Object first = iterator.next();
+		if (!iterator.hasNext()) {
+			return ObjectUtils.toString(first);
+		}
 
-    /**
-     * <p>Removes control characters (char &lt;= 32) from both
-     * ends of this String returning an empty String ("") if the String
-     * is empty ("") after the trim or if it is {@code null}.
-     *
-     * <p>The String is trimmed using {@link String#trim()}.
-     * Trim removes start and end characters &lt;= 32.
-     * To strip whitespace use {@link #stripToEmpty(String)}.</p>
-     *
-     * <pre>
-     * StringUtils.trimToEmpty(null)          = ""
-     * StringUtils.trimToEmpty("")            = ""
-     * StringUtils.trimToEmpty("     ")       = ""
-     * StringUtils.trimToEmpty("abc")         = "abc"
-     * StringUtils.trimToEmpty("    abc    ") = "abc"
-     * </pre>
-     *
-     * @param str  the String to be trimmed, may be null
-     * @return the trimmed String, or an empty String if {@code null} input
-     * @since 2.0
-     */
-    public static String trimToEmpty(String str) {
-        return str == null ? EMPTY : str.trim();
-    }
+		// two or more elements
+		StringBuilder buf = new StringBuilder(256); // Java default is 16,
+													// probably too small
+		if (first != null) {
+			buf.append(first);
+		}
 
-    // Stripping
-    //-----------------------------------------------------------------------
-    /**
-     * <p>Strips whitespace from the start and end of a String.</p>
-     *
-     * <p>This is similar to {@link #trim(String)} but removes whitespace.
-     * Whitespace is defined by {@link Character#isWhitespace(char)}.</p>
-     *
-     * <p>A {@code null} input String returns {@code null}.</p>
-     *
-     * <pre>
-     * StringUtils.strip(null)     = null
-     * StringUtils.strip("")       = ""
-     * StringUtils.strip("   ")    = ""
-     * StringUtils.strip("abc")    = "abc"
-     * StringUtils.strip("  abc")  = "abc"
-     * StringUtils.strip("abc  ")  = "abc"
-     * StringUtils.strip(" abc ")  = "abc"
-     * StringUtils.strip(" ab c ") = "ab c"
-     * </pre>
-     *
-     * @param str  the String to remove whitespace from, may be null
-     * @return the stripped String, {@code null} if null String input
-     */
-    public static String strip(String str) {
-        return strip(str, null);
-    }
+		while (iterator.hasNext()) {
+			if (separator != null) {
+				buf.append(separator);
+			}
+			Object obj = iterator.next();
+			if (obj != null) {
+				buf.append(obj);
+			}
+		}
+		return buf.toString();
+	}
 
-    /**
-     * <p>Strips whitespace from the start and end of a String  returning
-     * {@code null} if the String is empty ("") after the strip.</p>
-     *
-     * <p>This is similar to {@link #trimToNull(String)} but removes whitespace.
-     * Whitespace is defined by {@link Character#isWhitespace(char)}.</p>
-     *
-     * <pre>
-     * StringUtils.stripToNull(null)     = null
-     * StringUtils.stripToNull("")       = null
-     * StringUtils.stripToNull("   ")    = null
-     * StringUtils.stripToNull("abc")    = "abc"
-     * StringUtils.stripToNull("  abc")  = "abc"
-     * StringUtils.stripToNull("abc  ")  = "abc"
-     * StringUtils.stripToNull(" abc ")  = "abc"
-     * StringUtils.stripToNull(" ab c ") = "ab c"
-     * </pre>
-     *
-     * @param str  the String to be stripped, may be null
-     * @return the stripped String,
-     *  {@code null} if whitespace, empty or null String input
-     * @since 2.0
-     */
-    public static String stripToNull(String str) {
-        if (str == null) {
-            return null;
-        }
-        str = strip(str, null);
-        return str.length() == 0 ? null : str;
-    }
+	// Trim
+	// -----------------------------------------------------------------------
+	/**
+	 * <p>
+	 * Removes control characters (char &lt;= 32) from both ends of this String,
+	 * handling {@code null} by returning {@code null}.
+	 * </p>
+	 * 
+	 * <p>
+	 * The String is trimmed using {@link String#trim()}. Trim removes start and
+	 * end characters &lt;= 32. To strip whitespace use {@link #strip(String)}.
+	 * </p>
+	 * 
+	 * <p>
+	 * To trim your choice of characters, use the {@link #strip(String, String)}
+	 * methods.
+	 * </p>
+	 * 
+	 * <pre>
+	 * StringUtils.trim(null)          = null
+	 * StringUtils.trim("")            = ""
+	 * StringUtils.trim("     ")       = ""
+	 * StringUtils.trim("abc")         = "abc"
+	 * StringUtils.trim("    abc    ") = "abc"
+	 * </pre>
+	 * 
+	 * @param str
+	 *            the String to be trimmed, may be null
+	 * @return the trimmed string, {@code null} if null String input
+	 */
+	public static String trim(String str) {
+		return str == null ? null : str.trim();
+	}
 
-    /**
-     * <p>Strips whitespace from the start and end of a String  returning
-     * an empty String if {@code null} input.</p>
-     *
-     * <p>This is similar to {@link #trimToEmpty(String)} but removes whitespace.
-     * Whitespace is defined by {@link Character#isWhitespace(char)}.</p>
-     *
-     * <pre>
-     * StringUtils.stripToEmpty(null)     = ""
-     * StringUtils.stripToEmpty("")       = ""
-     * StringUtils.stripToEmpty("   ")    = ""
-     * StringUtils.stripToEmpty("abc")    = "abc"
-     * StringUtils.stripToEmpty("  abc")  = "abc"
-     * StringUtils.stripToEmpty("abc  ")  = "abc"
-     * StringUtils.stripToEmpty(" abc ")  = "abc"
-     * StringUtils.stripToEmpty(" ab c ") = "ab c"
-     * </pre>
-     *
-     * @param str  the String to be stripped, may be null
-     * @return the trimmed String, or an empty String if {@code null} input
-     * @since 2.0
-     */
-    public static String stripToEmpty(String str) {
-        return str == null ? EMPTY : strip(str, null);
-    }
+	/**
+	 * <p>
+	 * Removes control characters (char &lt;= 32) from both ends of this String
+	 * returning {@code null} if the String is empty ("") after the trim or if
+	 * it is {@code null}.
+	 * 
+	 * <p>
+	 * The String is trimmed using {@link String#trim()}. Trim removes start and
+	 * end characters &lt;= 32. To strip whitespace use
+	 * {@link #stripToNull(String)}.
+	 * </p>
+	 * 
+	 * <pre>
+	 * StringUtils.trimToNull(null)          = null
+	 * StringUtils.trimToNull("")            = null
+	 * StringUtils.trimToNull("     ")       = null
+	 * StringUtils.trimToNull("abc")         = "abc"
+	 * StringUtils.trimToNull("    abc    ") = "abc"
+	 * </pre>
+	 * 
+	 * @param str
+	 *            the String to be trimmed, may be null
+	 * @return the trimmed String, {@code null} if only chars &lt;= 32, empty or
+	 *         null String input
+	 * @since 2.0
+	 */
+	public static String trimToNull(String str) {
+		String ts = trim(str);
+		return isEmpty(ts) ? null : ts;
+	}
 
-    /**
-     * <p>Strips any of a set of characters from the start and end of a String.
-     * This is similar to {@link String#trim()} but allows the characters
-     * to be stripped to be controlled.</p>
-     *
-     * <p>A {@code null} input String returns {@code null}.
-     * An empty string ("") input returns the empty string.</p>
-     *
-     * <p>If the stripChars String is {@code null}, whitespace is
-     * stripped as defined by {@link Character#isWhitespace(char)}.
-     * Alternatively use {@link #strip(String)}.</p>
-     *
-     * <pre>
-     * StringUtils.strip(null, *)          = null
-     * StringUtils.strip("", *)            = ""
-     * StringUtils.strip("abc", null)      = "abc"
-     * StringUtils.strip("  abc", null)    = "abc"
-     * StringUtils.strip("abc  ", null)    = "abc"
-     * StringUtils.strip(" abc ", null)    = "abc"
-     * StringUtils.strip("  abcyx", "xyz") = "  abc"
-     * </pre>
-     *
-     * @param str  the String to remove characters from, may be null
-     * @param stripChars  the characters to remove, null treated as whitespace
-     * @return the stripped String, {@code null} if null String input
-     */
-    public static String strip(String str, String stripChars) {
-        if (isEmpty(str)) {
-            return str;
-        }
-        str = stripStart(str, stripChars);
-        return stripEnd(str, stripChars);
-    }
+	/**
+	 * <p>
+	 * Removes control characters (char &lt;= 32) from both ends of this String
+	 * returning an empty String ("") if the String is empty ("") after the trim
+	 * or if it is {@code null}.
+	 * 
+	 * <p>
+	 * The String is trimmed using {@link String#trim()}. Trim removes start and
+	 * end characters &lt;= 32. To strip whitespace use
+	 * {@link #stripToEmpty(String)}.
+	 * </p>
+	 * 
+	 * <pre>
+	 * StringUtils.trimToEmpty(null)          = ""
+	 * StringUtils.trimToEmpty("")            = ""
+	 * StringUtils.trimToEmpty("     ")       = ""
+	 * StringUtils.trimToEmpty("abc")         = "abc"
+	 * StringUtils.trimToEmpty("    abc    ") = "abc"
+	 * </pre>
+	 * 
+	 * @param str
+	 *            the String to be trimmed, may be null
+	 * @return the trimmed String, or an empty String if {@code null} input
+	 * @since 2.0
+	 */
+	public static String trimToEmpty(String str) {
+		return str == null ? EMPTY : str.trim();
+	}
 
-    /**
-     * <p>Strips any of a set of characters from the start of a String.</p>
-     *
-     * <p>A {@code null} input String returns {@code null}.
-     * An empty string ("") input returns the empty string.</p>
-     *
-     * <p>If the stripChars String is {@code null}, whitespace is
-     * stripped as defined by {@link Character#isWhitespace(char)}.</p>
-     *
-     * <pre>
-     * StringUtils.stripStart(null, *)          = null
-     * StringUtils.stripStart("", *)            = ""
-     * StringUtils.stripStart("abc", "")        = "abc"
-     * StringUtils.stripStart("abc", null)      = "abc"
-     * StringUtils.stripStart("  abc", null)    = "abc"
-     * StringUtils.stripStart("abc  ", null)    = "abc  "
-     * StringUtils.stripStart(" abc ", null)    = "abc "
-     * StringUtils.stripStart("yxabc  ", "xyz") = "abc  "
-     * </pre>
-     *
-     * @param str  the String to remove characters from, may be null
-     * @param stripChars  the characters to remove, null treated as whitespace
-     * @return the stripped String, {@code null} if null String input
-     */
-    public static String stripStart(String str, String stripChars) {
-        int strLen;
-        if (str == null || (strLen = str.length()) == 0) {
-            return str;
-        }
-        int start = 0;
-        if (stripChars == null) {
-            while (start != strLen && Character.isWhitespace(str.charAt(start))) {
-                start++;
-            }
-        } else if (stripChars.length() == 0) {
-            return str;
-        } else {
-            while (start != strLen && stripChars.indexOf(str.charAt(start)) != INDEX_NOT_FOUND) {
-                start++;
-            }
-        }
-        return str.substring(start);
-    }
+	// Stripping
+	// -----------------------------------------------------------------------
+	/**
+	 * <p>
+	 * Strips whitespace from the start and end of a String.
+	 * </p>
+	 * 
+	 * <p>
+	 * This is similar to {@link #trim(String)} but removes whitespace.
+	 * Whitespace is defined by {@link Character#isWhitespace(char)}.
+	 * </p>
+	 * 
+	 * <p>
+	 * A {@code null} input String returns {@code null}.
+	 * </p>
+	 * 
+	 * <pre>
+	 * StringUtils.strip(null)     = null
+	 * StringUtils.strip("")       = ""
+	 * StringUtils.strip("   ")    = ""
+	 * StringUtils.strip("abc")    = "abc"
+	 * StringUtils.strip("  abc")  = "abc"
+	 * StringUtils.strip("abc  ")  = "abc"
+	 * StringUtils.strip(" abc ")  = "abc"
+	 * StringUtils.strip(" ab c ") = "ab c"
+	 * </pre>
+	 * 
+	 * @param str
+	 *            the String to remove whitespace from, may be null
+	 * @return the stripped String, {@code null} if null String input
+	 */
+	public static String strip(String str) {
+		return strip(str, null);
+	}
 
-    /**
-     * <p>Strips any of a set of characters from the end of a String.</p>
-     *
-     * <p>A {@code null} input String returns {@code null}.
-     * An empty string ("") input returns the empty string.</p>
-     *
-     * <p>If the stripChars String is {@code null}, whitespace is
-     * stripped as defined by {@link Character#isWhitespace(char)}.</p>
-     *
-     * <pre>
-     * StringUtils.stripEnd(null, *)          = null
-     * StringUtils.stripEnd("", *)            = ""
-     * StringUtils.stripEnd("abc", "")        = "abc"
-     * StringUtils.stripEnd("abc", null)      = "abc"
-     * StringUtils.stripEnd("  abc", null)    = "  abc"
-     * StringUtils.stripEnd("abc  ", null)    = "abc"
-     * StringUtils.stripEnd(" abc ", null)    = " abc"
-     * StringUtils.stripEnd("  abcyx", "xyz") = "  abc"
-     * StringUtils.stripEnd("120.00", ".0")   = "12"
-     * </pre>
-     *
-     * @param str  the String to remove characters from, may be null
-     * @param stripChars  the set of characters to remove, null treated as whitespace
-     * @return the stripped String, {@code null} if null String input
-     */
-    public static String stripEnd(String str, String stripChars) {
-        int end;
-        if (str == null || (end = str.length()) == 0) {
-            return str;
-        }
+	/**
+	 * <p>
+	 * Strips whitespace from the start and end of a String returning
+	 * {@code null} if the String is empty ("") after the strip.
+	 * </p>
+	 * 
+	 * <p>
+	 * This is similar to {@link #trimToNull(String)} but removes whitespace.
+	 * Whitespace is defined by {@link Character#isWhitespace(char)}.
+	 * </p>
+	 * 
+	 * <pre>
+	 * StringUtils.stripToNull(null)     = null
+	 * StringUtils.stripToNull("")       = null
+	 * StringUtils.stripToNull("   ")    = null
+	 * StringUtils.stripToNull("abc")    = "abc"
+	 * StringUtils.stripToNull("  abc")  = "abc"
+	 * StringUtils.stripToNull("abc  ")  = "abc"
+	 * StringUtils.stripToNull(" abc ")  = "abc"
+	 * StringUtils.stripToNull(" ab c ") = "ab c"
+	 * </pre>
+	 * 
+	 * @param str
+	 *            the String to be stripped, may be null
+	 * @return the stripped String, {@code null} if whitespace, empty or null
+	 *         String input
+	 * @since 2.0
+	 */
+	public static String stripToNull(String str) {
+		if (str == null) {
+			return null;
+		}
+		str = strip(str, null);
+		return str.length() == 0 ? null : str;
+	}
 
-        if (stripChars == null) {
-            while (end != 0 && Character.isWhitespace(str.charAt(end - 1))) {
-                end--;
-            }
-        } else if (stripChars.length() == 0) {
-            return str;
-        } else {
-            while (end != 0 && stripChars.indexOf(str.charAt(end - 1)) != INDEX_NOT_FOUND) {
-                end--;
-            }
-        }
-        return str.substring(0, end);
-    }
+	/**
+	 * <p>
+	 * Strips whitespace from the start and end of a String returning an empty
+	 * String if {@code null} input.
+	 * </p>
+	 * 
+	 * <p>
+	 * This is similar to {@link #trimToEmpty(String)} but removes whitespace.
+	 * Whitespace is defined by {@link Character#isWhitespace(char)}.
+	 * </p>
+	 * 
+	 * <pre>
+	 * StringUtils.stripToEmpty(null)     = ""
+	 * StringUtils.stripToEmpty("")       = ""
+	 * StringUtils.stripToEmpty("   ")    = ""
+	 * StringUtils.stripToEmpty("abc")    = "abc"
+	 * StringUtils.stripToEmpty("  abc")  = "abc"
+	 * StringUtils.stripToEmpty("abc  ")  = "abc"
+	 * StringUtils.stripToEmpty(" abc ")  = "abc"
+	 * StringUtils.stripToEmpty(" ab c ") = "ab c"
+	 * </pre>
+	 * 
+	 * @param str
+	 *            the String to be stripped, may be null
+	 * @return the trimmed String, or an empty String if {@code null} input
+	 * @since 2.0
+	 */
+	public static String stripToEmpty(String str) {
+		return str == null ? EMPTY : strip(str, null);
+	}
 
-    // StripAll
-    //-----------------------------------------------------------------------
-    /**
-     * <p>Strips whitespace from the start and end of every String in an array.
-     * Whitespace is defined by {@link Character#isWhitespace(char)}.</p>
-     *
-     * <p>A new array is returned each time, except for length zero.
-     * A {@code null} array will return {@code null}.
-     * An empty array will return itself.
-     * A {@code null} array entry will be ignored.</p>
-     *
-     * <pre>
-     * StringUtils.stripAll(null)             = null
-     * StringUtils.stripAll([])               = []
-     * StringUtils.stripAll(["abc", "  abc"]) = ["abc", "abc"]
-     * StringUtils.stripAll(["abc  ", null])  = ["abc", null]
-     * </pre>
-     *
-     * @param strs  the array to remove whitespace from, may be null
-     * @return the stripped Strings, {@code null} if null array input
-     */
-    public static String[] stripAll(String... strs) {
-        return stripAll(strs, null);
-    }
+	/**
+	 * <p>
+	 * Strips any of a set of characters from the start and end of a String.
+	 * This is similar to {@link String#trim()} but allows the characters to be
+	 * stripped to be controlled.
+	 * </p>
+	 * 
+	 * <p>
+	 * A {@code null} input String returns {@code null}. An empty string ("")
+	 * input returns the empty string.
+	 * </p>
+	 * 
+	 * <p>
+	 * If the stripChars String is {@code null}, whitespace is stripped as
+	 * defined by {@link Character#isWhitespace(char)}. Alternatively use
+	 * {@link #strip(String)}.
+	 * </p>
+	 * 
+	 * <pre>
+	 * StringUtils.strip(null, *)          = null
+	 * StringUtils.strip("", *)            = ""
+	 * StringUtils.strip("abc", null)      = "abc"
+	 * StringUtils.strip("  abc", null)    = "abc"
+	 * StringUtils.strip("abc  ", null)    = "abc"
+	 * StringUtils.strip(" abc ", null)    = "abc"
+	 * StringUtils.strip("  abcyx", "xyz") = "  abc"
+	 * </pre>
+	 * 
+	 * @param str
+	 *            the String to remove characters from, may be null
+	 * @param stripChars
+	 *            the characters to remove, null treated as whitespace
+	 * @return the stripped String, {@code null} if null String input
+	 */
+	public static String strip(String str, String stripChars) {
+		if (isEmpty(str)) {
+			return str;
+		}
+		str = stripStart(str, stripChars);
+		return stripEnd(str, stripChars);
+	}
 
-    /**
-     * <p>Strips any of a set of characters from the start and end of every
-     * String in an array.</p>
-     * Whitespace is defined by {@link Character#isWhitespace(char)}.</p>
-     *
-     * <p>A new array is returned each time, except for length zero.
-     * A {@code null} array will return {@code null}.
-     * An empty array will return itself.
-     * A {@code null} array entry will be ignored.
-     * A {@code null} stripChars will strip whitespace as defined by
-     * {@link Character#isWhitespace(char)}.</p>
-     *
-     * <pre>
-     * StringUtils.stripAll(null, *)                = null
-     * StringUtils.stripAll([], *)                  = []
-     * StringUtils.stripAll(["abc", "  abc"], null) = ["abc", "abc"]
-     * StringUtils.stripAll(["abc  ", null], null)  = ["abc", null]
-     * StringUtils.stripAll(["abc  ", null], "yz")  = ["abc  ", null]
-     * StringUtils.stripAll(["yabcz", null], "yz")  = ["abc", null]
-     * </pre>
-     *
-     * @param strs  the array to remove characters from, may be null
-     * @param stripChars  the characters to remove, null treated as whitespace
-     * @return the stripped Strings, {@code null} if null array input
-     */
-    public static String[] stripAll(String[] strs, String stripChars) {
-        int strsLen;
-        if (strs == null || (strsLen = strs.length) == 0) {
-            return strs;
-        }
-        String[] newArr = new String[strsLen];
-        for (int i = 0; i < strsLen; i++) {
-            newArr[i] = strip(strs[i], stripChars);
-        }
-        return newArr;
-    }
+	/**
+	 * <p>
+	 * Strips any of a set of characters from the start of a String.
+	 * </p>
+	 * 
+	 * <p>
+	 * A {@code null} input String returns {@code null}. An empty string ("")
+	 * input returns the empty string.
+	 * </p>
+	 * 
+	 * <p>
+	 * If the stripChars String is {@code null}, whitespace is stripped as
+	 * defined by {@link Character#isWhitespace(char)}.
+	 * </p>
+	 * 
+	 * <pre>
+	 * StringUtils.stripStart(null, *)          = null
+	 * StringUtils.stripStart("", *)            = ""
+	 * StringUtils.stripStart("abc", "")        = "abc"
+	 * StringUtils.stripStart("abc", null)      = "abc"
+	 * StringUtils.stripStart("  abc", null)    = "abc"
+	 * StringUtils.stripStart("abc  ", null)    = "abc  "
+	 * StringUtils.stripStart(" abc ", null)    = "abc "
+	 * StringUtils.stripStart("yxabc  ", "xyz") = "abc  "
+	 * </pre>
+	 * 
+	 * @param str
+	 *            the String to remove characters from, may be null
+	 * @param stripChars
+	 *            the characters to remove, null treated as whitespace
+	 * @return the stripped String, {@code null} if null String input
+	 */
+	public static String stripStart(String str, String stripChars) {
+		int strLen;
+		if (str == null || (strLen = str.length()) == 0) {
+			return str;
+		}
+		int start = 0;
+		if (stripChars == null) {
+			while (start != strLen && Character.isWhitespace(str.charAt(start))) {
+				start++;
+			}
+		} else if (stripChars.length() == 0) {
+			return str;
+		} else {
+			while (start != strLen && stripChars.indexOf(str.charAt(start)) != INDEX_NOT_FOUND) {
+				start++;
+			}
+		}
+		return str.substring(start);
+	}
 
+	/**
+	 * <p>
+	 * Strips any of a set of characters from the end of a String.
+	 * </p>
+	 * 
+	 * <p>
+	 * A {@code null} input String returns {@code null}. An empty string ("")
+	 * input returns the empty string.
+	 * </p>
+	 * 
+	 * <p>
+	 * If the stripChars String is {@code null}, whitespace is stripped as
+	 * defined by {@link Character#isWhitespace(char)}.
+	 * </p>
+	 * 
+	 * <pre>
+	 * StringUtils.stripEnd(null, *)          = null
+	 * StringUtils.stripEnd("", *)            = ""
+	 * StringUtils.stripEnd("abc", "")        = "abc"
+	 * StringUtils.stripEnd("abc", null)      = "abc"
+	 * StringUtils.stripEnd("  abc", null)    = "  abc"
+	 * StringUtils.stripEnd("abc  ", null)    = "abc"
+	 * StringUtils.stripEnd(" abc ", null)    = " abc"
+	 * StringUtils.stripEnd("  abcyx", "xyz") = "  abc"
+	 * StringUtils.stripEnd("120.00", ".0")   = "12"
+	 * </pre>
+	 * 
+	 * @param str
+	 *            the String to remove characters from, may be null
+	 * @param stripChars
+	 *            the set of characters to remove, null treated as whitespace
+	 * @return the stripped String, {@code null} if null String input
+	 */
+	public static String stripEnd(String str, String stripChars) {
+		int end;
+		if (str == null || (end = str.length()) == 0) {
+			return str;
+		}
+
+		if (stripChars == null) {
+			while (end != 0 && Character.isWhitespace(str.charAt(end - 1))) {
+				end--;
+			}
+		} else if (stripChars.length() == 0) {
+			return str;
+		} else {
+			while (end != 0 && stripChars.indexOf(str.charAt(end - 1)) != INDEX_NOT_FOUND) {
+				end--;
+			}
+		}
+		return str.substring(0, end);
+	}
+
+	// StripAll
+	// -----------------------------------------------------------------------
+	/**
+	 * <p>
+	 * Strips whitespace from the start and end of every String in an array.
+	 * Whitespace is defined by {@link Character#isWhitespace(char)}.
+	 * </p>
+	 * 
+	 * <p>
+	 * A new array is returned each time, except for length zero. A {@code null}
+	 * array will return {@code null}. An empty array will return itself. A
+	 * {@code null} array entry will be ignored.
+	 * </p>
+	 * 
+	 * <pre>
+	 * StringUtils.stripAll(null)             = null
+	 * StringUtils.stripAll([])               = []
+	 * StringUtils.stripAll(["abc", "  abc"]) = ["abc", "abc"]
+	 * StringUtils.stripAll(["abc  ", null])  = ["abc", null]
+	 * </pre>
+	 * 
+	 * @param strs
+	 *            the array to remove whitespace from, may be null
+	 * @return the stripped Strings, {@code null} if null array input
+	 */
+	public static String[] stripAll(String... strs) {
+		return stripAll(strs, null);
+	}
+
+	/**
+	 * <p>
+	 * Strips any of a set of characters from the start and end of every String
+	 * in an array.
+	 * </p>
+	 * Whitespace is defined by {@link Character#isWhitespace(char)}.</p>
+	 * 
+	 * <p>
+	 * A new array is returned each time, except for length zero. A {@code null}
+	 * array will return {@code null}. An empty array will return itself. A
+	 * {@code null} array entry will be ignored. A {@code null} stripChars will
+	 * strip whitespace as defined by {@link Character#isWhitespace(char)}.
+	 * </p>
+	 * 
+	 * <pre>
+	 * StringUtils.stripAll(null, *)                = null
+	 * StringUtils.stripAll([], *)                  = []
+	 * StringUtils.stripAll(["abc", "  abc"], null) = ["abc", "abc"]
+	 * StringUtils.stripAll(["abc  ", null], null)  = ["abc", null]
+	 * StringUtils.stripAll(["abc  ", null], "yz")  = ["abc  ", null]
+	 * StringUtils.stripAll(["yabcz", null], "yz")  = ["abc", null]
+	 * </pre>
+	 * 
+	 * @param strs
+	 *            the array to remove characters from, may be null
+	 * @param stripChars
+	 *            the characters to remove, null treated as whitespace
+	 * @return the stripped Strings, {@code null} if null array input
+	 */
+	public static String[] stripAll(String[] strs, String stripChars) {
+		int strsLen;
+		if (strs == null || (strsLen = strs.length) == 0) {
+			return strs;
+		}
+		String[] newArr = new String[strsLen];
+		for (int i = 0; i < strsLen; i++) {
+			newArr[i] = strip(strs[i], stripChars);
+		}
+		return newArr;
+	}
 
 }
