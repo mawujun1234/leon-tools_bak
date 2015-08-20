@@ -12,7 +12,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.PrintStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
@@ -24,9 +23,13 @@ import java.util.zip.ZipFile;
 
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 public class FileUtils {
+	static Logger logger = LogManager.getLogger(FileUtils.class);
+	
 	 public static final String FILE_SEPARATOR =  System.getProperty("file.separator");
 	  /**
 	     * The number of bytes in a kilobyte.
@@ -76,7 +79,8 @@ public class FileUtils {
 	        //判断目录是否存在  
 	        File baseDir = new File(baseDirName);  
 	        if (!baseDir.exists() || !baseDir.isDirectory()){  
-	            System.out.println("文件查找失败：" + baseDirName + "不是一个目录！");  
+	            //System.out.println();  
+	        	logger.info("文件查找失败：{} 不是一个目录！或者不存在这个目录",baseDirName);
 	        } else {  
 	            String[] filelist = baseDir.list();  
 	            for (int i = 0; i < filelist.length; i++) {  
