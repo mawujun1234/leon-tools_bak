@@ -987,7 +987,7 @@ public class FileUtils {
      * @param path
      * @throws IOException 
      */
-    public static void createDir(String path) throws IOException{
+    public static boolean createDir(String path) throws IOException {
     	File directory = new File(path);
     	if (directory.exists()) {
             if (!directory.isDirectory()) {
@@ -1010,7 +1010,56 @@ public class FileUtils {
                 }
             }
         }
+    	return true;
     }
+    
+    /**
+     * 创建临时文件
+     *
+     * @param prefix
+     *            临时文件名的前缀
+     * @param suffix
+     *            临时文件名的后缀
+     * @param dirName
+     *            临时文件所在的目录，如果输入null，则在用户的文档目录下创建临时文件
+     * @return 临时文件创建成功返回true，否则返回false
+     */
+    public static String createTempFile(String prefix, String suffix,
+            String dirName) {
+        File tempFile = null;
+        if (dirName == null) {
+            try {
+                // 在默认文件夹下创建临时文件
+                tempFile = File.createTempFile(prefix, suffix);
+                // 返回临时文件的路径
+                return tempFile.getCanonicalPath();
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.println("创建临时文件失败!" + e.getMessage());
+                return null;
+            }
+        } else {
+        	try {
+            File dir = new File(dirName);
+            // 如果临时文件所在目录不存在，首先创建
+            if (!dir.exists()) {
+                if (FileUtils.createDir(dirName)) {
+                    System.out.println("创建临时文件失败，不能创建临时文件所在的目录！");
+                    return null;
+                }
+            }
+            
+                // 在指定目录下创建临时文件
+                tempFile = File.createTempFile(prefix, suffix, dir);
+                return tempFile.getCanonicalPath();
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.println("创建临时文件失败!" + e.getMessage());
+                return null;
+            }
+        }
+    }
+
     /**
      * 创建文件
      * @author mawujun email:16064988@163.com qq:16064988
