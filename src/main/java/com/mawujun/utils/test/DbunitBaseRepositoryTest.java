@@ -84,5 +84,9 @@ public class DbunitBaseRepositoryTest {
 				e.printStackTrace();
 			}
 	}
+
+	public static IDatabaseConnection getDbConn() {
+		return dbConn;
+	}
 	
 }
