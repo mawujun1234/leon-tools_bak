@@ -2,6 +2,7 @@ package com.mawujun.utils.page;
 
 import java.util.List;
 
+@Deprecated
 public class PageResult<T> extends PageParam{//
 	protected int pageNo = 1;
 //	protected int pageSize = 50;// 默认是每页50条

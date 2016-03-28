@@ -3,6 +3,7 @@ package com.mawujun.utils.page;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated
 public class PageParam {
 	protected int pageNo = 1;
 	protected int pageSize = 50;// 默认是每页50条

@@ -10,16 +10,15 @@ import org.apache.commons.io.comparator.NameFileComparator;
 import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 
-import com.mawujun.utils.page.PageParam;
-import com.mawujun.utils.page.PageResult;
+import com.mawujun.utils.page.Pager;
 
 public class IconUtil {
 	/**
 	 * 读取icon文件夹内的内容
 	 * @param filePath
 	 */
-	public static PageResult<Icon>  readIcon(String filePath,String wildcard ,String contextPath,PageParam page) {
-		PageResult<Icon> result=new PageResult<Icon>(page);
+	public static Pager<Icon>  readIcon(String filePath,String wildcard ,String contextPath,Pager page) {
+		//Pager<Icon> result=new Pager<Icon>(page);
 		List<Icon> result_list=new ArrayList<Icon>();
 		
 		File file=new File(filePath);
@@ -40,7 +39,7 @@ public class IconUtil {
 		
 		List<File> list=(List<File>) FileUtils.listFiles(file,fileFilter, null);
 		Collections.sort(list, NameFileComparator.NAME_COMPARATOR);
-		for(int i=page.getStart();(i<list.size()&&i<page.getStart()+page.getPageSize());i++){
+		for(int i=page.getStart();(i<list.size()&&i<page.getStart()+page.getLimit());i++){
 			//System.out.println(list.get(i).getName());
 			Icon icon=new Icon();
 			icon.setFileName(list.get(i).getName());
@@ -48,9 +47,9 @@ public class IconUtil {
 			
 			result_list.add(icon);
 		}
-		result.setResult(result_list);
+		page.setRoot(result_list);
 		
-		result.setTotal(list.size());
-		return result;	
+		page.setTotal(list.size());
+		return page;	
 	}
 }
