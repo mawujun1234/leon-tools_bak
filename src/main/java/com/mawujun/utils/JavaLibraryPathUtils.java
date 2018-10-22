@@ -6,9 +6,6 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mawujun.utils.file.FileUtils;
-import com.mawujun.utils.string.StringTokenizerUtils;
-
 public class JavaLibraryPathUtils {
 	
 	static final Logger logger=LoggerFactory.getLogger(JavaLibraryPathUtils.class);

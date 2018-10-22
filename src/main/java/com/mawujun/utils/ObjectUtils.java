@@ -18,11 +18,9 @@ package com.mawujun.utils;
 
 import java.lang.reflect.Array;
 
-import com.mawujun.utils.string.StringUtils;
 
 
-
-public class ObjectUtils  {
+public class ObjectUtils  extends org.apache.commons.lang3.ObjectUtils{
 	private static final int INITIAL_HASH = 7;
 	private static final int MULTIPLIER = 31;
 
@@ -415,51 +413,5 @@ public class ObjectUtils  {
 		}
 		return newArray;
 	}
-	
-	 // ToString
-    //-----------------------------------------------------------------------
-    /**
-     * <p>Gets the <code>toString</code> of an <code>Object</code> returning
-     * an empty string ("") if <code>null</code> input.</p>
-     * 
-     * <pre>
-     * ObjectUtils.toString(null)         = ""
-     * ObjectUtils.toString("")           = ""
-     * ObjectUtils.toString("bat")        = "bat"
-     * ObjectUtils.toString(Boolean.TRUE) = "true"
-     * </pre>
-     * 
-     * @see StringUtils#defaultString(String)
-     * @see String#valueOf(Object)
-     * @param obj  the Object to <code>toString</code>, may be null
-     * @return the passed in Object's toString, or nullStr if <code>null</code> input
-     * @since 2.0
-     */
-    public static String toString(Object obj) {
-        return obj == null ? "" : obj.toString();
-    }
-
-    /**
-     * <p>Gets the <code>toString</code> of an <code>Object</code> returning
-     * a specified text if <code>null</code> input.</p>
-     * 
-     * <pre>
-     * ObjectUtils.toString(null, null)           = null
-     * ObjectUtils.toString(null, "null")         = "null"
-     * ObjectUtils.toString("", "null")           = ""
-     * ObjectUtils.toString("bat", "null")        = "bat"
-     * ObjectUtils.toString(Boolean.TRUE, "null") = "true"
-     * </pre>
-     * 
-     * @see StringUtils#defaultString(String,String)
-     * @see String#valueOf(Object)
-     * @param obj  the Object to <code>toString</code>, may be null
-     * @param nullStr  the String to return if <code>null</code> input, may be null
-     * @return the passed in Object's toString, or nullStr if <code>null</code> input
-     * @since 2.0
-     */
-    public static String toString(Object obj, String nullStr) {
-        return obj == null ? nullStr : obj.toString();
-    }
 
 }

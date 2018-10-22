@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Properties;
 
 
-public class CollectionUtils   {
+public class CollectionUtils extends org.apache.commons.collections.CollectionUtils  {
 	/**
 	 * Return <code>true</code> if the supplied Collection is <code>null</code>
 	 * or empty. Otherwise, return <code>false</code>.

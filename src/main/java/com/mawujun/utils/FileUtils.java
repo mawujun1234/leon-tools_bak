@@ -1,151 +1,33 @@
-package com.mawujun.utils.file;
+package com.mawujun.utils;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
-import java.nio.channels.FileChannel;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.zip.ZipFile;
 
 import org.apache.commons.io.IOCase;
-import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 
 public class FileUtils extends org.apache.commons.io.FileUtils {
-	static Logger logger = LogManager.getLogger(FileUtils.class);
-	
 	 public static final String FILE_SEPARATOR =  System.getProperty("file.separator");
-	  /**
-	     * The number of bytes in a kilobyte.
-	     */
-	    public static final long ONE_KB = 1024;
-	 /**
-	     * The number of bytes in a megabyte.
-	     */
-	    public static final long ONE_MB = ONE_KB * ONE_KB;
-	  /**
-	     * The file copy buffer size (30 MB)
-	     */
-	    private static final long FILE_COPY_BUFFER_SIZE = ONE_MB * 30;
-	
-	    /** 
-	     * 递归查找文件 
-	     *  //    在此目录中找文件  
-	        String baseDIR = "d:/file";   
-	        //    找扩展名为txt的文件  
-	        String fileName = "*.txt";   
-	        FileUtils.findFiles(baseDIR, fileName);   
-	        if (resultList.size() == 0) {  
-	            System.out.println("No File Fount.");  
-	        } else {  
-	            for (int i = 0; i < resultList.size(); i++) {  
-	                System.out.println(resultList.get(i));//显示查找结果。   
-	            }  
-	        }  
-	     * @param baseDirName  查找的文件夹路径 
-	     * @param targetFileName  需要查找的文件名 
-	     * @param fileList  查找到的文件集合 
-	     */  
-	    public static List<File> findFiles(String baseDirName, String targetFileName) {
-	    	List<File> files=new ArrayList<File>();
-	    	findFiles(baseDirName,targetFileName,files);
-	    	return files;
-	    }
-	   
-	    private  static void findFiles(String baseDirName, String targetFileName, List<File> fileList) {  
-	        /** 
-	         * 算法简述： 
-	         * 从某个给定的需查找的文件夹出发，搜索该文件夹的所有子文件夹及文件， 
-	         * 若为文件，则进行匹配，匹配成功则加入结果集，若为子文件夹，则进队列。 
-	         * 队列不空，重复上述操作，队列为空，程序结束，返回结果。 
-	         */  
-	        String tempName = null;  
-	        //判断目录是否存在  
-	        File baseDir = new File(baseDirName);  
-	        if (!baseDir.exists() || !baseDir.isDirectory()){  
-	            //System.out.println();  
-	        	logger.info("文件查找失败：{} 不是一个目录！或者不存在这个目录",baseDirName);
-	        } else {  
-	            String[] filelist = baseDir.list();  
-	            for (int i = 0; i < filelist.length; i++) {  
-	                File readfile = new File(baseDirName + "\\" + filelist[i]);  
-	                //System.out.println(readfile.getName());  
-	                if(!readfile.isDirectory()) {  
-	                    tempName =  readfile.getName();   
-	                    if (FileUtils.wildcardMatch(targetFileName, tempName)) {  
-	                        //匹配成功，将文件名添加到结果集  
-	                        fileList.add(readfile.getAbsoluteFile());   
-	                    }  
-	                } else if(readfile.isDirectory()){  
-	                    findFiles(baseDirName + "\\" + filelist[i],targetFileName,fileList);  
-	                }  
-	            }  
-	        }  
-	    }  
-	      
-	    /** 
-	     * 通配符匹配 
-	     * @param pattern    通配符模式 
-	     * @param str    待匹配的字符串 
-	     * @return    匹配成功则返回true，否则返回false 
-	     */  
-	    private static boolean wildcardMatch(String pattern, String str) {  
-	        int patternLength = pattern.length();  
-	        int strLength = str.length();  
-	        int strIndex = 0;  
-	        char ch;  
-	        for (int patternIndex = 0; patternIndex < patternLength; patternIndex++) {  
-	            ch = pattern.charAt(patternIndex);  
-	            if (ch == '*') {  
-	                //通配符星号*表示可以匹配任意多个字符  
-	                while (strIndex < strLength) {  
-	                    if (wildcardMatch(pattern.substring(patternIndex + 1),  
-	                            str.substring(strIndex))) {  
-	                        return true;  
-	                    }  
-	                    strIndex++;  
-	                }  
-	            } else if (ch == '?') {  
-	                //通配符问号?表示匹配任意一个字符  
-	                strIndex++;  
-	                if (strIndex > strLength) {  
-	                    //表示str中已经没有字符匹配?了。  
-	                    return false;  
-	                }  
-	            } else {  
-	                if ((strIndex >= strLength) || (ch != str.charAt(strIndex))) {  
-	                    return false;  
-	                }  
-	                strIndex++;  
-	            }  
-	        }  
-	        return (strIndex == strLength);  
-	    }  
-	  
- 
+
 	/**
 	 * 获取class所在的位置
-	 * 获取到的是class目录所在的位置:webapp/class
 	 * @return
 	 */
 	public static String getCurrentClassPath(Object obj){
-		return obj.getClass().getResource("/").getPath() ;
+		return obj.getClass().getResource("").getPath() ;
 	}
 	/**
 	 * 返回某个目录下面的所有文件和目录，不包括子文件夹中的文件
@@ -204,7 +86,6 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
             OTHER_SEPARATOR = WINDOWS_SEPARATOR;
         }
     }
-    
   //-----------------------------------------------------------------------
     /**
      * Determines if Windows file system is in use.
@@ -987,79 +868,10 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
      * @param path
      * @throws IOException 
      */
-    public static boolean createDir(String path) throws IOException {
-    	File directory = new File(path);
-    	if (directory.exists()) {
-            if (!directory.isDirectory()) {
-                String message =
-                    "File "
-                        + directory
-                        + " exists and is "
-                        + "not a directory. Unable to create directory.";
-                throw new IOException(message);
-            }
-        } else {
-            if (!directory.mkdirs()) {
-                // Double-check that some other thread or process hasn't made
-                // the directory in the background
-                if (!directory.isDirectory())
-                {
-                    String message =
-                        "Unable to create directory " + directory;
-                    throw new IOException(message);
-                }
-            }
-        }
-    	return true;
+    public static void createDir(String path) throws IOException{
+    	File dirFile = new File(path);
+    	forceMkdir(dirFile);
     }
-    
-    /**
-     * 创建临时文件
-     *
-     * @param prefix
-     *            临时文件名的前缀
-     * @param suffix
-     *            临时文件名的后缀
-     * @param dirName
-     *            临时文件所在的目录，如果输入null，则在用户的文档目录下创建临时文件
-     * @return 临时文件创建成功返回true，否则返回false
-     */
-    public static String createTempFile(String prefix, String suffix,
-            String dirName) {
-        File tempFile = null;
-        if (dirName == null) {
-            try {
-                // 在默认文件夹下创建临时文件
-                tempFile = File.createTempFile(prefix, suffix);
-                // 返回临时文件的路径
-                return tempFile.getCanonicalPath();
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println("创建临时文件失败!" + e.getMessage());
-                return null;
-            }
-        } else {
-        	try {
-            File dir = new File(dirName);
-            // 如果临时文件所在目录不存在，首先创建
-            if (!dir.exists()) {
-                if (FileUtils.createDir(dirName)) {
-                    System.out.println("创建临时文件失败，不能创建临时文件所在的目录！");
-                    return null;
-                }
-            }
-            
-                // 在指定目录下创建临时文件
-                tempFile = File.createTempFile(prefix, suffix, dir);
-                return tempFile.getCanonicalPath();
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println("创建临时文件失败!" + e.getMessage());
-                return null;
-            }
-        }
-    }
-
     /**
      * 创建文件
      * @author mawujun email:16064988@163.com qq:16064988
@@ -1129,16 +941,16 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
 		 return true;
 	 }
 	 
-//	 /** do line-based copying */
-//		@SuppressWarnings("deprecation")
-//		public static void copyStream(DataInputStream in, PrintStream out) throws IOException {
-//			//LangUtil.throwIaxIfNull(in, "in");
-//			//LangUtil.throwIaxIfNull(in, "out");
-//			String s;
-//			while (null != (s = in.readLine())) {
-//				out.println(s);
-//			}
-//		}
+	 /** do line-based copying */
+		@SuppressWarnings("deprecation")
+		public static void copyStream(DataInputStream in, PrintStream out) throws IOException {
+			LangUtil.throwIaxIfNull(in, "in");
+			LangUtil.throwIaxIfNull(in, "out");
+			String s;
+			while (null != (s = in.readLine())) {
+				out.println(s);
+			}
+		}
 
 		public static void copyStream(InputStream in, OutputStream out) throws IOException {
 			final int MAX = 4096;
@@ -1165,7 +977,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
 	 * @return String null on no error, error otherwise
 	 */
 	public static String writeAsString(File file, String contents) {
-		//LangUtil.throwIaxIfNull(file, "file");
+		LangUtil.throwIaxIfNull(file, "file");
 		if (null == contents) {
 			contents = "";
 		}
@@ -1181,7 +993,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
 			FileUtils.copyStream(in, out);
 			return null;
 		} catch (IOException e) {
-			return " writing " + file + ": " + e.getMessage();
+			return LangUtil.unqualifiedClassName(e) + " writing " + file + ": " + e.getMessage();
 		} finally {
 			if (null != out) {
 				try {
@@ -1300,35 +1112,15 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
 	// return b.toString();
 	// }
 
-	/**
-	 * Returns the contents of this file as a byte[]
-	 */
-	public static byte[] readAsByteArray(File file) throws IOException {
-		FileInputStream in = new FileInputStream(file);
-		int size = 1024;
-		byte[] ba = new byte[size];
-		int readSoFar = 0;
-
-		while (true) {
-			int nRead = in.read(ba, readSoFar, size - readSoFar);
-			if (nRead == -1) {
-				break;
-			}
-			readSoFar += nRead;
-			if (readSoFar == size) {
-				int newSize = size * 2;
-				byte[] newBa = new byte[newSize];
-				System.arraycopy(ba, 0, newBa, 0, size);
-				ba = newBa;
-				size = newSize;
-			}
-		}
-
-		byte[] newBa = new byte[readSoFar];
-		System.arraycopy(ba, 0, newBa, 0, readSoFar);
-		in.close();
-		return newBa;
-	}
+//	/**
+//	 * Returns the contents of this file as a byte[]
+//	 */
+//	public static byte[] readAsByteArray(File file) throws IOException {
+//		FileInputStream in = new FileInputStream(file);
+//		byte[] ret = FileUtil.readAsByteArray(in);
+//		in.close();
+//		return ret;
+//	}
 
 	/**
 	 * Reads this input stream and returns contents as a byte[]
@@ -1359,208 +1151,4 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
 	}
 
 
-	 //-----------------------------------------------------------------------
-    /**
-     * Copies a file to a directory preserving the file date.
-     * <p>
-     * This method copies the contents of the specified source file
-     * to a file of the same name in the specified destination directory.
-     * The destination directory is created if it does not exist.
-     * If the destination file exists, then this method will overwrite it.
-     * <p>
-     * <strong>Note:</strong> This method tries to preserve the file's last
-     * modified date/times using {@link File#setLastModified(long)}, however
-     * it is not guaranteed that the operation will succeed.
-     * If the modification operation fails, no indication is provided.
-     *
-     * @param srcFile  an existing file to copy, must not be {@code null}
-     * @param destDir  the directory to place the copy in, must not be {@code null}
-     *
-     * @throws NullPointerException if source or destination is null
-     * @throws IOException if source or destination is invalid
-     * @throws IOException if an IO error occurs during copying
-     * @see #copyFile(File, File, boolean)
-     */
-    public static void copyFileToDirectory(File srcFile, File destDir) throws IOException {
-        copyFileToDirectory(srcFile, destDir, true);
-    }
-
-    /**
-     * Copies a file to a directory optionally preserving the file date.
-     * <p>
-     * This method copies the contents of the specified source file
-     * to a file of the same name in the specified destination directory.
-     * The destination directory is created if it does not exist.
-     * If the destination file exists, then this method will overwrite it.
-     * <p>
-     * <strong>Note:</strong> Setting <code>preserveFileDate</code> to
-     * {@code true} tries to preserve the file's last modified
-     * date/times using {@link File#setLastModified(long)}, however it is
-     * not guaranteed that the operation will succeed.
-     * If the modification operation fails, no indication is provided.
-     *
-     * @param srcFile  an existing file to copy, must not be {@code null}
-     * @param destDir  the directory to place the copy in, must not be {@code null}
-     * @param preserveFileDate  true if the file date of the copy
-     *  should be the same as the original
-     *
-     * @throws NullPointerException if source or destination is {@code null}
-     * @throws IOException if source or destination is invalid
-     * @throws IOException if an IO error occurs during copying
-     * @see #copyFile(File, File, boolean)
-     * @since 1.3
-     */
-    public static void copyFileToDirectory(File srcFile, File destDir, boolean preserveFileDate) throws IOException {
-        if (destDir == null) {
-            throw new NullPointerException("Destination must not be null");
-        }
-        if (destDir.exists() && destDir.isDirectory() == false) {
-            throw new IllegalArgumentException("Destination '" + destDir + "' is not a directory");
-        }
-        File destFile = new File(destDir, srcFile.getName());
-        copyFile(srcFile, destFile, preserveFileDate);
-    }
-
-    /**
-     * Copies a file to a new location preserving the file date.
-     * <p>
-     * This method copies the contents of the specified source file to the
-     * specified destination file. The directory holding the destination file is
-     * created if it does not exist. If the destination file exists, then this
-     * method will overwrite it.
-     * <p>
-     * <strong>Note:</strong> This method tries to preserve the file's last
-     * modified date/times using {@link File#setLastModified(long)}, however
-     * it is not guaranteed that the operation will succeed.
-     * If the modification operation fails, no indication is provided.
-     * 
-     * @param srcFile  an existing file to copy, must not be {@code null}
-     * @param destFile  the new file, must not be {@code null}
-     * 
-     * @throws NullPointerException if source or destination is {@code null}
-     * @throws IOException if source or destination is invalid
-     * @throws IOException if an IO error occurs during copying
-     * @see #copyFileToDirectory(File, File)
-     */
-    public static void copyFile(File srcFile, File destFile) throws IOException {
-        copyFile(srcFile, destFile, true);
-    }
-
-    /**
-     * Copies a file to a new location.
-     * <p>
-     * This method copies the contents of the specified source file
-     * to the specified destination file.
-     * The directory holding the destination file is created if it does not exist.
-     * If the destination file exists, then this method will overwrite it.
-     * <p>
-     * <strong>Note:</strong> Setting <code>preserveFileDate</code> to
-     * {@code true} tries to preserve the file's last modified
-     * date/times using {@link File#setLastModified(long)}, however it is
-     * not guaranteed that the operation will succeed.
-     * If the modification operation fails, no indication is provided.
-     *
-     * @param srcFile  an existing file to copy, must not be {@code null}
-     * @param destFile  the new file, must not be {@code null}
-     * @param preserveFileDate  true if the file date of the copy
-     *  should be the same as the original
-     *
-     * @throws NullPointerException if source or destination is {@code null}
-     * @throws IOException if source or destination is invalid
-     * @throws IOException if an IO error occurs during copying
-     * @see #copyFileToDirectory(File, File, boolean)
-     */
-    public static void copyFile(File srcFile, File destFile,
-            boolean preserveFileDate) throws IOException {
-        if (srcFile == null) {
-            throw new NullPointerException("Source must not be null");
-        }
-        if (destFile == null) {
-            throw new NullPointerException("Destination must not be null");
-        }
-        if (srcFile.exists() == false) {
-            throw new FileNotFoundException("Source '" + srcFile + "' does not exist");
-        }
-        if (srcFile.isDirectory()) {
-            throw new IOException("Source '" + srcFile + "' exists but is a directory");
-        }
-        if (srcFile.getCanonicalPath().equals(destFile.getCanonicalPath())) {
-            throw new IOException("Source '" + srcFile + "' and destination '" + destFile + "' are the same");
-        }
-        File parentFile = destFile.getParentFile();
-        if (parentFile != null) {
-            if (!parentFile.mkdirs() && !parentFile.isDirectory()) {
-                throw new IOException("Destination '" + parentFile + "' directory cannot be created");
-            }
-        }
-        if (destFile.exists() && destFile.canWrite() == false) {
-            throw new IOException("Destination '" + destFile + "' exists but is read-only");
-        }
-        doCopyFile(srcFile, destFile, preserveFileDate);
-    }
-    /**
-     * Internal copy file method.
-     * 
-     * @param srcFile  the validated source file, must not be {@code null}
-     * @param destFile  the validated destination file, must not be {@code null}
-     * @param preserveFileDate  whether to preserve the file date
-     * @throws IOException if an error occurs
-     */
-    private static void doCopyFile(File srcFile, File destFile, boolean preserveFileDate) throws IOException {
-        if (destFile.exists() && destFile.isDirectory()) {
-            throw new IOException("Destination '" + destFile + "' exists but is a directory");
-        }
-
-        FileInputStream fis = null;
-        FileOutputStream fos = null;
-        FileChannel input = null;
-        FileChannel output = null;
-        try {
-            fis = new FileInputStream(srcFile);
-            fos = new FileOutputStream(destFile);
-            input  = fis.getChannel();
-            output = fos.getChannel();
-            long size = input.size();
-            long pos = 0;
-            long count = 0;
-            while (pos < size) {
-                count = size - pos > FILE_COPY_BUFFER_SIZE ? FILE_COPY_BUFFER_SIZE : size - pos;
-                pos += output.transferFrom(input, pos, count);
-            }
-        } finally {
-            IOUtils.closeQuietly(output);
-            IOUtils.closeQuietly(fos);
-            IOUtils.closeQuietly(input);
-            IOUtils.closeQuietly(fis);
-        }
-
-        if (srcFile.length() != destFile.length()) {
-            throw new IOException("Failed to copy full contents from '" +
-                    srcFile + "' to '" + destFile + "'");
-        }
-        if (preserveFileDate) {
-            destFile.setLastModified(srcFile.lastModified());
-        }
-    }
-    /**
-     * Returns the path to the system temporary directory.
-     * 
-     * @return the path to the system temporary directory.
-     * 
-     * @since 2.0
-     */
-    public static String getTempDirectoryPath() {
-        return System.getProperty("java.io.tmpdir");
-    }
-    
-    /**
-     * Returns a {@link File} representing the system temporary directory.
-     * 
-     * @return the system temporary directory. 
-     * 
-     * @since 2.0
-     */
-    public static File getTempDirectory() {
-        return new File(getTempDirectoryPath());
-    }
 }
