@@ -34,7 +34,7 @@ public class DateUtils {
 //		}
 //	}
 //	/**
-//	 * 默认的格式yyyy-MM-dd
+//	 * 榛樿鐨勬牸寮弝yyy-MM-dd
 //	 * @author mawujun email:160649888@163.com qq:16064988
 //	 * @param date
 //	 * @return
@@ -130,11 +130,11 @@ public class DateUtils {
 	 * yyyy-MM-dd HH:mm:ss
 	 */
 	public static final Integer DATE_TIME=1;
-	static HashMap<Integer,SimpleDateFormat> _$1=new HashMap<Integer,SimpleDateFormat>();
+	static HashMap<Integer,SimpleDateFormat> cache_format=new HashMap<Integer,SimpleDateFormat>();
 	static {
 
-		_$1.put(DATE_SHORT, new SimpleDateFormat("yyyy-MM-dd"));
-		_$1.put(DATE_TIME, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
+		cache_format.put(DATE_SHORT, new SimpleDateFormat("yyyy-MM-dd"));
+		cache_format.put(DATE_TIME, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 	}
 	
 
@@ -161,7 +161,7 @@ public class DateUtils {
 	 * @return
 	 */
 	public static String date2String(Date date, int format) {
-		return date == null ? " " : _$1.get(format).format(date);
+		return date == null ? " " : cache_format.get(format).format(date);
 	}
 
 	public static String date2String(Date date, String format) {
@@ -171,12 +171,12 @@ public class DateUtils {
 
 
 	/**
-	 * 默认返回时间格式为yyyy-MM-dd HH:mm:ss
+	 * 输出指定的日期时间格式 yyy-MM-dd HH:mm:ss
 	 * @param var0
 	 * @return
 	 */
 	public static String date2String(Date var0) {
-		return _$1.get(DATE_TIME).format(var0);
+		return cache_format.get(DATE_TIME).format(var0);
 	}
 
     
@@ -189,7 +189,7 @@ public class DateUtils {
 		return var0.getTime();
 	}
 	/**
-	 * 默认返回时间格式为yyyy-MM-dd HH:mm:ss
+	 * 获取当前的日期时间  yyy-MM-dd HH:mm:ss
 	 * @return
 	 */
 	public static String getStringNow() {
@@ -203,12 +203,18 @@ public class DateUtils {
 	 */
 	public static String getStringNow(int format) {
 		Calendar var1 = Calendar.getInstance();
-		return _$1.get(format).format(var1.getTime());
+		return cache_format.get(format).format(var1.getTime());
 	}
 
 	public static long getLongNow() {
 		return date2Long(getDateNow());
 	}
+	/**
+	 * 把指定格式的日期转换为日期类型
+	 * @param var0
+	 * @param var1
+	 * @return
+	 */
 	public static Date string2Date(String var0, int var1) {
 		if (var0==null || "".equals(var0)) {
 			return Calendar.getInstance().getTime();
@@ -234,33 +240,39 @@ public class DateUtils {
 				}
 			}
 
-			DateFormat var8 = _$1.get(var1);
+			DateFormat var8 = cache_format.get(var1);
 			Date var3 = null;
 
 			String var5;
-			try {
-				var3 = var8.parse(var0);
-			} catch (ParseException var6) {
-				var5 = "解析日期{" + var0 + "}格式{" + ((SimpleDateFormat) var8).toPattern() + "}异常!";
-				if (logger.isDebugEnabled()) {
-					logger.error(var5, var6);
-				} else {
-					logger.error(var5);
-				}
-			} catch (Exception var7) {
-				var3 = Calendar.getInstance().getTime();
-				var5 = "转换日期{" + var0 + "}为{" + ((SimpleDateFormat) var8).toPattern() + "}是格式时异常!";
-				if (logger.isDebugEnabled()) {
-					logger.error(var5, var7);
-				} else {
-					logger.error(var5);
-				}
-			}
+            try {
+                var3 = var8.parse(var0);
+            } catch (ParseException var6) {
+                var5 = "解析日期{" + var0 + "}格式{" + ((SimpleDateFormat)var8).toPattern() + "}异常!";
+                if (logger.isDebugEnabled()) {
+                	logger.error(var5, var6);
+                } else {
+                	logger.error(var5);
+                }
+            } catch (Exception var7) {
+                var3 = Calendar.getInstance().getTime();
+                var5 = "转换日期{" + var0 + "}为{" + ((SimpleDateFormat)var8).toPattern() + "}是格式时异常!";
+                if (logger.isDebugEnabled()) {
+                	logger.error(var5, var7);
+                } else {
+                	logger.error(var5);
+                }
+            }
 
 			return var3;
 		}
 	}
-	
+	/**
+	 * 把当前日期和参数日期进行比较，当前时间减去参数的时间
+	 * 第二个参数是Calendar.SECOND,Calendar.MINUTE,Calendar.HOUR,Calendar.DAY_OF_MONTH
+	 * @param var0
+	 * @param var1
+	 * @return
+	 */
 	public static int compareDate(Date var0, int var1) {
 		return compareDate(var0, Calendar.getInstance().getTime(), var1);
 	}
@@ -282,43 +294,58 @@ public class DateUtils {
 	}
 
 	/**
-	 * 比较两个日期相差的时间
+	 *  比较两个日期的差距，后面一个日期减去前面的一个日期
 	 * @param var0
 	 * @param var1
-	 * @param var2 Calendar.MINUTE,Calendar。HOUR，Calendar。DAY_OF_MONTH等
+	 * @param var2 Calendar.SECOND,Calendar.MINUTE,Calendar.HOUR,Calendar.DAY_OF_MONTH
 	 * @return
 	 */
 	public static int compareDate(Date var0, Date var1, int var2) {
-		double var3 = (double) (var1.getTime() - var0.getTime());
+		long var3 = var1.getTime() - var0.getTime();
 		if (var2 == Calendar.MINUTE) {
-			var3 = fixDouble2(var3 / 60000.0D);
+			var3 = var3 / 60000;
 		} else if (var2 == Calendar.HOUR) {
-			var3 = fixDouble2(var3 / 3600000.0D);
+			var3 = var3 / 3600000;
 		} else if (var2 == Calendar.DAY_OF_MONTH) {
-			var3 = fixDouble2(var3 / 8.64E7D);
+			var3 = var3 / 86400000;
+		} else if (var2 == Calendar.SECOND) {
+			var3 = var3 / 1000;
 		}
 
 		return (int) var3;
+		
+//		double var3 = (double) (var1.getTime() - var0.getTime());
+//		if (var2 == Calendar.MINUTE) {
+//			var3 = fixDouble2(var3 / 60000.0D);
+//		} else if (var2 == Calendar.HOUR) {
+//			var3 = fixDouble2(var3 / 3600000.0D);
+//		} else if (var2 == Calendar.DAY_OF_MONTH) {
+//			var3 = fixDouble2(var3 / 8.64E7D);
+//		} else if (var2 == Calendar.SECOND) {
+//			var3 = var3 / 1000;
+//		}
+//
+//		return (int) var3;
 	}
-	private static DecimalFormat decimalFormat =new DecimalFormat("#.00");
-	public static double fixDouble2(double var0) {
-		return fixDouble(var0, 2);
-	}
-
-	public static double fixDouble(double var0, int var2) {
-		if (var2 < 0) {
-			var2 = 2;
-		}
-
-		DecimalFormat var3 = null;
-		if (var2 == 2) {
-			var3 = decimalFormat;
-		} else {
-			String var4 = String.valueOf((int) Math.pow(10.0D, (double) var2));
-			var3 = new DecimalFormat(var2 == 0 ? "#" : "#." + var4.substring(1));
-		}
-
-		return Double.parseDouble(var3.format(var0));
-	}
+//	private static DecimalFormat decimalFormat =new DecimalFormat("#.00");
+//	public static double fixDouble2(double var0) {
+//		return fixDouble(var0, 2);
+//	}
+//
+//	public static double fixDouble(double var0, int var2) {
+//		if (var2 < 0) {
+//			var2 = 2;
+//		}
+//
+//		DecimalFormat var3 = null;
+//		if (var2 == 2) {
+//			var3 = decimalFormat;
+//		} else {
+//			String var4 = String.valueOf((int) Math.pow(10.0D, (double) var2));
+//			var3 = new DecimalFormat(var2 == 0 ? "#" : "#." + var4.substring(1));
+//		}
+//
+//		return Double.parseDouble(var3.format(var0));
+//	}
 	
 }
