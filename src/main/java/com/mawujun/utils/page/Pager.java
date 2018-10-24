@@ -73,7 +73,7 @@ public class Pager<T> {
 	 * @author mawujun email:160649888@163.com qq:16064988
 	 * @param params
 	 */
-	public Pager setParams(Object params) {
+	public Pager<T> setParams(Object params) {
 		this.params = params;
 		return this;
 	}
@@ -86,7 +86,7 @@ public class Pager<T> {
 	 * @param params
 	 * @return
 	 */
-	public Pager addParam(String key,Object value) {
+	public Pager<T> addParam(String key,Object value) {
 		if(value==null || "".equals(value)){
 			return this;
 		}
