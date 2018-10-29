@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Deprecated
 public class Pager<T> {
 	protected int page = -1;//当前第几页
 	protected int limit = 50;// 默认是每页50条
