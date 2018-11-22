@@ -512,6 +512,36 @@ public class ReflectUtils {
 
 		return (Class) params[index];
 	}
+	/**
+	 * 获取某个接口上定义的泛型类
+	 * @param clazz
+	 * @param index
+	 * @return
+	 */
+	public static Class getGenericInterfaces(final Class clazz, final int index) {
+		Type[] genTypes = clazz.getGenericInterfaces();
+		Type genType=genTypes[0];
+		
+		if (!(genType instanceof ParameterizedType)) {
+			logger.warn(clazz.getSimpleName() + "'s superclass not ParameterizedType");
+			return Object.class;
+		}
+
+		Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+
+		if (index >= params.length || index < 0) {
+			logger.warn("Index: " + index + ", Size of " + clazz.getSimpleName() + "'s Parameterized Type: "
+					+ params.length);
+			return Object.class;
+		}
+		if (!(params[index] instanceof Class)) {
+			logger.warn(clazz.getSimpleName() + " not set the actual class on superclass generic parameter");
+			return Object.class;
+		}
+
+		return (Class) params[index];
+	}
+	
 
 	/**
 	 * 提取集合中的对象的属性(通过getter函数), 组合成List.
