@@ -18,9 +18,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.beanutils.ConvertUtils;
+
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.beanutils.converters.DateConverter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,13 +36,13 @@ public class ReflectUtils {
 	private static Logger logger = LoggerFactory.getLogger(ReflectUtils.class);
 	//private static Set<Class> baseType=new HashSet<Class>();
 
-	static {
-		DateConverter dc = new DateConverter();
-		dc.setUseLocaleFormat(true);
-		dc.setPatterns(new String[] { "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss" });
-		ConvertUtils.register(dc, Date.class);
-		
-	}
+//	static {
+//		DateConverter dc = new DateConverter();
+//		dc.setUseLocaleFormat(true);
+//		dc.setPatterns(new String[] { "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss","HH:mm:ss" });
+//		ConvertUtils.register(dc, Date.class);
+//		
+//	}
 
 	/**
 	 * 是不是包装类型
