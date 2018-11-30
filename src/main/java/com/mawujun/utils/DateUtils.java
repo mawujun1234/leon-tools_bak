@@ -12,114 +12,8 @@ import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DateUtils {
-//	static SimpleDateFormat yyyy_MM_dd;
-//	static HashMap<String,SimpleDateFormat> format_cache=new HashMap<String,SimpleDateFormat>();
-//	static {
-//		yyyy_MM_dd=new SimpleDateFormat("yyyy-MM-dd");
-//		format_cache.put("yyyy-MM-dd", yyyy_MM_dd);
-//	}
-//	
-//	public static String format(Date date,String format) {
-//		if(date==null){
-//			return null;
-//		}
-//		if(format_cache.get(format)!=null){
-//			return format_cache.get(format).format(date);
-//		} else {
-//			SimpleDateFormat yyyy_MM_dd=new SimpleDateFormat(format);
-//			String r= yyyy_MM_dd.format(date);
-//			format_cache.put(format, yyyy_MM_dd);
-//			return r;
-//		}
-//	}
-//	/**
-//	 * 榛樿鐨勬牸寮弝yyy-MM-dd
-//	 * @author mawujun email:160649888@163.com qq:16064988
-//	 * @param date
-//	 * @return
-//	 */
-//	public static String format(Date date) {
-//		if(date==null){
-//			return null;
-//		}
-//		return yyyy_MM_dd.format(date);
-//	}
-//	
-//
-//	
-//	
-//	 //-----------------------------------------------------------------------
-//    /**
-//     * <p>Parses a string representing a date by trying a variety of different parsers.</p>
-//     * 
-//     * <p>The parse will try each parse pattern in turn.
-//     * A parse is only deemed successful if it parses the whole of the input string.
-//     * If no parse patterns match, a ParseException is thrown.</p>
-//     * The parser will be lenient toward the parsed date.
-//     * 
-//     * @param str  the date to parse, not null
-//     * @param parsePatterns  the date format patterns to use, see SimpleDateFormat, not null
-//     * @return the parsed date
-//     * @throws IllegalArgumentException if the date string or pattern array is null
-//     * @throws ParseException if none of the date patterns were suitable (or there were none)
-//     */
-//    public static Date parseDate(String str, String... parsePatterns) throws ParseException {
-//        return parseDateWithLeniency(str, parsePatterns, true);
-//    }
-//	
-//	   /**
-//     * <p>Parses a string representing a date by trying a variety of different parsers.</p>
-//     * 
-//     * <p>The parse will try each parse pattern in turn.
-//     * A parse is only deemed successful if it parses the whole of the input string.
-//     * If no parse patterns match, a ParseException is thrown.</p>
-//     * 
-//     * @param str  the date to parse, not null
-//     * @param parsePatterns  the date format patterns to use, see SimpleDateFormat, not null
-//     * @param lenient Specify whether or not date/time parsing is to be lenient.
-//     * @return the parsed date
-//     * @throws IllegalArgumentException if the date string or pattern array is null
-//     * @throws ParseException if none of the date patterns were suitable
-//     * @see java.util.Calender#isLenient()
-//     */
-//    private static Date parseDateWithLeniency(
-//            String str, String[] parsePatterns, boolean lenient) throws ParseException {
-//        if (str == null || parsePatterns == null) {
-//            throw new IllegalArgumentException("Date and Patterns must not be null");
-//        }
-//        
-//        SimpleDateFormat parser = new SimpleDateFormat();
-//        parser.setLenient(lenient);
-//        ParsePosition pos = new ParsePosition(0);
-//        for (String parsePattern : parsePatterns) {
-//
-//            String pattern = parsePattern;
-//
-//            // LANG-530 - need to make sure 'ZZ' output doesn't get passed to SimpleDateFormat
-//            if (parsePattern.endsWith("ZZ")) {
-//                pattern = pattern.substring(0, pattern.length() - 1);
-//            }
-//            
-//            parser.applyPattern(pattern);
-//            pos.setIndex(0);
-//
-//            String str2 = str;
-//            // LANG-530 - need to make sure 'ZZ' output doesn't hit SimpleDateFormat as it will ParseException
-//            if (parsePattern.endsWith("ZZ")) {
-//                str2 = str.replaceAll("([-+][0-9][0-9]):([0-9][0-9])$", "$1$2"); 
-//            }
-//
-//            Date date = parser.parse(str2, pos);
-//            if (date != null && pos.getIndex() == str2.length()) {
-//                return date;
-//            }
-//        }
-//        throw new ParseException("Unable to parse the date: " + str, -1);
-//    }
-    
-    
-	//private static IIIllllIIlIIIlII _$1 = new IIIllllIIlIIIlII();
+public class DateUtils extends org.apache.commons.lang3.time.DateUtils{
+
     
     private static Logger logger = LoggerFactory.getLogger(DateUtils.class);
 	/**
@@ -273,18 +167,25 @@ public class DateUtils {
 	 * @param var1
 	 * @return
 	 */
-	public static int compareDate(Date var0, int var1) {
-		return compareDate(var0, Calendar.getInstance().getTime(), var1);
+	public static int compareDate(Date date, int var1) {
+		return compareDate(date, Calendar.getInstance().getTime(), var1);
 	}
 
-	public static Date addDate(Date var0, int var1, int var2) {
-		if (var1 < 0) {
-			logger.warn("日期增减操作时不支持类型:" + var1);
-			return var0;
+	/**
+	 * 
+	 * @param date
+	 * @param field Calendar.SECOND,Calendar.MINUTE,Calendar.HOUR,Calendar.DAY_OF_MONTH
+	 * @param var2
+	 * @return
+	 */
+	public static Date addDate(Date date, int field, int var2) {
+		if (field < 0) {
+			logger.warn("日期增减操作时不支持类型:" + field);
+			return date;
 		} else {
 			Calendar var3 = Calendar.getInstance();
-			var3.setTime(var0);
-			var3.add(var1, var2);
+			var3.setTime(date);
+			var3.add(field, var2);
 			return var3.getTime();
 		}
 	}
