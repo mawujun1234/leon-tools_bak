@@ -13,7 +13,8 @@ public class ConvertUtils extends org.apache.commons.beanutils.ConvertUtils {
 	static {
 		DateConverter dc = new DateConverter();
 		dc.setUseLocaleFormat(true);
-		dc.setPatterns(new String[] { "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss","HH:mm:ss" });
+		//dc.setPatterns(new String[] { "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss","HH:mm:ss" });
+		dc.setPatterns(DateUtils.getDatePatterns());
 		ConvertUtils.register(dc, Date.class);
 		
 	}

@@ -1041,6 +1041,23 @@ public class StringUtils   extends org.apache.commons.lang3.StringUtils{
 		}
 		return set;
 	}
+	
+	
+	public static String collectionToDelimitedString(Iterator<?> it) {
+		if (!it.hasNext()) {
+			return "";
+		}
+		String delim=",";
+		StringBuilder sb = new StringBuilder();
+		//Iterator<?> it = coll.iterator();
+		while (it.hasNext()) {
+			sb.append(it.next());
+			if (it.hasNext()) {
+				sb.append(delim);
+			}
+		}
+		return sb.toString();
+	}
 
 	/**
 	 * Convenience method to return a Collection as a delimited (e.g. CSV)

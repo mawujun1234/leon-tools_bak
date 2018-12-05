@@ -1,13 +1,14 @@
 package com.mawujun.utils;
 
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.ParseException;
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,69 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils{
 		cache_format.put(DATE_TIME, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 	}
 	
+	private static Map<String, String> regularFormat_map=new LinkedHashMap<String,String>(){{
+		
+		this.put("^\\d{4}-\\d{1,2}-\\d{1,2}$", "yyyy-MM-dd");
+		this.put("^\\d{4}-\\d{1,2}-\\d{1,2} {1}\\d{1,2}:\\d{1,2}:\\d{1,2}$", "yyyy-MM-dd HH:mm:ss");
+		this.put("^\\d{4}-\\d{1,2}$", "yyyy-MM");
+		this.put("^\\d{4}-\\d{1,2}-\\d{1,2} {1}\\d{1,2}$","yyyy-MM-dd HH" );
+		this.put("^\\d{4}-\\d{1,2}-\\d{1,2} {1}\\d{1,2}:\\d{1,2}$","yyyy-MM-dd HH:mm" );	
+		this.put("^\\d{1,2}:\\d{1,2}:\\d{1,2}$", "HH:mm:ss");
+	}};
+	/**
+	 * 获取日期相关的格式化模板
+	 * @return
+	 */
+	public static String[] getDatePatterns() {
+		String[] patterns=new String[regularFormat_map.size()];
+		int i=0;
+		for(Entry<String,String> entry:regularFormat_map.entrySet()) {
+			patterns[i]=entry.getValue();
+			i++;
+		}
+		return patterns;
+	}
+	/**
+	 * 只解析24小时制的
+	 * 解析日期字符串的格式
+	 * 现在能解析的格式还不全
+	 * @param date_sr
+	 * @return
+	 */
+	public static String resolverDateFormat(String date_sr) {
+		String value = date_sr.trim();
+        if ("".equals(value)) {
+            return null;
+        }
+        String format=null;
+        for(Entry<String,String> entry:regularFormat_map.entrySet()) {
+        	if(value.matches(entry.getKey())) {
+        		format= entry.getValue();
+        		break;
+        	}
+        	
+        }
+        if(format==null) {
+        	 throw new IllegalArgumentException("暂时不支持这个格式的解析 '" + date_sr + "'");
+        }
+        return format;
+//        if(value.matches("^\\d{4}-\\d{1,2}$")){
+//        	return "yyyy-MM";
+//            //return parseDate(source, formarts.get(0));
+//        }else if(value.matches("^\\d{4}-\\d{1,2}-\\d{1,2}$")){
+//        	return "yyyy-MM-dd";
+//            //return parseDate(source, formarts.get(1));
+//        }else if(value.matches("^\\d{4}-\\d{1,2}-\\d{1,2} {1}\\d{1,2}:\\d{1,2}$")){
+//        	return "yyyy-MM-dd HH:mm";
+//           // return parseDate(source, formarts.get(2));
+//        }else if(value.matches("^\\d{4}-\\d{1,2}-\\d{1,2} {1}\\d{1,2}:\\d{1,2}:\\d{1,2}$")){
+//        	return "yyyy-MM-dd HH:mm:ss";
+//            //return parseDate(source, formarts.get(3));
+//        }else {
+//            throw new IllegalArgumentException("暂时不支持这个格式的解析 '" + date_sr + "'");
+//        }
+
+	}
 
 	public static Date long2Date(long var0) {
 		Calendar var2 = Calendar.getInstance();
