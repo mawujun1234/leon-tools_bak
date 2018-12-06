@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Map.Entry;
 
 import org.slf4j.Logger;
@@ -21,6 +22,9 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils{
 	 * yyyy-MM-dd
 	 */
 	public static final Integer DATE_SHORT = 0;
+	
+	private static final String date_pattern_file="date.pattern.properties";
+	private static final String date_pattern_prefix="regular";
 	/**
 	 * yyyy-MM-dd HH:mm:ss
 	 */
@@ -37,10 +41,26 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils{
 		this.put("^\\d{4}-\\d{1,2}-\\d{1,2}$", "yyyy-MM-dd");
 		this.put("^\\d{4}-\\d{1,2}-\\d{1,2} {1}\\d{1,2}:\\d{1,2}:\\d{1,2}$", "yyyy-MM-dd HH:mm:ss");
 		this.put("^\\d{4}-\\d{1,2}$", "yyyy-MM");
+		this.put("^\\d{4}$", "yyyy");
 		this.put("^\\d{4}-\\d{1,2}-\\d{1,2} {1}\\d{1,2}$","yyyy-MM-dd HH" );
 		this.put("^\\d{4}-\\d{1,2}-\\d{1,2} {1}\\d{1,2}:\\d{1,2}$","yyyy-MM-dd HH:mm" );	
 		this.put("^\\d{1,2}:\\d{1,2}:\\d{1,2}$", "HH:mm:ss");
 	}};
+	
+	static {
+		Properties properties=PropertiesUtils.load(date_pattern_file).getProperties();
+		if(properties!=null || properties.size()>0) {
+			for(Entry<Object,Object> entry:properties.entrySet()) {
+    			String key=entry.getKey().toString();
+    			if(key.indexOf(date_pattern_prefix)==0) {
+    				DateUtils.addDatePatterns(key.substring(key.indexOf('.')+1), (String)entry.getValue());
+    			}
+			}
+		}
+	}
+	public static void addDatePatterns(String java_pattern,String regular) {
+		regularFormat_map.put(regular, java_pattern);
+	}
 	/**
 	 * 获取日期相关的格式化模板
 	 * @return
@@ -75,7 +95,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils{
         	
         }
         if(format==null) {
-        	 throw new IllegalArgumentException("暂时不支持这个格式的解析 '" + date_sr + "'");
+        	 throw new IllegalArgumentException("暂时不支持这个格式的解析 '" + date_sr + "',需要新增的话，新建date.pattern.properties文件，按regular.yyyy-MM-dd=^\\\\d{4}-\\\\d{1,2}-\\\\d{1,2}$这种模式编写");
         }
         return format;
 //        if(value.matches("^\\d{4}-\\d{1,2}$")){
