@@ -2,6 +2,9 @@ package com.mawujun.utils;
 
 import java.util.Date;
 
+import org.apache.commons.beanutils.ConversionException;
+import org.apache.commons.beanutils.ConvertUtilsBean;
+import org.apache.commons.beanutils.Converter;
 import org.apache.commons.beanutils.converters.DateConverter;
 
 /**
@@ -19,21 +22,21 @@ public class ConvertUtils extends org.apache.commons.beanutils.ConvertUtils {
 		
 	}
 	
-	/**
-	 * 添加了枚举类型转换支持
-	 * 支持日期，日期时间，时间格式，"yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss","HH:mm:ss"
-	 * @param value
-	 * @param clazz
-	 * @return
-	 */
-	public static Object convert(String value, Class clazz) {
-		if(clazz.isEnum()) {
-			return EnumUtils.getEnum(clazz, value);
-		}
-		
-		
-		return org.apache.commons.beanutils.ConvertUtils.convert(value, clazz);
-    }
+//	/**
+//	 * 添加了枚举类型转换支持
+//	 * 支持日期，日期时间，时间格式，"yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss","HH:mm:ss"
+//	 * @param value
+//	 * @param clazz
+//	 * @return
+//	 */
+//	public static Object convert(String value, Class clazz) {
+//		if(clazz.isEnum()) {
+//			return EnumUtils.getEnum(clazz, value);
+//		}
+//		
+//		
+//		return org.apache.commons.beanutils.ConvertUtils.convert(value, clazz);
+//    }
 	/**
 	 * 添加了枚举类型的支持
 	 *  支持日期，日期时间，时间格式，"yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss","HH:mm:ss"
@@ -41,13 +44,18 @@ public class ConvertUtils extends org.apache.commons.beanutils.ConvertUtils {
 	 * @param clazz
 	 * @return
 	 */
-	public static Object convert(Object value, Class clazz) {
+	public static <X> X convert1(Object value, Class<X> clazz) {
 		if(clazz.isEnum()) {
-			return EnumUtils.getEnum(clazz, value.toString());
+			return (X)EnumUtils.getEnum((Class) clazz, value.toString());
 		}
 		
 		
-		return org.apache.commons.beanutils.ConvertUtils.convert(value, clazz);
+		return (X)org.apache.commons.beanutils.ConvertUtils.convert(value, clazz);
     }
+	
+	
+	
+	
+	
 
 }
