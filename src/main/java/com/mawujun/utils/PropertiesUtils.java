@@ -343,14 +343,20 @@ public class PropertiesUtils {
 	 * @throws IOException
 	 */
 	public static PropertiesUtils load(String filePath)  {
-		InputStream in = PropertiesUtils.class.getClassLoader().getResourceAsStream(filePath);
 		PropertiesUtils utils=new PropertiesUtils();
+		InputStream in = PropertiesUtils.class.getClassLoader().getResourceAsStream(filePath);
+		if(in==null) {
+			//throw new BusinessException("加载properties文件失败");
+			return utils;
+		}
+		
 		try {
 			utils.load(in);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new BusinessException("加载properties文件失败");
+			//throw new BusinessException("加载properties文件失败");
+			return utils;
 		}
 		return utils;
 	}

@@ -15,7 +15,11 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.channels.FileChannel;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -140,12 +144,88 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
 	  
  
 	/**
-	 * 获取class所在的位置
+	 * 获取class所在的根目录
 	 * 获取到的是class目录所在的位置:webapp/class
 	 * @return
 	 */
-	public static String getCurrentClassPath(Object obj){
-		return obj.getClass().getResource("/").getPath() ;
+	public static String getClassRootPath(Object obj){
+		//return obj.getClass().getResource("/").getPath() ;
+		return FileUtils.getClassRootPath(obj.getClass());
+	}
+	
+	/**
+	 * 获取class所在的根目录
+	 * 获取到的是class目录所在的位置:webapp/class
+	 * @return
+	 */
+	public static String getClassRootPath(Class<?> clazz){
+		return clazz.getResource("/").getPath() ;
+	}
+	
+	/**
+	 * 获取class文件所在的位置
+	 * 如果类在jar中，也会返回位置，例如：file:/D:/apache-maven-3.5.4/repository/org/springframework/spring-core/5.0.10.RELEASE/spring-core-5.0.10.RELEASE.jar!/org/springframework/util/
+	 * 如果是普通的，返回：/E:/my-workspace/leon-repository/target/test-classes/test/mawujun/jpa/
+	 * @param clazz
+	 * @return
+	 */
+	public static String getClassPath(Class<?> clazz){
+		return clazz.getResource("").getPath();
+	}
+	/**
+	 * 获取项目的绝对路径
+	 * @param obj
+	 * @return
+	 */
+	public static String getProjectPath(Object obj){
+		File file = new File("");
+        String filePath=null;
+		try {
+			filePath = file.getCanonicalPath();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        System.out.println(filePath);
+        return filePath;
+	}
+	
+	/**
+	 * 获取类所在的jar路径,或者依赖的项目的路径
+	 * file:/D:/apache-maven-3.5.4/repository/org/springframework/spring-core/5.0.10.RELEASE/spring-core-5.0.10.RELEASE.jar!/org/springframework/util/
+	 * @param clazz
+	 * @return
+	 */
+	public static URL getJarPath(Class<?> clazz){
+		ProtectionDomain pd = clazz.getProtectionDomain();  
+		CodeSource cs = pd.getCodeSource();  
+		//System.out.println(cs.getLocation()); 
+		return cs.getLocation();
+	}
+	
+	/**
+	 * 返回类所在的jar文件的绝对路径,D:/apache-maven-3.5.4/repository/org/springframework/spring-core/5.0.10.RELEASE/spring-core-5.0.10.RELEASE.jar
+	 * 如果不是jar中的class，则返回该class所在的classpath：E:/my-workspace/leon-repository/target/test-classes/
+	 * @param clazz
+	 * @return
+	 */
+	public static String getJarAbstractPath(Class<?> clazz){
+		ProtectionDomain pd = clazz.getProtectionDomain();  
+		CodeSource cs = pd.getCodeSource();  
+//		cs.getLocation().getPath();
+//		try {
+//			cs.getLocation().toURI();
+//		} catch (URISyntaxException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		URL url=cs.getLocation();
+		if(url.getFile().indexOf(".jar!")==-1) {
+			return url.getFile();
+		} else {
+			return url.getFile().substring(0, url.getFile().indexOf(".jar!")+4);
+		}
+
 	}
 	/**
 	 * 返回某个目录下面的所有文件和目录，不包括子文件夹中的文件

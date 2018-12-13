@@ -22,21 +22,21 @@ public class ConvertUtils extends org.apache.commons.beanutils.ConvertUtils {
 		
 	}
 	
-//	/**
-//	 * 添加了枚举类型转换支持
-//	 * 支持日期，日期时间，时间格式，"yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss","HH:mm:ss"
-//	 * @param value
-//	 * @param clazz
-//	 * @return
-//	 */
-//	public static Object convert(String value, Class clazz) {
-//		if(clazz.isEnum()) {
-//			return EnumUtils.getEnum(clazz, value);
-//		}
-//		
-//		
-//		return org.apache.commons.beanutils.ConvertUtils.convert(value, clazz);
-//    }
+	/**
+	 * 添加了枚举类型转换支持
+	 * 支持日期，日期时间，时间格式，"yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss","HH:mm:ss"
+	 * @param value
+	 * @param clazz
+	 * @return
+	 */
+	public static Object convert(String value, Class clazz) {
+		if(clazz.isEnum()) {
+			return EnumUtils.getEnum(clazz, value);
+		}
+		
+		
+		return org.apache.commons.beanutils.ConvertUtils.convert(value, clazz);
+    }
 	/**
 	 * 添加了枚举类型的支持
 	 *  支持日期，日期时间，时间格式，"yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss","HH:mm:ss"
