@@ -13,15 +13,11 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.converters.DateConverter;
-import org.dozer.DozerBeanMapper;
 
 import com.mawujun.utils.Assert;
 import com.mawujun.utils.ReflectUtils;
@@ -36,49 +32,49 @@ import com.mawujun.utils.string.StringUtils;
  */
 public abstract class BeanUtils {
 
-	/**
-	 * 持有Dozer单例, 避免重复创建DozerMapper消耗资源.
-	 */
-	private static DozerBeanMapper dozer = new DozerBeanMapper();
-
-	/**
-	 * 基于Dozer转换对象的类型.
-	 * 主要用于对象之间进行拷贝
-	 * 
-	 * 1：Long[] aa=BeanUtils.copy(value, long[].class)value也是数组对象
-	 * 2：BeanUtils.copyOrCast(map, Product.class);把map对象里的值拷贝到类里面
-	 */
-	public static <T> T copyOrCast(Object source, Class<T> destinationClass) {
-//		Class fromType=source.getClass();
-//		if (fromType == destinationClass || destinationClass == null || fromType == null)
-//			return (T) source;
-//		if (fromType.getName().equals(destinationClass.getName()))
-//			return (T) source;
-//		if (destinationClass.isAssignableFrom(fromType))
-//			return (T) source;
-		return dozer.map(source, destinationClass);
-	}
-
-	/**
-	 * 基于Dozer转换Collection中对象的类型.
-	 */
-	public static <T> List<T> copyList(Collection sourceList, Class<T> destinationClass) {
-		//List<T> destinationList = Lists.newArrayList();
-		List<T> destinationList = new ArrayList<T>();//Lists.newArrayList();
-		for (Object sourceObject : sourceList) {
-			T destinationObject = dozer.map(sourceObject, destinationClass);
-			destinationList.add(destinationObject);
-		}
-		return destinationList;
-	}
-	/**
-	 * 基于Dozer将对象A的值拷贝到对象B中.
-	 */
-	public static void copyOrCast(Object source, Object destinationObject) {
-		//dozer.
-		dozer.map(source, destinationObject);
-	}
-	
+//	/**
+//	 * 持有Dozer单例, 避免重复创建DozerMapper消耗资源.
+//	 */
+//	private static DozerBeanMapper dozer = new DozerBeanMapper();
+//
+//	/**
+//	 * 基于Dozer转换对象的类型.
+//	 * 主要用于对象之间进行拷贝
+//	 * 
+//	 * 1：Long[] aa=BeanUtils.copy(value, long[].class)value也是数组对象
+//	 * 2：BeanUtils.copyOrCast(map, Product.class);把map对象里的值拷贝到类里面
+//	 */
+//	public static <T> T copyOrCast(Object source, Class<T> destinationClass) {
+////		Class fromType=source.getClass();
+////		if (fromType == destinationClass || destinationClass == null || fromType == null)
+////			return (T) source;
+////		if (fromType.getName().equals(destinationClass.getName()))
+////			return (T) source;
+////		if (destinationClass.isAssignableFrom(fromType))
+////			return (T) source;
+//		return dozer.map(source, destinationClass);
+//	}
+//
+//	/**
+//	 * 基于Dozer转换Collection中对象的类型.
+//	 */
+//	public static <T> List<T> copyList(Collection sourceList, Class<T> destinationClass) {
+//		//List<T> destinationList = Lists.newArrayList();
+//		List<T> destinationList = new ArrayList<T>();//Lists.newArrayList();
+//		for (Object sourceObject : sourceList) {
+//			T destinationObject = dozer.map(sourceObject, destinationClass);
+//			destinationList.add(destinationObject);
+//		}
+//		return destinationList;
+//	}
+//	/**
+//	 * 基于Dozer将对象A的值拷贝到对象B中.
+//	 */
+//	public static void copyOrCast(Object source, Object destinationObject) {
+//		//dozer.
+//		dozer.map(source, destinationObject);
+//	}
+//	
 	
 	private static  HashMap<String,PropertyDescriptor[]> beanPropertyCache=new HashMap<String,PropertyDescriptor[]>();
 	private static PropertyDescriptor[] getPropertyDescriptors(Class<?> clazz) throws  IntrospectionException {

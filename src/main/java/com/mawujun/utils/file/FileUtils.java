@@ -15,7 +15,6 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.Writer;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.security.CodeSource;
@@ -27,12 +26,13 @@ import java.util.zip.ZipFile;
 
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 
 public class FileUtils extends org.apache.commons.io.FileUtils {
-	static Logger logger = LogManager.getLogger(FileUtils.class);
+	static Logger logger = LoggerFactory.getLogger(FileUtils.class);
 	
 	 public static final String FILE_SEPARATOR =  System.getProperty("file.separator");
 	  /**
@@ -177,17 +177,18 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
 	 * @param obj
 	 * @return
 	 */
-	public static String getProjectPath(Object obj){
-		File file = new File("");
-        String filePath=null;
-		try {
-			filePath = file.getCanonicalPath();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        System.out.println(filePath);
-        return filePath;
+	public static String getProjectPath(){
+		return System.getProperty("user.dir");
+//		File file = new File("");
+//        String filePath=null;
+//		try {
+//			filePath = file.getCanonicalPath();
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//        System.out.println(filePath);
+//        return filePath;
 	}
 	
 	/**

@@ -5,9 +5,6 @@ package com.mawujun.utils;
 import java.util.Collection;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
-
-
 import com.mawujun.utils.string.StringUtils;
 
 /**
