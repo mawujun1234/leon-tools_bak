@@ -679,8 +679,8 @@ public class ReflectUtils {
 	 * @param name the name of the field
 	 * @return the corresponding Field object, or <code>null</code> if not found
 	 */
-	public static Field findField(Class clazz, String name) {
-		return findField(clazz, name, null);
+	public static Field getField(Class clazz, String name) {
+		return getField(clazz, name, null);
 	}
 
 	/**
@@ -692,7 +692,7 @@ public class ReflectUtils {
 	 * @param type the type of the field (may be <code>null</code> if name is specified)
 	 * @return the corresponding Field object, or <code>null</code> if not found
 	 */
-	public static Field findField(Class clazz, String name, Class type) {
+	public static Field getField(Class clazz, String name, Class type) {
 		AssertUtils.notNull(clazz, "Class must not be null");
 		AssertUtils.isTrue(name != null || type != null, "Either name or type of the field must be specified");
 		Class searchType = clazz;
@@ -722,7 +722,7 @@ public class ReflectUtils {
 	 * @param target the target object on which to set the field
 	 * @param value the value to set; may be <code>null</code>
 	 */
-	public static void setField(Field field, Object target, Object value) {
+	public static void setFieldValue(Field field, Object target, Object value) {
 		try {
 			field.set(target, value);
 		}
@@ -744,7 +744,7 @@ public class ReflectUtils {
 	 * @param target the target object from which to get the field
 	 * @return the field's current value
 	 */
-	public static Object getField(Field field, Object target) {
+	public static Object getFieldValue(Field field, Object target) {
 		try {
 			return field.get(target);
 		}
