@@ -155,12 +155,15 @@ public class HttpClientUtils {
         CloseableHttpClient client = HttpClients.createDefault();
         String respContent = null;
         
+        
+        //参数用map，里面的内容可以是，String、File以及InputStream对应的ContentBody类型的子类，如FileBody、InputStreamBody、StringBody，通过这些类我们可以将String、File以及InputStream类型的数据转换成ContentBody类型的数据
         FileBody bin = new FileBody(file);
         FormBodyPart formBodyPart=FormBodyPartBuilder.create(fileName,bin)
         		.build();
         
         HttpEntity entity = MultipartEntityBuilder.create()
         		.addPart(formBodyPart)
+        		//.addPart("1111", contentBody)
         		.build();
         
 //        //FileBody bin = new FileBody(file);
