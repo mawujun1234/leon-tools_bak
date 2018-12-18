@@ -1,5 +1,6 @@
 package com.mawujun.http;
 
+import java.io.File;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -13,6 +14,7 @@ import java.util.Map;
 import javax.net.ssl.SSLContext;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.ParseException;
 import org.apache.http.client.config.RequestConfig;
@@ -22,16 +24,27 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.FormBodyPart;
+import org.apache.http.entity.mime.FormBodyPartBuilder;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.mawujun.utils.string.StringUtils;
 
 public class HttpClientUtils {
+	private static Logger logger=LoggerFactory.getLogger(HttpClientUtils.class);
+	
 	private static final CloseableHttpClient httpClient;
     public static final String CHARSET = "UTF-8";
     // 采用静态代码块，初始化超时时间配置，再根据配置生成默认httpClient对象
@@ -51,6 +64,141 @@ public class HttpClientUtils {
     public static String doPost(String url, Map<String, String> params) throws IOException {
         return doPost(url, params, CHARSET);
     }
+    /**
+     * 
+     * @param url
+     * @param param json的内容
+     * @return
+     */
+    public static String doPostJson(String url,String param){
+    	return doPostJson( url,null,  param);
+    }
+    /**
+     * 
+     * @param url
+     * @param headers 有些请求要带上自定义的头部信息
+     * @param param xml的内容
+     * @return
+     */
+    public static String doPostJson(String url,Map<String, String> headers, String param){
+        return doPostBody(url,headers,ContentType.APPLICATION_JSON,param);
+    }
+    
+    /**
+     * 
+     * @param url
+     * @param param xml的内容
+     * @return
+     */
+    public static String doPostXml(String url,String param){
+    	return doPostXml( url,null,  param);
+    }
+    /**
+     * 
+     * @param url
+     * @param headers 有些请求要带上自定义的头部信息
+     * @param param json的内容
+     * @return
+     */
+    public static String doPostXml(String url,Map<String, String> headers, String param){
+        return doPostBody(url,headers,ContentType.APPLICATION_XML,param);
+    }
+    
+    public static String doPostBody(String url,Map<String, String> headers,ContentType contentType, String param){
+        HttpPost httpPost = new HttpPost(url);
+        CloseableHttpClient client = HttpClients.createDefault();
+        String respContent = null;
+        //json方式
+
+        StringEntity entity = new StringEntity(param,contentType);//解决中文乱码问题,自带utf-8
+
+        //entity.setContentType("application/json; charset=UTF-8");
+        //httpPost.setHeader("Accept", "application/json");
+
+        httpPost.setEntity(entity);
+        if (headers!=null){
+
+            for (Map.Entry<String, String> e : headers.entrySet()) {
+                httpPost.setHeader(e.getKey(), e.getValue());
+            }
+        }
+        HttpResponse resp = null;
+        try {
+            resp = client.execute(httpPost);
+            if(resp.getStatusLine().getStatusCode() == 200) {
+                HttpEntity he = resp.getEntity();
+                respContent = EntityUtils.toString(he,CHARSET);
+            }
+        } catch (IOException e) {
+            logger.error("请求异常:"+url,e);
+        }finally {
+            try {
+                client.close();
+            } catch (IOException e) {
+                logger.error("请求异常:"+url,e);
+            }
+        }
+        return respContent;
+    }
+    
+    /**
+     * 
+     * @param url
+     * @param fileName 文件参数的名字
+     * @param file 文件内容
+     * @param paramName 其他参数
+     * @param paramContent
+     * @return
+     */
+    public static String doPostFile(String url,String fileName,File file,Map<String,Object> params){
+        HttpPost httpPost = new HttpPost(url);
+        CloseableHttpClient client = HttpClients.createDefault();
+        String respContent = null;
+        
+        FileBody bin = new FileBody(file);
+        FormBodyPart formBodyPart=FormBodyPartBuilder.create(fileName,bin)
+        		.build();
+        
+        HttpEntity entity = MultipartEntityBuilder.create()
+        		.addPart(formBodyPart)
+        		.build();
+        
+//        //FileBody bin = new FileBody(file);
+//        StringBody comment = new StringBody(paramContent, ContentType.TEXT_PLAIN);
+//
+//        HttpEntity entity = MultipartEntityBuilder.create()
+//        		.addBinaryBody(fileName, file)
+//                //.addPart("bin", bin)
+//                .addPart(paramName, comment)
+//                .addPart(bodyPart)
+//                .build();
+
+        httpPost.setEntity(entity);
+//        if (headers!=null){
+//
+//            for (Map.Entry<String, String> e : headers.entrySet()) {
+//                httpPost.setHeader(e.getKey(), e.getValue());
+//            }
+//        }
+        HttpResponse resp = null;
+        try {
+            resp = client.execute(httpPost);
+            if(resp.getStatusLine().getStatusCode() == 200) {
+                HttpEntity he = resp.getEntity();
+                respContent = EntityUtils.toString(he,CHARSET);
+            }
+        } catch (IOException e) {
+            logger.error("请求异常:"+url,e);
+        }finally {
+            try {
+                client.close();
+            } catch (IOException e) {
+                logger.error("请求异常:"+url,e);
+            }
+        }
+        return respContent;
+    }
+
 
     /**
      * HTTP Get 获取内容
