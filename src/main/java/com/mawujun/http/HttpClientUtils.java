@@ -2,6 +2,7 @@ package com.mawujun.http;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -10,6 +11,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.net.ssl.SSLContext;
 
@@ -26,11 +28,7 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.entity.mime.FormBodyPart;
-import org.apache.http.entity.mime.FormBodyPartBuilder;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
@@ -53,15 +51,15 @@ public class HttpClientUtils {
         httpClient = HttpClientBuilder.create().setDefaultRequestConfig(config).build();
     }
 
-    public static String doGet(String url, Map<String, String> params) {
+    public static String doGet(String url, Map<String, Object> params) {
         return doGet(url, params, CHARSET);
     }
 
-    public static String doGetSSL(String url, Map<String, String> params) {
+    public static String doGetSSL(String url, Map<String, Object> params) {
         return doGetSSL(url, params, CHARSET);
     }
 
-    public static String doPost(String url, Map<String, String> params) throws IOException {
+    public static String doPost(String url, Map<String, Object> params) throws IOException {
         return doPost(url, params, CHARSET);
     }
     /**
@@ -80,7 +78,7 @@ public class HttpClientUtils {
      * @param param xml的内容
      * @return
      */
-    public static String doPostJson(String url,Map<String, String> headers, String param){
+    public static String doPostJson(String url,Map<String, Object> headers, String param){
         return doPostBody(url,headers,ContentType.APPLICATION_JSON,param);
     }
     
@@ -100,11 +98,11 @@ public class HttpClientUtils {
      * @param param json的内容
      * @return
      */
-    public static String doPostXml(String url,Map<String, String> headers, String param){
+    public static String doPostXml(String url,Map<String, Object> headers, String param){
         return doPostBody(url,headers,ContentType.APPLICATION_XML,param);
     }
     
-    public static String doPostBody(String url,Map<String, String> headers,ContentType contentType, String param){
+    public static String doPostBody(String url,Map<String, Object> headers,ContentType contentType, String param){
         HttpPost httpPost = new HttpPost(url);
         CloseableHttpClient client = HttpClients.createDefault();
         String respContent = null;
@@ -118,8 +116,8 @@ public class HttpClientUtils {
         httpPost.setEntity(entity);
         if (headers!=null){
 
-            for (Map.Entry<String, String> e : headers.entrySet()) {
-                httpPost.setHeader(e.getKey(), e.getValue());
+            for (Map.Entry<String, Object> e : headers.entrySet()) {
+                httpPost.setHeader(e.getKey(), e.getValue().toString());
             }
         }
         HttpResponse resp = null;
@@ -141,7 +139,87 @@ public class HttpClientUtils {
         return respContent;
     }
     
+    
+    public static String doPostFile(String url,String fileParamName,File file,Map<String,Object> params){
+    	return doPostFileObject(url,fileParamName,file,params);
+    }
+    public static String doPostFile(String url,String fileParamName,byte[] file,Map<String,Object> params){
+    	return doPostFileObject(url,fileParamName,file,params);
+    }
+    public static String doPostFile(String url,String fileParamName,InputStream file,Map<String,Object> params){
+    	return doPostFileObject(url,fileParamName,file,params);
+    }
+    
     /**
+     * 可以传递多个文件，Object 可以是File，byte[],InputStream
+     * 传递额外参数，就使用其他类型,参数和接收类型对应关系如下
+     * File--->MultipartFile
+     * byte[]--->byte[]
+     * InputStream--->InputStream
+     * String---->byte[]
+     * @param url
+     * @param params
+     * @return
+     */
+    public static String doPostFile(String url,Map<String,Object> params){
+    	HttpPost httpPost = new HttpPost(url);
+        CloseableHttpClient client = HttpClients.createDefault();
+        String respContent = null;
+        
+        MultipartEntityBuilder multipartEntityBuilder=MultipartEntityBuilder.create();
+
+    
+//        MultipartEntityBuilder multipartEntityBuilder=MultipartEntityBuilder.create()
+//        		.addBinaryBody(fileParamName, file);
+        if(params!=null) {
+        	for(Entry<String,Object> entry:params.entrySet()) {
+        		// StringBody comment = new StringBody(paramContent, ContentType.TEXT_PLAIN);
+        		addMultipartEntityBuilder(multipartEntityBuilder,entry.getKey(),entry.getValue());
+        	}
+        }
+        HttpEntity entity = multipartEntityBuilder.build();
+        
+
+
+        httpPost.setEntity(entity);
+
+        HttpResponse resp = null;
+        try {
+            resp = client.execute(httpPost);
+            if(resp.getStatusLine().getStatusCode() == 200) {
+                HttpEntity he = resp.getEntity();
+                respContent = EntityUtils.toString(he,CHARSET);
+            }
+        } catch (IOException e) {
+            logger.error("请求异常:"+url,e);
+        }finally {
+            try {
+                client.close();
+            } catch (IOException e) {
+                logger.error("请求异常:"+url,e);
+            }
+        }
+        return respContent;
+    }
+    
+    
+    private static MultipartEntityBuilder addMultipartEntityBuilder(MultipartEntityBuilder multipartEntityBuilder,String fileParamName, Object obj) {
+    	
+    	if(obj instanceof File) {
+    		multipartEntityBuilder.addBinaryBody(fileParamName, (File)obj);
+    	} else if(obj instanceof byte[]) {
+    		multipartEntityBuilder.addBinaryBody(fileParamName, (byte[])obj);
+    	} else if(obj instanceof InputStream) {
+    		multipartEntityBuilder.addBinaryBody(fileParamName, (InputStream)obj);
+    	} else if(obj instanceof String) {
+    		multipartEntityBuilder.addTextBody(fileParamName, (String)obj);
+    	} else  {
+    		multipartEntityBuilder.addTextBody(fileParamName, obj.toString());
+    	}
+    	return multipartEntityBuilder;
+    }
+    /**
+                 * 接收方式@RequestParam("fileParamName") MultipartFile fileParamName
      * 
      * @param url
      * @param fileName 文件参数的名字
@@ -150,39 +228,33 @@ public class HttpClientUtils {
      * @param paramContent
      * @return
      */
-    public static String doPostFile(String url,String fileName,File file,Map<String,Object> params){
+    private static String doPostFileObject(String url,String fileParamName,Object file,Map<String,Object> params){
         HttpPost httpPost = new HttpPost(url);
         CloseableHttpClient client = HttpClients.createDefault();
         String respContent = null;
         
         
-        //参数用map，里面的内容可以是，String、File以及InputStream对应的ContentBody类型的子类，如FileBody、InputStreamBody、StringBody，通过这些类我们可以将String、File以及InputStream类型的数据转换成ContentBody类型的数据
-        FileBody bin = new FileBody(file);
-        FormBodyPart formBodyPart=FormBodyPartBuilder.create(fileName,bin)
-        		.build();
+//        //参数用map，里面的内容可以是，String、File以及InputStream对应的ContentBody类型的子类，如FileBody、InputStreamBody、StringBody，通过这些类我们可以将String、File以及InputStream类型的数据转换成ContentBody类型的数据
+//        FileBody bin = new FileBody(file);
+//        FormBodyPart formBodyPart=FormBodyPartBuilder.create(fileParam,bin)
+//        		.build();
+        MultipartEntityBuilder multipartEntityBuilder=MultipartEntityBuilder.create();
+        addMultipartEntityBuilder(multipartEntityBuilder,fileParamName,file);
+    
+//        MultipartEntityBuilder multipartEntityBuilder=MultipartEntityBuilder.create()
+//        		.addBinaryBody(fileParamName, file);
+        if(params!=null) {
+        	for(Entry<String,Object> entry:params.entrySet()) {
+        		// StringBody comment = new StringBody(paramContent, ContentType.TEXT_PLAIN);
+        		multipartEntityBuilder.addTextBody(entry.getKey(), entry.getValue().toString());
+        	}
+        }
+        HttpEntity entity = multipartEntityBuilder.build();
         
-        HttpEntity entity = MultipartEntityBuilder.create()
-        		.addPart(formBodyPart)
-        		//.addPart("1111", contentBody)
-        		.build();
-        
-//        //FileBody bin = new FileBody(file);
-//        StringBody comment = new StringBody(paramContent, ContentType.TEXT_PLAIN);
-//
-//        HttpEntity entity = MultipartEntityBuilder.create()
-//        		.addBinaryBody(fileName, file)
-//                //.addPart("bin", bin)
-//                .addPart(paramName, comment)
-//                .addPart(bodyPart)
-//                .build();
+
 
         httpPost.setEntity(entity);
-//        if (headers!=null){
-//
-//            for (Map.Entry<String, String> e : headers.entrySet()) {
-//                httpPost.setHeader(e.getKey(), e.getValue());
-//            }
-//        }
+
         HttpResponse resp = null;
         try {
             resp = client.execute(httpPost);
@@ -210,15 +282,15 @@ public class HttpClientUtils {
      * @param charset 编码格式
      * @return 页面内容
      */
-    public static String doGet(String url, Map<String, String> params, String charset) {
+    public static String doGet(String url, Map<String, Object> params, String charset) {
         if (StringUtils.isBlank(url)) {
             return null;
         }
         try {
             if (params != null && !params.isEmpty()) {
                 List<NameValuePair> pairs = new ArrayList<NameValuePair>(params.size());
-                for (Map.Entry<String, String> entry : params.entrySet()) {
-                    String value = entry.getValue();
+                for (Map.Entry<String, Object> entry : params.entrySet()) {
+                    String value = entry.getValue().toString();
                     if (value != null) {
                         pairs.add(new BasicNameValuePair(entry.getKey(), value));
                     }
@@ -255,7 +327,7 @@ public class HttpClientUtils {
      * @return 页面内容
      * @throws IOException
      */
-    public static String doPost(String url, Map<String, String> params, String charset) 
+    public static String doPost(String url, Map<String, Object> params, String charset) 
             throws IOException {
         if (StringUtils.isBlank(url)) {
             return null;
@@ -263,8 +335,8 @@ public class HttpClientUtils {
         List<NameValuePair> pairs = null;
         if (params != null && !params.isEmpty()) {
             pairs = new ArrayList<NameValuePair>(params.size());
-            for (Map.Entry<String, String> entry : params.entrySet()) {
-                String value = entry.getValue();
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
+                String value = entry.getValue().toString();
                 if (value != null) {
                     pairs.add(new BasicNameValuePair(entry.getKey(), value));
                 }
@@ -305,15 +377,15 @@ public class HttpClientUtils {
      * @param charset  编码格式
      * @return 页面内容
      */
-    public static String doGetSSL(String url, Map<String, String> params, String charset) {
+    public static String doGetSSL(String url, Map<String, Object> params, String charset) {
         if (StringUtils.isBlank(url)) {
             return null;
         }
         try {
             if (params != null && !params.isEmpty()) {
                 List<NameValuePair> pairs = new ArrayList<NameValuePair>(params.size());
-                for (Map.Entry<String, String> entry : params.entrySet()) {
-                    String value = entry.getValue();
+                for (Map.Entry<String, Object> entry : params.entrySet()) {
+                    String value = entry.getValue().toString();
                     if (value != null) {
                         pairs.add(new BasicNameValuePair(entry.getKey(), value));
                     }
