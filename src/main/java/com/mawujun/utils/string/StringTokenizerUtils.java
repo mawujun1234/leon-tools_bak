@@ -4,6 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+/**
+ * 还可以参考org.apache.commons.text。StringTokenizer
+ * @author admin
+ *
+ */
 public class StringTokenizerUtils {
 
     /**

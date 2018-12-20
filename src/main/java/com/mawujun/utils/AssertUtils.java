@@ -5,6 +5,8 @@ package com.mawujun.utils;
 import java.util.Collection;
 import java.util.Map;
 
+import com.mawujun.utils.string.StringUtils;
+
 /**
  * 与Spring Assert功能类似, 代码基本从org.springframework.util.Assert复制, 增加如下功能:
  * 
