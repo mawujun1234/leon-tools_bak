@@ -1392,6 +1392,23 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 		Matcher mer = Pattern.compile("^[0-9]+$").matcher(input);
 		return mer.find();
 	}
+	
+	/**
+	 * StringUtils.join(["a,"b","c"], ',',"'")=====>"'a','b','c'"
+	 * @param iterable
+	 * @param separator
+	 * @param around 以指定的符号 先对内容进行包围，然后再用指定的分隔符分隔
+	 * @return
+	 */
+	public static String joinAround(String[] array, String separator,String around) {
+		if (array == null) {
+			return null;
+		}
+		for(int i=0;i<array.length;i++) {
+			array[i]=around+array[i]+around;
+		}
+		return join(array, separator);
+	}
 
 	/**
 	 * <p>
