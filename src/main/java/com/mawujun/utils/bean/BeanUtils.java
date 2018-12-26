@@ -20,7 +20,7 @@ import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.converters.DateConverter;
 
 import com.mawujun.utils.Assert;
-import com.mawujun.utils.ReflectUtils;
+import com.mawujun.utils.ReflectionUtils;
 import com.mawujun.utils.string.StringUtils;
 
 /**
@@ -178,7 +178,7 @@ public abstract class BeanUtils {
 		try {
 			return (T)ConvertUtils.convert(value, toType);
 		} catch (Exception e) {
-			throw ReflectUtils.convertReflectionExceptionToUnchecked(e);
+			throw ReflectionUtils.convertReflectionExceptionToUnchecked(e);
 		}
 	}
 	
@@ -192,7 +192,7 @@ public abstract class BeanUtils {
 		try {
 			return (T)ConvertUtils.convert(value, toType);
 		} catch (Exception e) {
-			throw ReflectUtils.convertReflectionExceptionToUnchecked(e);
+			throw ReflectionUtils.convertReflectionExceptionToUnchecked(e);
 		}
 	}
 	/**

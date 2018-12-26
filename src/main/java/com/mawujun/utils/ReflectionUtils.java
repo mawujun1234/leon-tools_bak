@@ -31,9 +31,9 @@ import com.mawujun.utils.string.StringUtils;
  * 
  * @author mawujun
  */
-public class ReflectUtils {
+public class ReflectionUtils {
 
-	private static Logger logger = LoggerFactory.getLogger(ReflectUtils.class);
+	private static Logger logger = LoggerFactory.getLogger(ReflectionUtils.class);
 	//private static Set<Class> baseType=new HashSet<Class>();
 
 //	static {
