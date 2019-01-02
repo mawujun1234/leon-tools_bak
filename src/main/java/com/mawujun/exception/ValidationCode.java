@@ -5,7 +5,7 @@ package com.mawujun.exception;
  * @author mawujun
  *
  */
-public enum ValidationCode implements ExceptionCode {
+enum ValidationCode implements ExceptionCode {
 	
 	VALUE_REQUIRED(201),
 	INVALID_FORMAT(202),
