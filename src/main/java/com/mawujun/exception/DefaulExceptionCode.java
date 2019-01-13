@@ -7,10 +7,10 @@ package com.mawujun.exception;
  *
  */
 public enum DefaulExceptionCode implements ExceptionCode {
-	SYSTEM_EXCEPTION(101),//系统异常，后台报出的异常
-	SYSTEM_PROPERTY_IS_NOT_EXISTS(102),//属性不存在
-	SYSTEM_MYBATIS_STATEMENT_CAN_NOT_NULL(103),//Mybatis的statement id不能为空
-	BUSSINESS_EXCEPTION(104);
+	SYSTEM_EXCEPTION(-101),//系统异常，后台报出的异常
+	SYSTEM_PROPERTY_IS_NOT_EXISTS(-102),//属性不存在
+	SYSTEM_MYBATIS_STATEMENT_CAN_NOT_NULL(-103),//Mybatis的statement id不能为空
+	BUSSINESS_EXCEPTION(-104);
 	
 	
 	private final int number;

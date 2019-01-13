@@ -46,6 +46,31 @@ public class ThreadPoolUtils {
 		return bool;
 	}
 	
+	/**
+	 * 不再接收新的线程任务了
+	 * 会阻塞直到所有的线程执行完毕，可以用来统计运行时长
+	 * @return true表示所有线程都执行完毕了，正常结束，false表示线程超时停止
+	 * @param timeout
+	 * @param unit
+	 * @return
+	 */
+	public boolean shutdownLatch(int timeout, TimeUnit unit) {
+		shutdown();
+		boolean bool=true;
+		try {
+			
+			bool= this.fixedThreadPool.awaitTermination(1, TimeUnit.HOURS);
+			
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  finally {
+
+			
+		}
+		return bool;
+	}
+	
 	
 	public  static synchronized ThreadPoolUtils initPools() {
 		ThreadPoolUtils pool=new ThreadPoolUtils();

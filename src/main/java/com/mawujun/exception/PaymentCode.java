@@ -5,7 +5,7 @@ package com.mawujun.exception;
  * @author mawujun
  *
  */
-public enum PaymentCode implements ExceptionCode {
+enum PaymentCode implements ExceptionCode {
 	
 	SERVICE_TIMEOUT(101),
 	CREDIT_CARD_EXPIRED(102),
