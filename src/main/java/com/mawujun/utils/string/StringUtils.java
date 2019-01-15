@@ -50,6 +50,35 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 	private static final char EXTENSION_SEPARATOR = '.';
 
 	public static final char UNDERLINE = '_';
+	/**
+	 * 返回字符串对象
+	 * @author mawujun 16064988 
+	 * @date:   2019年1月15日 下午5:20:43  
+	 * @param obj
+	 * @return
+	 */
+	public String getString(Object obj) {
+		if(obj==null) {
+			return null;
+		} else {
+			return obj.toString();
+		}
+	}
+	/**
+	 * 返回字符串对象
+	 * @author mawujun 16064988 
+	 * @date:   2019年1月15日 下午5:20:59  
+	 * @param obj
+	 * @param deft
+	 * @return
+	 */
+	public String getString(Object obj,String deft) {
+		if(obj==null) {
+			return deft;
+		} else {
+			return obj.toString();
+		}
+	}
 	
 	/**
 	 * 获取长度固定，的随机字符串，全部是小写
