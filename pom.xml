@@ -8,9 +8,10 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>leon-utils-new Maven Webapp</name>
 	<url>http://maven.apache.org</url>
-	<build>
-		<finalName>leon-utils-new</finalName>
-	</build>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 
 
 	<dependencies>
@@ -28,11 +29,11 @@
 			<version>2.6</version>
 		</dependency>
 		<dependency>
-		    <groupId>org.apache.commons</groupId>
-		    <artifactId>commons-text</artifactId>
-		    <version>1.6</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-text</artifactId>
+			<version>1.6</version>
 		</dependency>
-		
+
 
 		<dependency>
 			<groupId>commons-codec</groupId>
@@ -101,5 +102,7 @@
 
 
 	</dependencies>
-
+	<build>
+		<finalName>leon-utils-new</finalName>
+	</build>
 </project>
