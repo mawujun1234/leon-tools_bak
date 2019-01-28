@@ -831,6 +831,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
     }
 
     /**
+     * 获取文件的后缀名
      * Gets the extension of a filename.
      * <p>
      * This method returns the textual part of the filename after the last dot.
