@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 import java.util.Set;
@@ -248,6 +249,37 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 		return false;
 	}
 
+	/**
+	 * 未null，数组长度未0等都返回false
+	 * @param str
+	 * @return
+	 */
+	public static boolean isNotEmpty(Object str) {
+		if(str ==null) {
+			return false;
+		}
+		if(str instanceof String) {
+			return StringUtils.hasText((String)str);
+		}
+		if(str.getClass().isArray()) {
+			int len=((Object[])str).length;
+			if(len>0) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		if(str instanceof Collection) {
+			return ((Collection)str).size()>0?true:false;
+		}
+		if(str instanceof Map) {
+			return ((Map)str).size()>0?true:false;
+		}
+		if(str instanceof Set) {
+			return ((Set)str).size()>0?true:false;
+		}
+		return true;
+	}
 	/**
 	 * Check whether the given String has actual text. More specifically,
 	 * returns <code>true</code> if the string not <code>null</code>, its length
