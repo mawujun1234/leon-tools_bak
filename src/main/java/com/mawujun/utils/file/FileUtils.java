@@ -88,7 +88,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
 	        } else {  
 	            String[] filelist = baseDir.list();  
 	            for (int i = 0; i < filelist.length; i++) {  
-	                File readfile = new File(baseDirName + "\\" + filelist[i]);  
+	                File readfile = new File(baseDirName + File.separator + filelist[i]);  
 	                //System.out.println(readfile.getName());  
 	                if(!readfile.isDirectory()) {  
 	                    tempName =  readfile.getName();   
@@ -97,7 +97,7 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
 	                        fileList.add(readfile.getAbsoluteFile());   
 	                    }  
 	                } else if(readfile.isDirectory()){  
-	                    findFiles(baseDirName + "\\" + filelist[i],targetFileName,fileList);  
+	                    findFiles(baseDirName + File.separator + filelist[i],targetFileName,fileList);  
 	                }  
 	            }  
 	        }  
