@@ -279,14 +279,24 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils{
 	}
 
 	/**
-	 *  比较两个日期的差距，后面一个日期减去前面的一个日期
+	 * 比较两个日期相差天数，last-pre
 	 * @param var0
 	 * @param var1
+	 * @param var2
+	 * @return
+	 */
+	public static int compareDay(Date pre, Date last) {
+		return compareDate(pre, last,Calendar.DAY_OF_MONTH);
+	}
+	/**
+	 *  比较两个日期的差距，后面一个日期减去前面的一个日期:last-pre
+	 * @param pre
+	 * @param last
 	 * @param var2 Calendar.SECOND,Calendar.MINUTE,Calendar.HOUR,Calendar.DAY_OF_MONTH
 	 * @return
 	 */
-	public static int compareDate(Date var0, Date var1, int var2) {
-		long var3 = var1.getTime() - var0.getTime();
+	public static int compareDate(Date pre, Date last, int var2) {
+		long var3 = last.getTime() - pre.getTime();
 		if (var2 == Calendar.MINUTE) {
 			var3 = var3 / 60000;
 		} else if (var2 == Calendar.HOUR) {
