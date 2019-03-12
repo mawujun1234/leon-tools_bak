@@ -41,16 +41,16 @@ public class HttpClientUtilsTest {
 		
 		
 		String paramStr=JSONObject.toJSONString(params);
-		result=HttpClientUtils.doPostJson(baseurl+"/doPostJson", paramStr);
+		result=HttpClientUtils.doPostJsonBody(baseurl+"/doPostJson", paramStr);
 		Assert.assertEquals(paramStr, result);
 		
-		result=HttpClientUtils.doPostJson(baseurl+"/doPostJson1", paramStr);
+		result=HttpClientUtils.doPostJsonBody(baseurl+"/doPostJson1", paramStr);
 		Assert.assertEquals("{\"age\":111,\"name\":\"222\"}", result);
 		
 		Map<String,Object> header=new HashMap<String,Object>();
 		header.put("aaa", "333");
 		header.put("bbb", "444");
-		result=HttpClientUtils.doPostJson(baseurl+"/doPostJson2", header,paramStr);
+		result=HttpClientUtils.doPostJsonBody(baseurl+"/doPostJson2", header,paramStr);
 		Assert.assertEquals("111222333444", result);
 		
 		File file=new File(FileUtils.getProjectPath()+"/src/test/java/test/mawujun/utils/http/HttpClientUtilsTest.java");

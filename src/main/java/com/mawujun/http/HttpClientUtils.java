@@ -38,6 +38,7 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.mawujun.exception.BizException;
 import com.mawujun.utils.string.StringUtils;
 
 public class HttpClientUtils {
@@ -59,8 +60,14 @@ public class HttpClientUtils {
         return doGetSSL(url, params, CHARSET);
     }
 
-    public static String doPost(String url, Map<String, Object> params) throws IOException {
-        return doPost(url, params, CHARSET);
+    public static String doPost(String url, Map<String, Object> params)  {
+        try {
+			return doPost(url, params, CHARSET);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new BizException("请求发生异常!",e);
+		}
     }
     /**
      * 
@@ -68,8 +75,8 @@ public class HttpClientUtils {
      * @param param json的内容
      * @return
      */
-    public static String doPostJson(String url,String param){
-    	return doPostJson( url,null,  param);
+    public static String doPostJsonBody(String url,String param){
+    	return doPostJsonBody( url,null,  param);
     }
     /**
      * 
@@ -78,7 +85,7 @@ public class HttpClientUtils {
      * @param param xml的内容
      * @return
      */
-    public static String doPostJson(String url,Map<String, Object> headers, String param){
+    public static String doPostJsonBody(String url,Map<String, Object> headers, String param){
         return doPostBody(url,headers,ContentType.APPLICATION_JSON,param);
     }
     
@@ -88,8 +95,8 @@ public class HttpClientUtils {
      * @param param xml的内容
      * @return
      */
-    public static String doPostXml(String url,String param){
-    	return doPostXml( url,null,  param);
+    public static String doPostXmlBody(String url,String param){
+    	return doPostXmlBody( url,null,  param);
     }
     /**
      * 
@@ -98,7 +105,7 @@ public class HttpClientUtils {
      * @param param json的内容
      * @return
      */
-    public static String doPostXml(String url,Map<String, Object> headers, String param){
+    public static String doPostXmlBody(String url,Map<String, Object> headers, String param){
         return doPostBody(url,headers,ContentType.APPLICATION_XML,param);
     }
     

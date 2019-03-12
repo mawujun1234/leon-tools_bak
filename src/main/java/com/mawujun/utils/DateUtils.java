@@ -14,6 +14,8 @@ import java.util.Map.Entry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.mawujun.exception.BizException;
+
 public class DateUtils extends org.apache.commons.lang3.time.DateUtils{
 
     
@@ -21,17 +23,22 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils{
 	/**
 	 * yyyy-MM-dd
 	 */
-	public static final Integer DATE_SHORT = 0;
+	public static final String DATE_SHORT = "yyyy-MM-dd";
 	
-	private static final String date_pattern_file="date.pattern.properties";
-	private static final String date_pattern_prefix="regular";
+	public static final String DATE_SHORT1 = "yyyyMMdd";
 	/**
 	 * yyyy-MM-dd HH:mm:ss
 	 */
-	public static final Integer DATE_TIME=1;
-	static HashMap<Integer,SimpleDateFormat> cache_format=new HashMap<Integer,SimpleDateFormat>();
+	public static final String DATE_TIME="yyyy-MM-dd HH:mm:ss";
+	
+	
+	private static final String date_pattern_file="date.pattern.properties";
+	private static final String date_pattern_prefix="regular";
+	
+	static HashMap<String,SimpleDateFormat> cache_format=new HashMap<String,SimpleDateFormat>();
 	static {
 
+		cache_format.put(DATE_SHORT1, new SimpleDateFormat("yyyyMMdd"));
 		cache_format.put(DATE_SHORT, new SimpleDateFormat("yyyy-MM-dd"));
 		cache_format.put(DATE_TIME, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
 	}
@@ -132,18 +139,28 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils{
 		return var1.getTimeInMillis();
 	}
 
-	/**
-	 * 
-	 * @param date
-	 * @param format DateUtils.DATE_TIME
-	 * @return
-	 */
-	public static String date2String(Date date, int format) {
-		return date == null ? " " : cache_format.get(format).format(date);
+//	/**
+//	 * 
+//	 * @param date
+//	 * @param format DateUtils.DATE_TIME
+//	 * @return
+//	 */
+//	public static String date2String(Date date, String format) {
+//		return date == null ? " " : getSimpleDateFormat(format).format(date);
+//	}
+	
+	public static SimpleDateFormat getSimpleDateFormat(String format) {
+		SimpleDateFormat var2 = cache_format.get(format);
+		if(format==null) {
+			var2=new SimpleDateFormat(format);
+			cache_format.put(format,var2);
+		}
+		return var2;
 	}
 
 	public static String date2String(Date date, String format) {
-		SimpleDateFormat var2 = new SimpleDateFormat(format);
+		SimpleDateFormat var2 = getSimpleDateFormat(format);
+		
 		return var2.format(date);
 	}
 
@@ -154,12 +171,18 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils{
 	 * @return
 	 */
 	public static String date2String(Date var0) {
-		return cache_format.get(DATE_TIME).format(var0);
+		SimpleDateFormat format = getSimpleDateFormat(DATE_TIME);
+		return format.format(var0);
 	}
 
-    
-	public static long string2Long(String var0, int var1) {
-		return date2Long(string2Date(var0, var1));
+    /**
+     * 字符串日期格式变成long类型
+     * @param datestr
+     * @param format
+     * @return
+     */
+	public static long string2Long(String datestr, String format) {
+		return date2Long(string2Date(datestr, format));
 	}
 
 	public static Date getDateNow() {
@@ -173,15 +196,34 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils{
 	public static String getStringNow() {
 		return date2String(getDateNow(), DATE_TIME);
 	}
+	/**
+	 * 返回的格式为yyy-MM-dd
+	 * @return
+	 */
+	public static String getStringNowYmd() {
+		Calendar var1 = Calendar.getInstance();
+		SimpleDateFormat format = getSimpleDateFormat(DATE_SHORT);
+		return format.format(var1.getTime());
+	}
+	/**
+	 * 返回的格式为yyyMMdd
+	 * @return
+	 */
+	public static String getStringNowYmd1() {
+		Calendar var1 = Calendar.getInstance();
+		SimpleDateFormat format = getSimpleDateFormat(DATE_SHORT1);
+		return format.format(var1.getTime());
+	}
 
 	/**
-	 * 
+	 * 自定义日期格式
 	 * @param DateUtils.DATE_TIME
 	 * @return
 	 */
-	public static String getStringNow(int format) {
+	public static String getStringNow(String formatstr) {
 		Calendar var1 = Calendar.getInstance();
-		return cache_format.get(format).format(var1.getTime());
+		SimpleDateFormat format = getSimpleDateFormat(formatstr);
+		return format.format(var1.getTime());
 	}
 
 	public static long getLongNow() {
@@ -193,56 +235,64 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils{
 	 * @param var1
 	 * @return
 	 */
-	public static Date string2Date(String var0, int var1) {
-		if (var0==null || "".equals(var0)) {
-			return Calendar.getInstance().getTime();
-		} else {
-			if (var1 == -1) {
-				int var2 = var0.indexOf("-");
-				if (var2 > 0) {
-					var2 = var0.indexOf(":");
-					if (var2 > 0) {
-						var1 = 1;
-					} else if (var0.indexOf("-", var2 + 1) > 0) {
-						var1 = 0;
-					} else {
-						var1 = 8;
-					}
-				} else {
-					var2 = var0.indexOf(":");
-					if (var2 <= 0) {
-						return Calendar.getInstance().getTime();
-					}
-
-					var1 = 2;
-				}
-			}
-
-			DateFormat var8 = cache_format.get(var1);
-			Date var3 = null;
-
-			String var5;
-            try {
-                var3 = var8.parse(var0);
-            } catch (ParseException var6) {
-                var5 = "解析日期{" + var0 + "}格式{" + ((SimpleDateFormat)var8).toPattern() + "}异常!";
-                if (logger.isDebugEnabled()) {
-                	logger.error(var5, var6);
-                } else {
-                	logger.error(var5);
-                }
-            } catch (Exception var7) {
-                var3 = Calendar.getInstance().getTime();
-                var5 = "转换日期{" + var0 + "}为{" + ((SimpleDateFormat)var8).toPattern() + "}是格式时异常!";
-                if (logger.isDebugEnabled()) {
-                	logger.error(var5, var7);
-                } else {
-                	logger.error(var5);
-                }
-            }
-
-			return var3;
+	public static Date string2Date(String datestr, String formatstr) {
+		SimpleDateFormat format = getSimpleDateFormat(formatstr);
+		try {
+			return format.parse(datestr);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new BizException("日期格式化失败",e);
 		}
+//		if (var0==null || "".equals(var0)) {
+//			return Calendar.getInstance().getTime();
+//		} else {
+//			if (var1 == -1) {
+//				int var2 = var0.indexOf("-");
+//				if (var2 > 0) {
+//					var2 = var0.indexOf(":");
+//					if (var2 > 0) {
+//						var1 = 1;
+//					} else if (var0.indexOf("-", var2 + 1) > 0) {
+//						var1 = 0;
+//					} else {
+//						var1 = 8;
+//					}
+//				} else {
+//					var2 = var0.indexOf(":");
+//					if (var2 <= 0) {
+//						return Calendar.getInstance().getTime();
+//					}
+//
+//					var1 = 2;
+//				}
+//			}
+//
+//			DateFormat var8 = cache_format.get(var1);
+//			Date var3 = null;
+//
+//			String var5;
+//            try {
+//                var3 = var8.parse(var0);
+//            } catch (ParseException var6) {
+//                var5 = "解析日期{" + var0 + "}格式{" + ((SimpleDateFormat)var8).toPattern() + "}异常!";
+//                if (logger.isDebugEnabled()) {
+//                	logger.error(var5, var6);
+//                } else {
+//                	logger.error(var5);
+//                }
+//            } catch (Exception var7) {
+//                var3 = Calendar.getInstance().getTime();
+//                var5 = "转换日期{" + var0 + "}为{" + ((SimpleDateFormat)var8).toPattern() + "}是格式时异常!";
+//                if (logger.isDebugEnabled()) {
+//                	logger.error(var5, var7);
+//                } else {
+//                	logger.error(var5);
+//                }
+//            }
+//
+//			return var3;
+//		}
 	}
 	/**
 	 * 把当前日期和参数日期进行比较，当前时间减去参数的时间
