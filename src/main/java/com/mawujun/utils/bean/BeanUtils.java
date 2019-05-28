@@ -11,14 +11,17 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.converters.DateConverter;
 
+import com.mawujun.exception.BizException;
 import com.mawujun.utils.Assert;
 import com.mawujun.utils.ReflectionUtils;
 import com.mawujun.utils.string.StringUtils;
@@ -204,6 +207,52 @@ public abstract class BeanUtils {
 	public static <T> T convert(String[] values, Class<T> toType) {
 		return (T)ConvertUtils.convert(values, toType);
 	}
+	/**
+	 * 把map转换成对象
+	 * @param map
+	 * @param beanClass
+	 * @return
+	 * @throws Exception
+	 */
+	public static <T> T mapToObject(Map<String, Object> map, Class<T> beanClass)  {    
+        if (map == null) {
+            return null;
+        }
+ 
+        T obj;
+		try {
+			obj = beanClass.newInstance();
+			org.apache.commons.beanutils.BeanUtils.populate(obj, map);
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			throw new BizException("创建对象失败!",e);
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			throw new BizException("创建对象失败,属性不可以访问!",e);
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			throw new BizException("创建对象失败，目标对象不可以实例化!",e);
+		}   
+ 
+        return obj;
+    }    
+
+	/**
+	 * 把对象转换成map
+	 * @param obj
+	 * @return
+	 */
+	public static Map<?, ?> objectToMap(Object obj) {
+		if (obj == null) {
+			return null;
+		}
+		return new org.apache.commons.beanutils.BeanMap(obj);
+	}
+	  
+
 	
 //	 /**
 //     * <p>Copy the specified property value to the specified destination bean,
