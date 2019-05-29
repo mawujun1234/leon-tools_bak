@@ -11,6 +11,7 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -207,14 +208,17 @@ public abstract class BeanUtils {
 	public static <T> T convert(String[] values, Class<T> toType) {
 		return (T)ConvertUtils.convert(values, toType);
 	}
+	
 	/**
-	 * 把map转换成对象
+	 * 把map转换成对象，aaa111bb转换成Inter类型不会报错，最后的值是0；
+	 * 不支持字符串的日期转换成Date类型的日期。
 	 * @param map
 	 * @param beanClass
 	 * @return
 	 * @throws Exception
 	 */
-	public static <T> T mapToObject(Map<String, Object> map, Class<T> beanClass)  {    
+	public static <T> T mapToObject(Map<String, Object> map, Class<T> beanClass)  {  
+
         if (map == null) {
             return null;
         }
@@ -238,7 +242,73 @@ public abstract class BeanUtils {
 		}   
  
         return obj;
+    } 
+	/**
+	 * 把map转换成对象
+	 * @param map
+	 * @param beanClass
+	 * @return
+	 * @throws Exception
+	 */
+	public static <T> T mapToObject1(Map<String, Object> map, Class<T> beanClass)  {  
+		if (map == null) {
+			return null;
+		}
+		T obj;
+		try {
+			obj = beanClass.newInstance();
+
+			Field[] fields = obj.getClass().getDeclaredFields();
+			for (Field field : fields) {
+				int mod = field.getModifiers();
+				if (Modifier.isStatic(mod) || Modifier.isFinal(mod) || !map.containsKey(field.getName())) {
+					continue;
+				}
+
+				field.setAccessible(true);
+				field.set(obj, com.mawujun.utils.ConvertUtils.convert1(map.get(field.getName()), field.getType()));
+			}
+		} catch (IllegalAccessException e) {
+			throw new BizException("创建对象失败,属性不可以访问!",e);
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			throw new BizException("创建对象失败,实例化对象失败!",e);
+		}
+		
+		 
+		return obj;
     }    
+	
+	 // Map --> Bean 1: 利用Introspector,PropertyDescriptor实现 Map --> Bean  
+	   public static <T> T  mapToObject2(Map<String, Object> map, Class<T> beanClass) {  
+		   if (map == null) {
+				return null;
+			}
+		   T obj=null;
+	       try {  
+	    	   obj = beanClass.newInstance();
+	           BeanInfo beanInfo = Introspector.getBeanInfo(beanClass);  
+	           PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();  
+	 
+	           for (PropertyDescriptor property : propertyDescriptors) {  
+	               String key = property.getName();  
+	 
+	               if (map.containsKey(key)) {  
+	                   Object value = map.get(key);  
+	                   // 得到property对应的setter方法  
+	                   Method setter = property.getWriteMethod();  
+	                   setter.invoke(obj, value);  
+	               }  
+	 
+	           }  
+	 
+	       } catch (Exception e) {  
+	           System.out.println("transMap2Bean Error " + e);  
+	       }  
+	 
+	       return obj;  
+	 
+	   }  
 
 	/**
 	 * 把对象转换成map
