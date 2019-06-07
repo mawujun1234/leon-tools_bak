@@ -97,6 +97,12 @@ public class Assert {
 			throw new IllegalArgumentException(StrUtil.format(errorMsgTemplate, params));
 		}
 	}
+	
+	public static void isBlank(String object, String errorMsgTemplate, Object... params) throws IllegalArgumentException {
+		if (object != null) {
+			throw new IllegalArgumentException(StrUtil.format(errorMsgTemplate, params));
+		}
+	}
 
 	/**
 	 * 断言对象是否为{@code null} ，如果不为{@code null} 抛出{@link IllegalArgumentException} 异常
