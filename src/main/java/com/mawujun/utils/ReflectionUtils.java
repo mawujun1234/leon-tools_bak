@@ -22,6 +22,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.mawujun.convert.Convert;
 import com.mawujun.utils.string.StringUtils;
 
 /**
@@ -586,7 +587,7 @@ public class ReflectionUtils {
 	 */
 	public static Object convertStringToObject(String value, Class<?> toType) {
 		try {
-			return ConvertUtils.convert(value, toType);
+			return Convert.convert(toType,value);
 		} catch (Exception e) {
 			throw convertReflectionExceptionToUnchecked(e);
 		}

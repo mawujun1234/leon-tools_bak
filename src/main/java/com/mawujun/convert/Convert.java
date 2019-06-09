@@ -24,7 +24,7 @@ import com.mawujun.util.StrUtil;
 /**
  * 类型转换器
  * 
- * @author xiaoleilu
+ * @author mawujun
  * 
  */
 public class Convert {
