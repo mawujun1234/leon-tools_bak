@@ -10,8 +10,6 @@ import org.junit.Test;
 
 import com.mawujun.convert.Convert;
 
-import test.mawujun.utils.model.Sex;
-
 public class ConvertTest1 {
 	SimpleDateFormat yyyyMMdd=new SimpleDateFormat("yyyy-MM-dd");
 	SimpleDateFormat yyyyMMddHHmmss=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

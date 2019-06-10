@@ -1,4 +1,4 @@
-package com.mawujun.utils;
+package com.mawujun.util;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,9 +10,6 @@ import java.util.Enumeration;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import com.mawujun.util.StringTokenizerUtils;
-
 import java.util.Properties;
 import java.util.Set;
 

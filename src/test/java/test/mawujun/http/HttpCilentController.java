@@ -1,4 +1,4 @@
-package test.mawujun.utils.http;
+package test.mawujun.http;
 
 import java.io.InputStream;
 

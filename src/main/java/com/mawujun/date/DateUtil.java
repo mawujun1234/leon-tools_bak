@@ -19,8 +19,8 @@ import com.mawujun.date.format.DateParser;
 import com.mawujun.date.format.DatePrinter;
 import com.mawujun.date.format.FastDateFormat;
 import com.mawujun.lang.Validator;
+import com.mawujun.util.PropertiesUtils;
 import com.mawujun.util.StrUtil;
-import com.mawujun.utils.PropertiesUtils;
 
 /**
  * 时间工具类
