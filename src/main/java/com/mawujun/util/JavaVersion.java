@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mawujun.utils;
+package com.mawujun.util;
 
 /**
  * <p>An enum representing all the versions of the Java specification.

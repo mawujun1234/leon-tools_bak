@@ -1,4 +1,4 @@
-package com.mawujun.utils.thread.http;
+package com.mawujun.thread.http;
 
 import java.io.IOException;
 

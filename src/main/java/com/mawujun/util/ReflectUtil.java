@@ -2,15 +2,28 @@ package com.mawujun.util;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import org.apache.commons.beanutils.PropertyUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.mawujun.collection.CollectionUtil;
 import com.mawujun.convert.Convert;
 import com.mawujun.exceptions.UtilException;
+import com.mawujun.io.FileUtil;
 import com.mawujun.lang.Assert;
 import com.mawujun.lang.Filter;
 import com.mawujun.lang.SimpleCache;
@@ -18,11 +31,12 @@ import com.mawujun.lang.SimpleCache;
 /**
  * 反射工具类
  * 
- * @author Looly
- * @since 3.0.9
+ * @author mawujun
+ * 
  */
 public class ReflectUtil {
-
+	private static Logger logger=LoggerFactory.getLogger(FileUtil.class);
+	
 	/** 构造对象缓存 */
 	private static final SimpleCache<Class<?>, Constructor<?>[]> CONSTRUCTORS_CACHE = new SimpleCache<>();
 	/** 字段缓存 */
@@ -89,6 +103,438 @@ public class ReflectUtil {
 		Assert.notNull(beanClass);
 		return beanClass.getDeclaredConstructors();
 	}
+	//===============================================================================
+	/**
+	 * 是不是包装类型
+	 * @param clz
+	 * @return
+	 */
+	public static boolean isWrapClass(Object value) { 
+        try { 
+           Class clz=value.getClass();
+           return ((Class) clz.getField("TYPE").get(null)).isPrimitive();
+        } catch (Exception e) { 
+            return false; 
+        } 
+    } 
+
+	public static boolean isWrapClass(Class clz) {
+		try {
+			return ((Class) clz.getField("TYPE").get(null)).isPrimitive();
+		} catch (Exception e) {
+			return false;
+		}
+	}
+	
+	
+	/**
+	 * 如果是基本类型和基本类型的包装类，或是String，Date，就返回true
+	 * @param clz
+	 * @return
+	 */
+	public static boolean isBaseType(Object value){
+		//如果是基本类型就返回true
+		if(value instanceof String || value instanceof Date || value.getClass().isPrimitive() || isWrapClass(value.getClass())){
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * 如果是基本类型和基本类型的包装类，或是string，Date，就返回true
+	 * @param clz
+	 * @return
+	 */
+	public static boolean isBaseType(Class clz){
+		//如果是基本类型就返回true
+		if(clz == String.class || clz==Date.class || clz==java.sql.Date.class || clz==java.sql.Timestamp.class || clz.isPrimitive() || isWrapClass(clz)){
+			return true;
+		}
+		return false;
+	}
+	/**
+	 * 判断是不是集合类型
+	 * @param value
+	 * @return
+	 */
+	public static boolean  isCollectionMap(Object value){
+		if(Collection.class.isInstance(value) || Map.class.isInstance(value)){
+			return true;
+		}
+		return false;
+	}
+	/**
+	 * 判断当前类型是否为数组
+	 * 
+	 * @return true of false
+	 */
+	public static boolean isArray(Object obj) {
+		return obj.getClass().isArray();
+	}
+	/**
+	 * 判断当前类型是否为容器，包括 Map，Collection, 以及数组
+	 * 
+	 * @return true of false
+	 */
+	public static boolean isContainer(Object obj) {
+		return isColl(obj) || isMap(obj);
+	}
+	/**
+	 * @return 当前类型是否是数组或者集合
+	 */
+	public static boolean isColl(Object obj) {
+		return isArray(obj) || isCollection(obj);
+	}
+	/**
+	 * 判断当前类型是否为 Map
+	 * 
+	 * @return true of false
+	 */
+	public static boolean isMap(Object obj) {
+		return isOf(obj,Map.class);
+	}
+	/**
+	 * 判断当前类型是否为 Collection
+	 * 
+	 * @return true of false
+	 */
+	public static boolean isCollection(Object obj) {
+		return isOf(obj,Collection.class);
+	}
+	/**
+	 * @param type
+	 *            类型或接口名
+	 * @return 当前对象是否为一个类型的子类，或者一个接口的实现类
+	 */
+	public static boolean isOf(Object obj,Class<?> type) {
+		return type.isAssignableFrom(obj.getClass());
+	}
+	
+	/**
+	 * 判断当前对象是否为一个类型。精确匹配，即使是父类和接口，也不相等
+	 * 
+	 * @param type
+	 *            类型
+	 * @return 是否相等
+	 */
+	public static boolean is(Object obj,Class<?> type) {
+		return null != type && obj.getClass() == type;
+	}
+	
+	
+	/**
+	 * @return 当前对象是否为字符串
+	 */
+	public static boolean isString(Object obj) {
+		return is(obj,String.class);
+	}
+
+	/**
+	 * @return 当前对象是否为CharSequence的子类
+	 */
+	public static boolean isStringLike(Object obj) {
+		return CharSequence.class.isAssignableFrom(obj.getClass());
+	}
+
+	/**
+	 * @return 当前对象是否为字符
+	 */
+	public static boolean isChar(Object obj) {
+		return is(obj,char.class) || is(obj,Character.class);
+	}
+
+	/**
+	 * @return 当前对象是否为枚举
+	 */
+	public static boolean isEnum(Object obj) {
+		return obj.getClass().isEnum();
+	}
+
+	/**
+	 * @return 当前对象是否为布尔
+	 */
+	public static boolean isBoolean(Object obj) {
+		return is(obj,boolean.class) || is(obj,Boolean.class);
+	}
+
+	/**
+	 * @return 当前对象是否为浮点
+	 */
+	public static boolean isFloat(Object obj) {
+		return is(obj,float.class) || is(obj,Float.class);
+	}
+
+	/**
+	 * @return 当前对象是否为双精度浮点
+	 */
+	public static boolean isDouble(Object obj) {
+		return is(obj,double.class) || is(obj,Double.class);
+	}
+
+	/**
+	 * @return 当前对象是否为整型
+	 */
+	public static boolean isInt(Object obj) {
+		return is(obj,int.class) || is(obj,Integer.class);
+	}
+
+	/**
+	 * @return 当前对象是否为整数（包括 int, long, short, byte）
+	 */
+	public static boolean isIntLike(Object obj) {
+		return isInt(obj) || isLong(obj) || isShort(obj) || isByte(obj) || is(obj,BigDecimal.class);
+	}
+	
+	public static boolean isBigDecimal(Object obj) {
+		return is(obj,BigDecimal.class);
+	}
+
+	/**
+	 * @return 当前类型是不是接口
+	 */
+	public static boolean isInterface(Object obj) {
+		return null == obj ? null : obj.getClass().isInterface();
+	}
+
+	/**
+	 * @return 当前对象是否为小数 (float, dobule)
+	 */
+	public static boolean isDecimal(Object obj) {
+		return isFloat(obj) || isDouble(obj);
+	}
+
+	/**
+	 * @return 当前对象是否为长整型
+	 */
+	public static boolean isLong(Object obj) {
+		return is(obj,long.class) || is(obj,Long.class);
+	}
+
+	/**
+	 * @return 当前对象是否为短整型
+	 */
+	public static boolean isShort(Object obj) {
+		return is(obj,short.class) || is(obj,Short.class);
+	}
+
+	/**
+	 * @return 当前对象是否为字节型
+	 */
+	public static boolean isByte(Object obj) {
+		return is(obj,byte.class) || is(obj,Byte.class);
+	}
+
+	/**
+	 * @return 当前对象是否在表示日期或时间
+	 */
+	public static boolean isDateTimeLike(Object obj) {
+		Class klass=obj.getClass();
+		return Calendar.class.isAssignableFrom(klass)
+				|| java.util.Date.class.isAssignableFrom(klass)
+				|| java.sql.Date.class.isAssignableFrom(klass)
+				|| java.sql.Time.class.isAssignableFrom(klass);
+	}
+	/**
+	 * 如果不是容器，也不是 POJO，那么它必然是个 Obj
+	 * 
+	 * @return true or false
+	 */
+	public static boolean isObj(Object obj) {
+		return isContainer(obj) || isPojo(obj);
+	}
+	/**
+	 * 判断当前类型是否为POJO。 除了下面的类型，其他均为 POJO
+	 * <ul>
+	 * <li>原生以及所有包裹类
+	 * <li>类字符串
+	 * <li>类日期
+	 * <li>非容器
+	 * </ul>
+	 * 
+	 * @return true or false
+	 */
+	public static boolean isPojo(Object obj) {
+		Class klass=obj.getClass();
+		if (klass.isPrimitive() || isEnum(obj))
+			return false;
+
+		if (isStringLike(obj) || isDateTimeLike(obj))
+			return false;
+
+		if (isPrimitiveNumber(obj) || isBoolean(obj) || isChar(obj))
+			return false;
+
+		return !isContainer(obj);
+	}
+	/**
+	 * @return 当前对象是否为原生的数字类型 （即不包括 boolean 和 char）
+	 */
+	public static boolean isPrimitiveNumber(Object obj) {
+		return isInt(obj) || isLong(obj) || isFloat(obj) || isDouble(obj) || isByte(obj) || isShort(obj);
+	}
+	/**
+	 * 判断一个字符串是不是数字
+	 * @author mawujun email:16064988@163.com qq:16064988
+	 * @param input
+	 * @return
+	 */
+	public static boolean isNumber(String input){  
+		return StringUtils.isNumber(input);
+	}
+
+
+	/**
+	 * 判断value实例是不是clz类型，具有继承关系的检查能力，即使value是clz的子类也会返回true
+	 * @param clz
+	 * @param value
+	 * @return
+	 */
+	public static boolean isInstance(Class clz,Object value){
+		return clz.isInstance(value);
+	}
+	/**
+	 * 通过反射,获得Class定义中声明的父类的泛型参数的类型.
+	 * 如无法找到, 返回Object.class.
+	 * eg.
+	 * public UserDao extends HibernateDao<User>
+	 *
+	 * @param clazz The class to introspect
+	 * @return the first generic declaration, or Object.class if cannot be determined
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> Class<T> getSuperClassGenricType(final Class clazz) {
+		return getSuperClassGenricType(clazz, 0);
+	}
+
+	/**
+	 * 通过反射,获得定义Class时声明的父类的泛型参数的类型.
+	 * 如无法找到, 返回Object.class.
+	 * 
+	 * 如public UserDao extends HibernateDao<User,Long>
+	 *
+	 * @param clazz clazz The class to introspect
+	 * @param index the Index of the generic ddeclaration,start from 0.
+	 * @return the index generic declaration, or Object.class if cannot be determined
+	 */
+	@SuppressWarnings("unchecked")
+	public static Class getSuperClassGenricType(final Class clazz, final int index) {
+
+		Type genType = clazz.getGenericSuperclass();
+
+		if (!(genType instanceof ParameterizedType)) {
+			logger.warn(clazz.getSimpleName() + "'s superclass not ParameterizedType");
+			return Object.class;
+		}
+
+		Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+
+		if (index >= params.length || index < 0) {
+			logger.warn("Index: " + index + ", Size of " + clazz.getSimpleName() + "'s Parameterized Type: "
+					+ params.length);
+			return Object.class;
+		}
+		if (!(params[index] instanceof Class)) {
+			logger.warn(clazz.getSimpleName() + " not set the actual class on superclass generic parameter");
+			return Object.class;
+		}
+
+		return (Class) params[index];
+	}
+	/**
+	 * 获取某个接口上定义的泛型类
+	 * @param clazz
+	 * @param index
+	 * @return
+	 */
+	public static Class getGenericInterfaces(final Class clazz, final int index) {
+		Type[] genTypes = clazz.getGenericInterfaces();
+		Type genType=genTypes[0];
+		
+		if (!(genType instanceof ParameterizedType)) {
+			logger.warn(clazz.getSimpleName() + "'s superclass not ParameterizedType");
+			return Object.class;
+		}
+
+		Type[] params = ((ParameterizedType) genType).getActualTypeArguments();
+
+		if (index >= params.length || index < 0) {
+			logger.warn("Index: " + index + ", Size of " + clazz.getSimpleName() + "'s Parameterized Type: "
+					+ params.length);
+			return Object.class;
+		}
+		if (!(params[index] instanceof Class)) {
+			logger.warn(clazz.getSimpleName() + " not set the actual class on superclass generic parameter");
+			return Object.class;
+		}
+
+		return (Class) params[index];
+	}
+	
+
+	/**
+	 * 提取集合中的对象的属性(通过getter函数), 组合成List.
+	 * 
+	 * @param collection 来源集合.
+	 * @param propertyName 要提取的属性名.
+	 */
+	@SuppressWarnings("unchecked")
+	public static List convertElementPropertyToList(final Collection collection, final String propertyName) {
+		List list = new ArrayList();
+
+		try {
+			for (Object obj : collection) {
+				list.add(PropertyUtils.getProperty(obj, propertyName));
+			}
+		} catch (Exception e) {
+			throw convertReflectionExceptionToUnchecked(e);
+		}
+
+		return list;
+	}
+
+	/**
+	 * 提取集合中的对象的属性(通过getter函数), 组合成由分割符分隔的字符串.
+	 * 
+	 * @param collection 来源集合.
+	 * @param propertyName 要提取的属性名.
+	 * @param separator 分隔符.
+	 */
+	@SuppressWarnings("unchecked")
+	public static String convertElementPropertyToString(final Collection collection, final String propertyName,
+			final String separator) {
+		List list = convertElementPropertyToList(collection, propertyName);
+		return StringUtils.join(list, separator);
+	}
+
+	/**
+	 * 转换字符串到相应类型.
+	 * 
+	 * @param value 待转换的字符串
+	 * @param toType 转换目标类型
+	 */
+	public static Object convertStringToObject(String value, Class<?> toType) {
+		try {
+			return Convert.convert(toType,value);
+		} catch (Exception e) {
+			throw convertReflectionExceptionToUnchecked(e);
+		}
+	}
+
+	/**
+	 * 将反射时的checked exception转换为unchecked exception.
+	 */
+	public static RuntimeException convertReflectionExceptionToUnchecked(Exception e) {
+		if (e instanceof IllegalAccessException || e instanceof IllegalArgumentException
+				|| e instanceof NoSuchMethodException) {
+			return new IllegalArgumentException("Reflection Exception.", e);
+		} else if (e instanceof InvocationTargetException) {
+			return new RuntimeException("Reflection Exception.", ((InvocationTargetException) e).getTargetException());
+		} else if (e instanceof RuntimeException) {
+			return (RuntimeException) e;
+		}
+		return new RuntimeException("Unexpected Checked Exception.", e);
+	}
+	
 
 	// --------------------------------------------------------------------------------------------------------- Field
 	/**

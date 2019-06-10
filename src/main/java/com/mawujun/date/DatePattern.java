@@ -33,6 +33,10 @@ public class DatePattern {
 	public final static String NORM_DATETIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
 	/** 标准日期时间格式，精确到秒 {@link FastDateFormat}：yyyy-MM-dd HH:mm:ss */
 	public final static FastDateFormat NORM_DATETIME_FORMAT = FastDateFormat.getInstance(NORM_DATETIME_PATTERN);
+	/** 标准日期时间格式，精确到秒：yyyy-MM-dd HH:mm:ss */
+	public final static String NORM_DATETIME_PATTERN_T = "yyyy-MM-dd'T'HH:mm:ss";
+	/** 标准日期时间格式，精确到秒 {@link FastDateFormat}：yyyy-MM-dd HH:mm:ss */
+	public final static FastDateFormat NORM_DATETIME_FORMAT_T = FastDateFormat.getInstance(NORM_DATETIME_PATTERN_T);
 
 	/** 标准日期时间格式，精确到毫秒：yyyy-MM-dd HH:mm:ss.SSS */
 	public final static String NORM_DATETIME_MS_PATTERN = "yyyy-MM-dd HH:mm:ss.SSS";

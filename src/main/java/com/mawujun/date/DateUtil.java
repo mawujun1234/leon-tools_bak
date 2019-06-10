@@ -5,8 +5,12 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
 
 import com.mawujun.collection.CollUtil;
 import com.mawujun.convert.Convert;
@@ -16,11 +20,12 @@ import com.mawujun.date.format.DatePrinter;
 import com.mawujun.date.format.FastDateFormat;
 import com.mawujun.lang.Validator;
 import com.mawujun.util.StrUtil;
+import com.mawujun.utils.PropertiesUtils;
 
 /**
  * 时间工具类
  * 
- * @author xiaoleilu
+ * @author mawujun
  */
 public class DateUtil {
 
@@ -510,6 +515,19 @@ public class DateUtil {
 		}
 		return DatePattern.NORM_DATETIME_FORMAT.format(date);
 	}
+	/**
+	 * 格式化日期时间，即中间T的日期格式化<br>
+	 * 格式 yyyy-MM-dd	THH:mm:ss
+	 * 
+	 * @param date 被格式化的日期
+	 * @return 格式化后的日期
+	 */
+	public static String formatDateTimeUTC(Date date) {
+		if (null == date) {
+			return null;
+		}
+		return DatePattern.NORM_DATETIME_FORMAT_T.format(date);
+	}
 
 	/**
 	 * 格式化日期部分（不包括时间）<br>
@@ -739,6 +757,107 @@ public class DateUtil {
 
 		// 没有更多匹配的时间格式
 		throw new DateException("No format fit for date String [{}] !", dateStr);
+	}
+	
+	private static final String date_pattern_file="date.pattern.properties";
+	private static final String date_pattern_prefix="regular";
+	/**
+	 * 将日期字符串转换为{@link DateTime}对象，格式：<br>
+	 * <ol>
+	 * <li>yyyy-MM-dd HH:mm:ss</li>
+	 * <li>yyyy/MM/dd HH:mm:ss</li>
+	 * <li>yyyy.MM.dd HH:mm:ss</li>
+	 * <li>yyyy年MM月dd日 HH时mm分ss秒</li>
+	 * <li>yyyy-MM-dd</li>
+	 * <li>yyyy/MM/dd</li>
+	 * <li>yyyy.MM.dd</li>
+	 * <li>HH:mm:ss</li>
+	 * <li>HH时mm分ss秒</li>
+	 * <li>yyyy-MM-dd HH:mm</li>
+	 * <li>yyyy-MM-dd HH:mm:ss.SSS</li>
+	 * <li>yyyyMMddHHmmss</li>
+	 * <li>yyyyMMddHHmmssSSS</li>
+	 * <li>yyyyMMdd</li>
+	 * </ol>
+	 * 
+	 * @param dateStr 日期字符串
+	 * @return 日期
+	 */
+	private static Map<String, String> regularFormat_map=new LinkedHashMap<String,String>(){{
+		
+		this.put("^\\d{4}-\\d{1,2}-\\d{1,2}$", "yyyy-MM-dd");
+		this.put("^\\d{4}/\\d{1,2}/\\d{1,2}$", "yyyy/MM/dd");
+		this.put("^\\d{4}\\.\\d{1,2}\\.\\d{1,2}$", "yyyy.MM.dd");
+		this.put("^\\d{4}\\d{1,2}\\d{1,2}$", "yyyyMMdd");
+		
+		
+		this.put("^\\d{4}-\\d{1,2}-\\d{1,2} {1}\\d{1,2}:\\d{1,2}:\\d{1,2}$", "yyyy-MM-dd HH:mm:ss");
+		//下面这三个未测试
+		this.put("^\\d{4}/\\d{1,2}/\\d{1,2} {1}\\d{1,2}:\\d{1,2}:\\d{1,2}$", "yyyy/MM/dd HH:mm:ss");
+		this.put("^\\d{4}\\.\\d{1,2}\\.\\d{1,2} {1}\\d{1,2}:\\d{1,2}:\\d{1,2}$", "yyyy.MM.dd HH:mm:ss");
+		this.put("^\\d{4}年\\d{1,2}月\\d{1,2}日  {1}\\d{1,2}时\\d{1,2}分\\d{1,2}秒$", "yyyy年MM月dd日 HH时mm分ss秒");
+		this.put("^\\d{4}\\d{1,2}\\d{1,2}\\d{1,2}\\d{1,2}\\d{1,2}$", "yyyyMMddHHmmss");
+		
+		this.put("^\\d{1,2}:\\d{1,2}:\\d{1,2}$", "HH:mm:ss");
+		this.put("^\\d{1,2}时\\d{1,2}分\\d{1,2}秒$", "HH时mm分ss秒");
+		
+		this.put("^\\d{4}-\\d{1,2}-\\d{1,2} {1}\\d{1,2}:\\d{1,2}$","yyyy-MM-dd HH:mm" );	
+		this.put("^\\d{4}-\\d{1,2}-\\d{1,2} {1}\\d{1,2}$","yyyy-MM-dd HH" );
+		
+		this.put("^\\d{4}-\\d{1,2}$", "yyyy-MM");
+		this.put("^\\d{4}$", "yyyy");
+		
+		
+		
+	}};
+	
+	static {
+		Properties properties=PropertiesUtils.load(date_pattern_file).getProperties();
+		if(properties!=null || properties.size()>0) {
+			for(Entry<Object,Object> entry:properties.entrySet()) {
+    			String key=entry.getKey().toString();
+    			if(key.indexOf(date_pattern_prefix)==0) {
+    				DateUtil.addDatePatterns(key.substring(key.indexOf('.')+1), (String)entry.getValue());
+    			}
+			}
+		}
+	}
+	public static void addDatePatterns(String java_pattern,String regular) {
+		regularFormat_map.put(regular, java_pattern);
+	}
+	public static String resolverDateFormat(String date_sr) {
+		String value = date_sr.trim();
+        if ("".equals(value)) {
+            return null;
+        }
+        String format=null;
+        for(Entry<String,String> entry:regularFormat_map.entrySet()) {
+        	if(value.matches(entry.getKey())) {
+        		format= entry.getValue();
+        		break;
+        	}
+        	
+        }
+        if(format==null) {
+        	 throw new IllegalArgumentException("暂时不支持这个格式的解析 '" + date_sr + "',需要新增的话，新建date.pattern.properties文件，按regular.yyyy-MM-dd=^\\\\d{4}-\\\\d{1,2}-\\\\d{1,2}$这种模式编写");
+        }
+        return format;
+//        if(value.matches("^\\d{4}-\\d{1,2}$")){
+//        	return "yyyy-MM";
+//            //return parseDate(source, formarts.get(0));
+//        }else if(value.matches("^\\d{4}-\\d{1,2}-\\d{1,2}$")){
+//        	return "yyyy-MM-dd";
+//            //return parseDate(source, formarts.get(1));
+//        }else if(value.matches("^\\d{4}-\\d{1,2}-\\d{1,2} {1}\\d{1,2}:\\d{1,2}$")){
+//        	return "yyyy-MM-dd HH:mm";
+//           // return parseDate(source, formarts.get(2));
+//        }else if(value.matches("^\\d{4}-\\d{1,2}-\\d{1,2} {1}\\d{1,2}:\\d{1,2}:\\d{1,2}$")){
+//        	return "yyyy-MM-dd HH:mm:ss";
+//            //return parseDate(source, formarts.get(3));
+//        }else {
+//            throw new IllegalArgumentException("暂时不支持这个格式的解析 '" + date_sr + "'");
+//        }
+
 	}
 
 	// ------------------------------------ Parse end ----------------------------------------------

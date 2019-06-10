@@ -1,4 +1,4 @@
-package com.mawujun.utils.thread;
+package com.mawujun.thread;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

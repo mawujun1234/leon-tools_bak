@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.mawujun.utils.string;
+package com.mawujun.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,9 +35,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.ArrayUtils;
-
-import com.mawujun.utils.CollectionUtils;
-import com.mawujun.utils.ObjectUtils;
+import org.apache.commons.lang3.ObjectUtils;
 
 public class StringUtils extends org.apache.commons.lang3.StringUtils {
 	private static final String FOLDER_SEPARATOR = "/";
@@ -1363,7 +1361,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 	 * @return the delimited String
 	 */
 	public static String collectionToDelimitedString(Collection<?> coll, String delim, String prefix, String suffix) {
-		if (CollectionUtils.isEmpty(coll)) {
+		if (ArrayUtil.isEmpty(coll)) {
 			return "";
 		}
 		StringBuilder sb = new StringBuilder();
@@ -1418,7 +1416,10 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 			return "";
 		}
 		if (arr.length == 1) {
-			return ObjectUtils.nullSafeToString(arr[0]);
+			//return ObjectUtils.nullSafeToString(arr[0]);
+			if(arr[0]!=null) {
+				return arr[0].toString();
+			}
 		}
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < arr.length; i++) {

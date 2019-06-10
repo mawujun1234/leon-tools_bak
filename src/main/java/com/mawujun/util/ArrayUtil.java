@@ -6,10 +6,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang3.ObjectUtils;
 
 import com.mawujun.collection.CollectionUtil;
 import com.mawujun.collection.IterUtil;
+import com.mawujun.convert.Convert;
 import com.mawujun.exceptions.UtilException;
 import com.mawujun.lang.Editor;
 import com.mawujun.lang.Filter;
@@ -24,6 +28,46 @@ public class ArrayUtil {
 
 	/** 数组中元素未找到的下标，值为-1 */
 	public static final int INDEX_NOT_FOUND = -1;
+	
+	/**
+	 * 以逗号分隔符，把数组组成字符串，类似：1,2,3,4,5
+	 * @param array
+	 * @return
+	 */
+	 public static String toString(String[] array) {
+		 return toString(array,",");
+	 }
+	
+	/**
+	 * 
+	 * @param array
+	 * @param sperator 分隔符，把数组中的元素以分隔符分开
+	 * @return
+	 */
+    public static String toString(String[] array, String sperator) {
+        if (array == null) {
+            return null;
+        }
+        StringBuilder builder=new StringBuilder();
+       for(String str:array){
+    	   builder.append(str);
+    	   builder.append(sperator);
+       }
+       return builder.substring(0, builder.length()-1);
+    }
+    
+    public static List arrayToList(Object source) {
+		return Arrays.asList(Convert.toList(source));
+	}
+
+    public static boolean isEmpty(Collection collection) {
+		return (collection == null || collection.isEmpty());
+	}
+
+
+	public static boolean isEmpty(Map map) {
+		return (map == null || map.isEmpty());
+	}
 
 	// ---------------------------------------------------------------------- isEmpty
 	/**

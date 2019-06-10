@@ -4,8 +4,10 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.mawujun.collection.CollectionUtil;
+import com.mawujun.exception.BizException;
 import com.mawujun.util.ArrayUtil;
 import com.mawujun.util.StrUtil;
+import com.mawujun.util.StringUtils;
 
 /**
  * 断言<br>
@@ -15,6 +17,29 @@ import com.mawujun.util.StrUtil;
  *
  */
 public class Assert {
+	/**
+	 * text不能为空，也不能为空字符串
+	 * @param text
+	 */
+	public static void hasText(String text) {
+		hasText(text, "[Assertion failed] - this String argument must have text; it must not be null, empty, or blank");
+	}
+
+	/**
+	 * text不能为空，也不能为空字符串
+	 * @param text
+	 */
+	public static void hasText(String text, String message) {
+		if (!StringUtils.hasText(text)) {
+			throw new BizException(message);
+		}
+	}
+
+	public static void hasText(String text, RuntimeException throwIfAssertFail) {
+		if (!StringUtils.hasText(text)) {
+			throw throwIfAssertFail;
+		}
+	}
 
 	/**
 	 * 断言是否为真，如果为 {@code false} 抛出 {@code IllegalArgumentException} 异常<br>

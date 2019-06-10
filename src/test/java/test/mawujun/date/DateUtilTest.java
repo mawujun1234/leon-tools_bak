@@ -28,10 +28,33 @@ import com.mawujun.date.Week;
 /**
  * 时间工具单元测试
  * 
- * @author Looly
+ * @author mawujun
  *
  */
 public class DateUtilTest {
+	
+	@Test
+	public void resolverDateFormatTest() {
+		
+		Assert.assertEquals("yyyy-MM-dd", DateUtil.resolverDateFormat("2018-11-11"));
+		Assert.assertEquals("yyyy/MM/dd", DateUtil.resolverDateFormat("2018/11/11"));
+		Assert.assertEquals("yyyy.MM.dd", DateUtil.resolverDateFormat("2018.11.11"));
+		Assert.assertEquals("yyyyMMdd", DateUtil.resolverDateFormat("20181111"));
+		
+		Assert.assertEquals("yyyy-MM-dd HH:mm:ss", DateUtil.resolverDateFormat("2018-11-11 11:11:11"));
+		Assert.assertEquals("yyyy/MM/dd HH:mm:ss", DateUtil.resolverDateFormat("2018/11/11 11:11:11"));
+		Assert.assertEquals("yyyy.MM.dd HH:mm:ss", DateUtil.resolverDateFormat("2018.11.11 11:11:11"));
+		Assert.assertEquals("yyyy年MM月dd日 HH时mm分ss秒", DateUtil.resolverDateFormat("2018年11月11日  11时11分11秒"));
+		Assert.assertEquals("yyyyMMddHHmmss", DateUtil.resolverDateFormat("20181111111111"));
+		
+		Assert.assertEquals("HH:mm:ss", DateUtil.resolverDateFormat("11:11:11"));
+		Assert.assertEquals("HH时mm分ss秒", DateUtil.resolverDateFormat("11时11分11秒"));
+		
+		Assert.assertEquals("yyyy-MM-dd HH:mm", DateUtil.resolverDateFormat("2018-11-11 11:11"));
+		Assert.assertEquals("yyyy-MM-dd HH", DateUtil.resolverDateFormat("2018-11-11 11"));
+		Assert.assertEquals("yyyy-MM", DateUtil.resolverDateFormat("2018-11"));
+		Assert.assertEquals("yyyy", DateUtil.resolverDateFormat("2018"));
+	}
 
 	@Test
 	public void nowTest() {

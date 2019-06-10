@@ -1,4 +1,4 @@
-package com.mawujun.utils.help;
+package com.mawujun.util;
 
 
 
@@ -6,8 +6,7 @@ package com.mawujun.utils.help;
 
 
 
-import com.mawujun.utils.ArrayUtils;
-import com.mawujun.utils.string.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 
 /**

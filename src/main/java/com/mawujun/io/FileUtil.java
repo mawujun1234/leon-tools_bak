@@ -15,6 +15,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.io.Reader;
+import java.io.Writer;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
@@ -29,6 +30,8 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.security.CodeSource;
+import java.security.ProtectionDomain;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,6 +45,9 @@ import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.mawujun.collection.CollUtil;
 import com.mawujun.io.file.FileCopier;
@@ -68,6 +74,8 @@ import com.mawujun.util.URLUtil;
  *
  */
 public class FileUtil {
+	
+	private static Logger logger=LoggerFactory.getLogger(FileUtil.class);
 
 	/** 类Unix路径分隔符 */
 	private static final char UNIX_SEPARATOR = CharUtil.SLASH;
@@ -84,6 +92,248 @@ public class FileUtil {
 	public static final String JAR_PATH_EXT = ".jar!";
 	/** 当Path为文件形式时, path会加入一个表示文件的前缀 */
 	public static final String PATH_FILE_PRE = URLUtil.FILE_URL_PREFIX;
+	
+	
+	 /**
+	  * 返回java临时目录的字符串形式
+	  * @return
+	  */
+    public static String getTempDirectoryPath() {
+        return System.getProperty("java.io.tmpdir");
+    }
+    
+   /**
+    * 返回java的临时目录
+    * @return
+    */
+    public static File getTempDirectory() {
+        return new File(getTempDirectoryPath());
+    }
+    
+    /**
+	 * 获取class所在的位置
+	 * @return
+	 */
+	public static String getCurrentClassPath(Object obj){
+		return obj.getClass().getResource("").getPath() ;
+	}
+	/**
+	 * 返回某个目录下面的所有文件和目录，不包括子文件夹中的文件
+	 * @author mawujun email:16064988@163.com qq:16064988
+	 * @param directory
+	 * @return
+	 */
+	public static File[] listFiles(File directory){
+		return directory.listFiles();
+	}
+	/**
+	 * 返回某个目录下面的所有文件和目录，不包括子文件夹中的文件
+	 * @author mawujun email:16064988@163.com qq:16064988
+	 * @param directory
+	 * @return
+	 */
+	public static File[] listFiles(String dirPath){
+		return listFiles(new File(dirPath));
+	}
+	
+	 /** 
+     * 递归查找文件 
+     *  //    在此目录中找文件  
+        String baseDIR = "d:/file";   
+        //    找扩展名为txt的文件  
+        String fileName = "*.txt";   
+        FileUtils.findFiles(baseDIR, fileName);   
+        if (resultList.size() == 0) {  
+            System.out.println("No File Fount.");  
+        } else {  
+            for (int i = 0; i < resultList.size(); i++) {  
+                System.out.println(resultList.get(i));//显示查找结果。   
+            }  
+        }  
+     * @param baseDirName  查找的文件夹路径 
+     * @param targetFileName  需要查找的文件名 
+     * @param fileList  查找到的文件集合 
+     */  
+    public static List<File> findFiles(String baseDirName, String targetFileName) {
+    	List<File> files=new ArrayList<File>();
+    	findFiles(baseDirName,targetFileName,files);
+    	return files;
+    }
+   
+    private  static void findFiles(String baseDirName, String targetFileName, List<File> fileList) {  
+        /** 
+         * 算法简述： 
+         * 从某个给定的需查找的文件夹出发，搜索该文件夹的所有子文件夹及文件， 
+         * 若为文件，则进行匹配，匹配成功则加入结果集，若为子文件夹，则进队列。 
+         * 队列不空，重复上述操作，队列为空，程序结束，返回结果。 
+         */  
+        String tempName = null;  
+        //判断目录是否存在  
+        File baseDir = new File(baseDirName);  
+        if (!baseDir.exists() || !baseDir.isDirectory()){  
+            //System.out.println();  
+        	logger.info("文件查找失败：{} 不是一个目录！或者不存在这个目录",baseDirName);
+        } else {  
+            String[] filelist = baseDir.list();  
+            for (int i = 0; i < filelist.length; i++) {  
+                File readfile = new File(baseDirName + File.separator + filelist[i]);  
+                //System.out.println(readfile.getName());  
+                if(!readfile.isDirectory()) {  
+                    tempName =  readfile.getName();   
+                    if (FileUtil.wildcardMatch(targetFileName, tempName)) {  
+                        //匹配成功，将文件名添加到结果集  
+                        fileList.add(readfile.getAbsoluteFile());   
+                    }  
+                } else if(readfile.isDirectory()){  
+                    findFiles(baseDirName + File.separator + filelist[i],targetFileName,fileList);  
+                }  
+            }  
+        }  
+    }  
+      
+    /** 
+     * 通配符匹配 
+     * @param pattern    通配符模式 
+     * @param str    待匹配的字符串 
+     * @return    匹配成功则返回true，否则返回false 
+     */  
+    private static boolean wildcardMatch(String pattern, String str) {  
+        int patternLength = pattern.length();  
+        int strLength = str.length();  
+        int strIndex = 0;  
+        char ch;  
+        for (int patternIndex = 0; patternIndex < patternLength; patternIndex++) {  
+            ch = pattern.charAt(patternIndex);  
+            if (ch == '*') {  
+                //通配符星号*表示可以匹配任意多个字符  
+                while (strIndex < strLength) {  
+                    if (wildcardMatch(pattern.substring(patternIndex + 1),  
+                            str.substring(strIndex))) {  
+                        return true;  
+                    }  
+                    strIndex++;  
+                }  
+            } else if (ch == '?') {  
+                //通配符问号?表示匹配任意一个字符  
+                strIndex++;  
+                if (strIndex > strLength) {  
+                    //表示str中已经没有字符匹配?了。  
+                    return false;  
+                }  
+            } else {  
+                if ((strIndex >= strLength) || (ch != str.charAt(strIndex))) {  
+                    return false;  
+                }  
+                strIndex++;  
+            }  
+        }  
+        return (strIndex == strLength);  
+    }  
+  
+
+/**
+ * 获取class所在的根目录
+ * 获取到的是class目录所在的位置:webapp/class
+ * @return
+ */
+public static String getClassRootPath(Object obj){
+	//return obj.getClass().getResource("/").getPath() ;
+	return FileUtil.getClassRootPath(obj.getClass());
+}
+
+/**
+ * 获取class所在的根目录
+ * 获取到的是class目录所在的位置:webapp/class
+ * @return
+ */
+public static String getClassRootPath(Class<?> clazz){
+	return clazz.getResource("/").getPath() ;
+}
+
+/**
+ * 获取class文件所在的位置
+ * 如果类在jar中，也会返回位置，例如：file:/D:/apache-maven-3.5.4/repository/org/springframework/spring-core/5.0.10.RELEASE/spring-core-5.0.10.RELEASE.jar!/org/springframework/util/
+ * 如果是普通的，返回：/E:/my-workspace/leon-repository/target/test-classes/test/mawujun/jpa/
+ * @param clazz
+ * @return
+ */
+public static String getClassPath(Class<?> clazz){
+	return clazz.getResource("").getPath();
+}
+/**
+ * 获取项目的绝对路径
+ * @param obj
+ * @return
+ */
+public static String getProjectPath(){
+	return System.getProperty("user.dir");
+//	File file = new File("");
+//    String filePath=null;
+//	try {
+//		filePath = file.getCanonicalPath();
+//	} catch (IOException e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//	}
+//    System.out.println(filePath);
+//    return filePath;
+}
+
+/**
+ * 获取类所在的jar路径,或者依赖的项目的路径
+ * file:/D:/apache-maven-3.5.4/repository/org/springframework/spring-core/5.0.10.RELEASE/spring-core-5.0.10.RELEASE.jar!/org/springframework/util/
+ * @param clazz
+ * @return
+ */
+public static URL getJarPath(Class<?> clazz){
+	ProtectionDomain pd = clazz.getProtectionDomain();  
+	CodeSource cs = pd.getCodeSource();  
+	//System.out.println(cs.getLocation()); 
+	return cs.getLocation();
+}
+
+/**
+ * 返回类所在的jar文件的绝对路径,D:/apache-maven-3.5.4/repository/org/springframework/spring-core/5.0.10.RELEASE/spring-core-5.0.10.RELEASE.jar
+ * 如果不是jar中的class，则返回该class所在的classpath：E:/my-workspace/leon-repository/target/test-classes/
+ * @param clazz
+ * @return
+ */
+public static String getJarAbstractPath(Class<?> clazz){
+	ProtectionDomain pd = clazz.getProtectionDomain();  
+	CodeSource cs = pd.getCodeSource();  
+//	cs.getLocation().getPath();
+//	try {
+//		cs.getLocation().toURI();
+//	} catch (URISyntaxException e) {
+//		// TODO Auto-generated catch block
+//		e.printStackTrace();
+//	}
+	URL url=cs.getLocation();
+	if(url.getFile().indexOf(".jar!")==-1) {
+		return url.getFile();
+	} else {
+		return url.getFile().substring(0, url.getFile().indexOf(".jar!")+4);
+	}
+
+}
+public static void copyStream(InputStream in, OutputStream out) throws IOException {
+	final int MAX = 4096;
+	byte[] buf = new byte[MAX];
+	for (int bytesRead = in.read(buf, 0, MAX); bytesRead != -1; bytesRead = in.read(buf, 0, MAX)) {
+		out.write(buf, 0, bytesRead);
+	}
+}
+
+public static void copyStream(Reader in, Writer out) throws IOException {
+	final int MAX = 4096;
+	char[] buf = new char[MAX];
+	for (int bytesRead = in.read(buf, 0, MAX); bytesRead != -1; bytesRead = in.read(buf, 0, MAX)) {
+		out.write(buf, 0, bytesRead);
+	}
+}
+
+	//=========================================================
+    
 
 	/**
 	 * 是否为Windows环境

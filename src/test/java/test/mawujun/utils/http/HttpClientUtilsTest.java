@@ -15,7 +15,7 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.mawujun.http.HttpClientUtils;
-import com.mawujun.utils.file.FileUtils;
+import com.mawujun.io.FileUtil;
 
 import net.minidev.json.JSONObject;
 
@@ -53,7 +53,7 @@ public class HttpClientUtilsTest {
 		result=HttpClientUtils.doPostJsonBody(baseurl+"/doPostJson2", header,paramStr);
 		Assert.assertEquals("111222333444", result);
 		
-		File file=new File(FileUtils.getProjectPath()+"/src/test/java/test/mawujun/utils/http/HttpClientUtilsTest.java");
+		File file=new File(FileUtil.getProjectPath()+"/src/test/java/test/mawujun/utils/http/HttpClientUtilsTest.java");
 		result=HttpClientUtils.doPostFile(baseurl+"/doPostFile","file", file,params);
 		Assert.assertEquals("111222HttpClientUtilsTest.java", result);
 		

@@ -39,7 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.mawujun.exception.BizException;
-import com.mawujun.utils.string.StringUtils;
+import com.mawujun.util.StringUtils;
 
 public class HttpClientUtils {
 	private static Logger logger=LoggerFactory.getLogger(HttpClientUtils.class);

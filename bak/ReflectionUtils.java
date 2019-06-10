@@ -23,7 +23,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.mawujun.convert.Convert;
-import com.mawujun.utils.string.StringUtils;
+import com.mawujun.lang.Assert;
+import com.mawujun.util.ArrayUtil;
+import com.mawujun.util.StringUtils;
 
 /**
  * 反射工具类.
@@ -424,8 +426,8 @@ public class ReflectionUtils {
 	 * 如向上转型到Object仍无法找到, 返回null.
 	 */
 	protected static Field getDeclaredField(final Object object, final String fieldName) {
-		AssertUtils.notNull(object, "object不能为空");
-		AssertUtils.hasText(fieldName, "fieldName");
+		Assert.notNull(object, "object不能为空");
+		Assert.hasText(fieldName, "fieldName");
 		for (Class<?> superClass = object.getClass(); superClass != Object.class; superClass = superClass
 				.getSuperclass()) {
 			try {
@@ -452,7 +454,7 @@ public class ReflectionUtils {
 	 * 如向上转型到Object仍无法找到, 返回null.
 	 */
 	protected static Method getDeclaredMethod(Object object, String methodName, Class<?>[] parameterTypes) {
-		AssertUtils.notNull(object, "object不能为空");
+		Assert.notNull(object, "object不能为空");
 
 		for (Class<?> superClass = object.getClass(); superClass != Object.class; superClass = superClass
 				.getSuperclass()) {
@@ -620,7 +622,8 @@ public class ReflectionUtils {
 	
 	private static void getDeclaredFields(Class clz, List<Field> list){
 		Field[] fields=clz.getDeclaredFields();
-		list.addAll(CollectionUtils.arrayToList(fields));
+		//list.addAll(CollectionUtils.arrayToList(fields));\
+		list.addAll(ArrayUtil.arrayToList(fields));
 		if(clz.getSuperclass()!=null){
 			getDeclaredFields(clz.getSuperclass(),list);
 		}
@@ -637,7 +640,7 @@ public class ReflectionUtils {
 	}
 	private static void getInterfaces(Class clz, List<Class> list){
 		Class[] interfaces=clz.getInterfaces();
-		list.addAll(CollectionUtils.arrayToList(interfaces));
+		list.addAll(ArrayUtil.arrayToList(interfaces));
 		if(clz.getSuperclass()!=null){
 			getInterfaces(clz.getSuperclass(),list);
 		}
@@ -694,8 +697,8 @@ public class ReflectionUtils {
 	 * @return the corresponding Field object, or <code>null</code> if not found
 	 */
 	public static Field getField(Class clazz, String name, Class type) {
-		AssertUtils.notNull(clazz, "Class must not be null");
-		AssertUtils.isTrue(name != null || type != null, "Either name or type of the field must be specified");
+		Assert.notNull(clazz, "Class must not be null");
+		Assert.isTrue(name != null || type != null, "Either name or type of the field must be specified");
 		Class searchType = clazz;
 		while (!Object.class.equals(searchType) && searchType != null) {
 			Field[] fields = searchType.getDeclaredFields();
@@ -779,8 +782,8 @@ public class ReflectionUtils {
 	 * @return the Method object, or <code>null</code> if none found
 	 */
 	public static Method getMethod(Class clazz, String name, Class[] paramTypes) {
-		AssertUtils.notNull(clazz, "Class must not be null");
-		AssertUtils.notNull(name, "Method name must not be null");
+		Assert.notNull(clazz, "Class must not be null");
+		Assert.notNull(name, "Method name must not be null");
 		Class searchType = clazz;
 		while (!Object.class.equals(searchType) && searchType != null) {
 			Method[] methods = (searchType.isInterface() ? searchType.getMethods() : searchType.getDeclaredMethods());
@@ -967,7 +970,7 @@ public class ReflectionUtils {
 	 * <code>false</code> if it needs to be wrapped
 	 */
 	public static boolean declaresException(Method method, Class exceptionType) {
-		AssertUtils.notNull(method, "Method must not be null");
+		Assert.notNull(method, "Method must not be null");
 		Class[] declaredExceptions = method.getExceptionTypes();
 		for (int i = 0; i < declaredExceptions.length; i++) {
 			Class declaredException = declaredExceptions[i];

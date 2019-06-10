@@ -46,6 +46,7 @@ public class Convert {
 	 * 转换为字符串<br>
 	 * 如果给定的值为<code>null</code>，或者转换失败，返回默认值<code>null</code><br>
 	 * 转换失败不会报错
+	 * long[] b = {1,2,3,4,5}; String bStr = Convert.toStr(b);bStr为："[1, 2, 3, 4, 5]"
 	 * 
 	 * @param value 被转换的值
 	 * @return 结果

@@ -23,6 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import com.mawujun.lang.Assert;
+
 
 
 public class AnnotationUtils extends org.apache.commons.lang3.AnnotationUtils{
