@@ -379,7 +379,7 @@ public class ReflectUtil {
 	 * @return
 	 */
 	public static boolean isNumber(String input){  
-		return StringUtils.isNumber(input);
+		return StringUtil.isNumber(input);
 	}
 
 
@@ -503,7 +503,7 @@ public class ReflectUtil {
 	public static String convertElementPropertyToString(final Collection collection, final String propertyName,
 			final String separator) {
 		List list = convertElementPropertyToList(collection, propertyName);
-		return StringUtils.join(list, separator);
+		return StringUtil.join(list, separator);
 	}
 
 	/**

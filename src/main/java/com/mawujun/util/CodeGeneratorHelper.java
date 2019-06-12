@@ -87,7 +87,7 @@ public class CodeGeneratorHelper {
 			return baseCode+sperator+getMinCode(len);
 		}
 		private static String getMinCode(int len){
-			return StringUtils.leftPad("", len, minStr);
+			return StringUtil.leftPad("", len, minStr);
 		}
 		/**
 		 * len最好大于等于basecode中每个节点的位数，否则使用默认的长度忽略len
@@ -104,7 +104,7 @@ public class CodeGeneratorHelper {
 			String codes[]=baseCode.split(sperator);
 			for(int i=0;i<codes.length;i++) {
 				if(codes[i].length()<len){
-					codes[i]=StringUtils.leftPad(codes[i], len, minStr);
+					codes[i]=StringUtil.leftPad(codes[i], len, minStr);
 				}
 			}
 			

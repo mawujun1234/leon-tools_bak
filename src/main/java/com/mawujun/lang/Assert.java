@@ -7,7 +7,7 @@ import com.mawujun.collection.CollectionUtil;
 import com.mawujun.exception.BizException;
 import com.mawujun.util.ArrayUtil;
 import com.mawujun.util.StrUtil;
-import com.mawujun.util.StringUtils;
+import com.mawujun.util.StringUtil;
 
 /**
  * 断言<br>
@@ -30,13 +30,13 @@ public class Assert {
 	 * @param text
 	 */
 	public static void hasText(String text, String message) {
-		if (!StringUtils.hasText(text)) {
+		if (!StringUtil.hasText(text)) {
 			throw new BizException(message);
 		}
 	}
 
 	public static void hasText(String text, RuntimeException throwIfAssertFail) {
-		if (!StringUtils.hasText(text)) {
+		if (!StringUtil.hasText(text)) {
 			throw throwIfAssertFail;
 		}
 	}

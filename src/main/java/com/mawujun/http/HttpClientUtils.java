@@ -39,7 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.mawujun.exception.BizException;
-import com.mawujun.util.StringUtils;
+import com.mawujun.util.StringUtil;
 
 public class HttpClientUtils {
 	private static Logger logger=LoggerFactory.getLogger(HttpClientUtils.class);
@@ -290,7 +290,7 @@ public class HttpClientUtils {
      * @return 页面内容
      */
     public static String doGet(String url, Map<String, Object> params, String charset) {
-        if (StringUtils.isBlank(url)) {
+        if (StringUtil.isBlank(url)) {
             return null;
         }
         try {
@@ -336,7 +336,7 @@ public class HttpClientUtils {
      */
     public static String doPost(String url, Map<String, Object> params, String charset) 
             throws IOException {
-        if (StringUtils.isBlank(url)) {
+        if (StringUtil.isBlank(url)) {
             return null;
         }
         List<NameValuePair> pairs = null;
@@ -385,7 +385,7 @@ public class HttpClientUtils {
      * @return 页面内容
      */
     public static String doGetSSL(String url, Map<String, Object> params, String charset) {
-        if (StringUtils.isBlank(url)) {
+        if (StringUtil.isBlank(url)) {
             return null;
         }
         try {

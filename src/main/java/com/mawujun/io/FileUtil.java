@@ -70,7 +70,7 @@ import com.mawujun.util.URLUtil;
 /**
  * 文件工具类
  * 
- * @author xiaoleilu
+ * @author mawujun 16064988@qq.com
  *
  */
 public class FileUtil {
@@ -94,6 +94,48 @@ public class FileUtil {
 	public static final String PATH_FILE_PRE = URLUtil.FILE_URL_PREFIX;
 	
 	
+	
+	//====================================================
+	/**
+	 * 去掉路径前面的/
+	 * @param path
+	 * @return
+	 */
+	public static String stripStartSlash(final String path) {
+		
+		String val = path==null?"":path.trim();
+		return val.startsWith("/") ? path.trim().substring(1) : path.trim();
+	}
+	
+	/**
+	 * 去掉了路径好后面的/
+	 * @param path
+	 * @return
+	 */
+	public static String stripEndSlash(final String path) {
+
+		String val = path==null?"":path.trim();
+		return val.endsWith("/") ? val.substring(0, path.length() - 1) : val;
+	}
+	/**
+	 * 和并路径
+	 * @param parent
+	 * @param child
+	 * @return
+	 */
+	public static String combine(final String parent, final String child) {
+		
+		String parent1 = (parent == null) ? "" : URLUtil.normalize(parent.trim());
+		String child1 = (child == null) ? "" : URLUtil.normalize(child.trim());
+		
+		if (parent1.equals("")) {
+			return child1;
+		} else if (child1.equals("")) {
+			return parent1;
+		}
+		
+		return FileUtil.stripEndSlash(parent1) + File.separatorChar + FileUtil.stripStartSlash(child1); 
+	}
 	 /**
 	  * 返回java临时目录的字符串形式
 	  * @return

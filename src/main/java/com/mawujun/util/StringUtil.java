@@ -37,7 +37,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ObjectUtils;
 
-public class StringUtils extends org.apache.commons.lang3.StringUtils {
+public class StringUtil extends org.apache.commons.lang3.StringUtils {
 	private static final String FOLDER_SEPARATOR = "/";
 
 	private static final String WINDOWS_FOLDER_SEPARATOR = "\\";
@@ -257,7 +257,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 			return false;
 		}
 		if(str instanceof String) {
-			return StringUtils.hasText((String)str);
+			return StringUtil.hasText((String)str);
 		}
 		if(str.getClass().isArray()) {
 			int len=((Object[])str).length;
