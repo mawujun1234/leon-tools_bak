@@ -185,6 +185,9 @@ public class URLEncoder {
 		this.encodeSpaceAsPlus = encodeSpaceAsPlus;
 	}
 
+	public String encode(String path, String charset) {
+		return encode(path,Charset.forName(charset));
+	}
 	/**
 	 * 将URL中的字符串编码为%形式
 	 *
