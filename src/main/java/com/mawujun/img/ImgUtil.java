@@ -112,7 +112,7 @@ public class ImgUtil {
 	 * @since 3.2.2
 	 */
 	public static void scale(Image srcImg, File destFile, float scale) throws IORuntimeException {
-		Img.from(srcImg).setTargetImageType(FileUtil.extName(destFile)).scale(scale).write(destFile);
+		Img.from(srcImg).setTargetImageType(FileUtil.getExtName(destFile)).scale(scale).write(destFile);
 	}
 
 	/**
@@ -492,8 +492,8 @@ public class ImgUtil {
 		Assert.notNull(destImageFile);
 		Assert.isFalse(srcImageFile.equals(destImageFile), "Src file is equals to dest file!");
 
-		final String srcExtName = FileUtil.extName(srcImageFile);
-		final String destExtName = FileUtil.extName(destImageFile);
+		final String srcExtName = FileUtil.getExtName(srcImageFile);
+		final String destExtName = FileUtil.getExtName(destImageFile);
 		if (StrUtil.equalsIgnoreCase(srcExtName, destExtName)) {
 			// 扩展名相同直接复制文件
 			FileUtil.copy(srcImageFile, destImageFile, true);
@@ -1447,7 +1447,7 @@ public class ImgUtil {
 		ImageOutputStream out = null;
 		try {
 			out = getImageOutputStream(targetFile);
-			write(image, FileUtil.extName(targetFile), out);
+			write(image, FileUtil.getExtName(targetFile), out);
 		} finally {
 			IoUtil.close(out);
 		}

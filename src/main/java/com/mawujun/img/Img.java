@@ -563,7 +563,7 @@ public class Img {
 	 * @throws IORuntimeException IO异常
 	 */
 	public boolean write(File targetFile) throws IORuntimeException {
-		final String formatName = FileUtil.extName(targetFile);
+		final String formatName = FileUtil.getExtName(targetFile);
 		if (StrUtil.isNotBlank(formatName)) {
 			this.targetImageType = formatName;
 		}

@@ -118,15 +118,15 @@ public class FileUtil {
 		return val.endsWith("/") ? val.substring(0, path.length() - 1) : val;
 	}
 	/**
-	 * 和并路径
+	 * 和并路径,并且会自动修复路径
 	 * @param parent
 	 * @param child
 	 * @return
 	 */
 	public static String combine(final String parent, final String child) {
 		
-		String parent1 = (parent == null) ? "" : URLUtil.normalize(parent.trim());
-		String child1 = (child == null) ? "" : URLUtil.normalize(child.trim());
+		String parent1 = (parent == null) ? "" : FileUtil.normalize(parent.trim());
+		String child1 = (child == null) ? "" : FileUtil.normalize(child.trim());
 		
 		if (parent1.equals("")) {
 			return child1;
@@ -135,6 +135,41 @@ public class FileUtil {
 		}
 		
 		return FileUtil.stripEndSlash(parent1) + File.separatorChar + FileUtil.stripStartSlash(child1); 
+	}
+	/**
+	 * 根据一个字符串看路径获取文件的名称
+	 * filepath可以是如下的值：
+	 *    aaa/bbb/cc.jpg，
+	 *    aaa\\bbb\\cc.jpg，
+	 *    cc.jpg，
+	 * @param filepath
+	 * @return
+	 */
+	public static String getFileName(String filepath) {
+		if(filepath==null || "".equals(filepath.trim())) {
+			return null;
+		}
+		int index=filepath.lastIndexOf("/");
+		if(index==-1) {
+			index=filepath.lastIndexOf("\\");
+		}
+		return index==-1?filepath:filepath.substring(index+1);
+	}
+	/**
+	 * 获取一个文件路径的父路径,aaa/bbb/cc.jpg，就返回aaa/bbb
+	 * @param filepath
+	 * @return
+	 */
+	public static String getFileParentPath(final String filepath) {
+		if(filepath==null || "".equals(filepath.trim())) {
+			return null;
+		}
+		String filepath_temp=normalize(filepath);
+		int index=filepath_temp.lastIndexOf("/");
+		if(index==-1) {
+			index=filepath.lastIndexOf("\\");
+		}
+		return index==-1?"":filepath.substring(0,index);
 	}
 	 /**
 	  * 返回java临时目录的字符串形式
@@ -1401,7 +1436,7 @@ public static void copyStream(Reader in, Writer out) throws IOException {
 	 */
 	public static File rename(File file, String newName, boolean isRetainExt, boolean isOverride) {
 		if (isRetainExt) {
-			newName = newName.concat(".").concat(FileUtil.extName(file));
+			newName = newName.concat(".").concat(FileUtil.getExtName(file));
 		}
 		final Path path = file.toPath();
 		final CopyOption[] options = isOverride ? new CopyOption[] { StandardCopyOption.REPLACE_EXISTING } : new CopyOption[] {};
@@ -2095,14 +2130,14 @@ public static void copyStream(Reader in, Writer out) throws IOException {
 	 * @param file 文件
 	 * @return 扩展名
 	 */
-	public static String extName(File file) {
+	public static String getExtName(File file) {
 		if (null == file) {
 			return null;
 		}
 		if (file.isDirectory()) {
 			return null;
 		}
-		return extName(file.getName());
+		return getExtName(file.getName());
 	}
 
 	/**
@@ -2111,7 +2146,7 @@ public static void copyStream(Reader in, Writer out) throws IOException {
 	 * @param fileName 文件名
 	 * @return 扩展名
 	 */
-	public static String extName(String fileName) {
+	public static String getExtName(String fileName) {
 		if (fileName == null) {
 			return null;
 		}

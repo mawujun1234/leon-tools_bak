@@ -20,6 +20,30 @@ import com.mawujun.util.CharsetUtil;
  * @author Looly
  */
 public class FileUtilTest {
+	
+	@Test
+	public void getFileNameTest() {
+		String filename = FileUtil.getFileName("aaa/bbb/cc.jpg");
+		Assert.assertEquals("cc.jpg", filename);
+		
+		filename = FileUtil.getFileName("aaa\\bbb\\cc.jpg");
+		Assert.assertEquals("cc.jpg", filename);
+		
+		filename = FileUtil.getFileName("cc.jpg");
+		Assert.assertEquals("cc.jpg", filename);
+	}
+	@Test
+	public void getgetFileParentPathTest() {
+		String filename = FileUtil.getFileParentPath("aaa/bbb/cc.jpg");
+		Assert.assertEquals("aaa/bbb", filename);
+		
+		filename = FileUtil.getFileParentPath("aaa\\bbb\\cc.jpg");
+		Assert.assertEquals("aaa/bbb", filename);
+		
+		filename = FileUtil.getFileParentPath("cc.jpg");
+		Assert.assertEquals("", filename);
+	}
+	//============================================
 
 	@Test(expected = IllegalArgumentException.class)
 	public void fileTest() {
@@ -295,15 +319,15 @@ public class FileUtilTest {
 	@Test
 	public void extNameTest() {
 		String path = "d:\\aaa\\bbb\\cc\\ddd\\";
-		String mainName = FileUtil.extName(path);
+		String mainName = FileUtil.getExtName(path);
 		Assert.assertEquals("", mainName);
 
 		path = "d:\\aaa\\bbb\\cc\\ddd";
-		mainName = FileUtil.extName(path);
+		mainName = FileUtil.getExtName(path);
 		Assert.assertEquals("", mainName);
 
 		path = "d:\\aaa\\bbb\\cc\\ddd.jpg";
-		mainName = FileUtil.extName(path);
+		mainName = FileUtil.getExtName(path);
 		Assert.assertEquals("jpg", mainName);
 	}
 
