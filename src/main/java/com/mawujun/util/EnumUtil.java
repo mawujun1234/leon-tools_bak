@@ -2,6 +2,7 @@ package com.mawujun.util;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,39 @@ import com.mawujun.map.MapUtil;
  * @since 3.3.0
  */
 public class EnumUtil {
+	/**
+	 * 获取某个枚举值
+	 * @param enumClass 枚举的class
+	 * @param enumName 枚举的名称
+	 * @return
+	 */
+	 public static <E extends Enum<E>> E getEnum(final Class<E> enumClass, final String enumName) {
+	        if (enumName == null) {
+	            return null;
+	        }
+	        try {
+	            return Enum.valueOf(enumClass, enumName);
+	        } catch (final IllegalArgumentException ex) {
+	            return null;
+	        }
+	    }
+	 /**
+	  * 获取某个枚举类下面，所有的枚举值列表
+	  * @param enumClass
+	  * @return
+	  */
+	 public static <E extends Enum<E>> List<E> getEnumList(final Class<E> enumClass) {
+	        return new ArrayList<>(Arrays.asList(enumClass.getEnumConstants()));
+	    }
+	 /**
+	  * 判断某个名称是枚举值中的值
+	  * @param enumClass
+	  * @param enumName
+	  * @return
+	  */
+	  public static <E extends Enum<E>> boolean isValidEnum(final Class<E> enumClass, final String enumName) {
+	        return getEnum(enumClass, enumName) != null;
+	    }
 
 	/**
 	 * 指定类是否为Enum类
