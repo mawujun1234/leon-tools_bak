@@ -41,8 +41,8 @@ import org.slf4j.LoggerFactory;
 import com.mawujun.exception.BizException;
 import com.mawujun.util.StringUtil;
 
-public class HttpClientUtils {
-	private static Logger logger=LoggerFactory.getLogger(HttpClientUtils.class);
+public class HttpClientUtil {
+	private static Logger logger=LoggerFactory.getLogger(HttpClientUtil.class);
 	
 	private static final CloseableHttpClient httpClient;
     public static final String CHARSET = "UTF-8";
@@ -402,7 +402,7 @@ public class HttpClientUtils {
             HttpGet httpGet = new HttpGet(url);
 
             // https  注意这里获取https内容，使用了忽略证书的方式，当然还有其他的方式来获取https内容
-            CloseableHttpClient httpsClient = HttpClientUtils.createSSLClientDefault();
+            CloseableHttpClient httpsClient = HttpClientUtil.createSSLClientDefault();
             CloseableHttpResponse response = httpsClient.execute(httpGet);
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode != 200) {

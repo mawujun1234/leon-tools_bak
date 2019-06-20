@@ -14,7 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.mawujun.http.HttpClientUtils;
+import com.mawujun.http.HttpClientUtil;
 import com.mawujun.io.FileUtil;
 
 import net.minidev.json.JSONObject;
@@ -33,35 +33,35 @@ public class HttpClientUtilsTest {
 		Map<String,Object> params=new HashMap<String,Object>();
 		params.put("age", "111");
 		params.put("name", "222");
-		String result=HttpClientUtils.doGet(baseurl+"/doget", params);
+		String result=HttpClientUtil.doGet(baseurl+"/doget", params);
 		Assert.assertEquals("111222", result);
 		
-		result=HttpClientUtils.doPost(baseurl+"/dopost", params);
+		result=HttpClientUtil.doPost(baseurl+"/dopost", params);
 		Assert.assertEquals("111222", result);
 		
 		
 		String paramStr=JSONObject.toJSONString(params);
-		result=HttpClientUtils.doPostJsonBody(baseurl+"/doPostJson", paramStr);
+		result=HttpClientUtil.doPostJsonBody(baseurl+"/doPostJson", paramStr);
 		Assert.assertEquals(paramStr, result);
 		
-		result=HttpClientUtils.doPostJsonBody(baseurl+"/doPostJson1", paramStr);
+		result=HttpClientUtil.doPostJsonBody(baseurl+"/doPostJson1", paramStr);
 		Assert.assertEquals("{\"age\":111,\"name\":\"222\"}", result);
 		
 		Map<String,Object> header=new HashMap<String,Object>();
 		header.put("aaa", "333");
 		header.put("bbb", "444");
-		result=HttpClientUtils.doPostJsonBody(baseurl+"/doPostJson2", header,paramStr);
+		result=HttpClientUtil.doPostJsonBody(baseurl+"/doPostJson2", header,paramStr);
 		Assert.assertEquals("111222333444", result);
 		
 		File file=new File(FileUtil.getProjectPath()+"/src/test/java/test/mawujun/http/HttpClientUtilsTest.java");
-		result=HttpClientUtils.doPostFile(baseurl+"/doPostFile","file", file,params);
+		result=HttpClientUtil.doPostFile(baseurl+"/doPostFile","file", file,params);
 		Assert.assertEquals("111222HttpClientUtilsTest.java", result);
 		
 		Map<String,Object> aaaa=new HashMap<String,Object>();
 		aaaa.put("file", file);
 		aaaa.put("age", "111");
 		aaaa.put("name", "222");
-		result=HttpClientUtils.doPostFile(baseurl+"/doPostFile", aaaa);
+		result=HttpClientUtil.doPostFile(baseurl+"/doPostFile", aaaa);
 		Assert.assertEquals("111222HttpClientUtilsTest.java", result);
 		
 		InputStream is=new FileInputStream(file);
@@ -71,7 +71,7 @@ public class HttpClientUtilsTest {
 		aaaa.put("file2", is);
 		aaaa.put("age", "111");
 		aaaa.put("name", "222");
-		result=HttpClientUtils.doPostFile(baseurl+"/doPostFile1", aaaa);
+		result=HttpClientUtil.doPostFile(baseurl+"/doPostFile1", aaaa);
 		Assert.assertEquals("111222HttpClientUtilsTest.java", result);
      
     }

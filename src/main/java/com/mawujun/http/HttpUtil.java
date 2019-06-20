@@ -6,8 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
@@ -18,16 +20,18 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Vector;
 
+import com.mawujun.exception.BizException;
+
 /**
  * java connection的原始封装
  * @author admin
  *
  */
-public class HttpUtils {
+public class HttpUtil {
 
-	private String defaultContentEncoding="UTF-8";
+	private static String defaultContentEncoding="UTF-8";
 
-	public HttpUtils() {
+	public HttpUtil() {
 		//this.defaultContentEncoding = Charset.defaultCharset().name();
 	}
 
@@ -38,8 +42,8 @@ public class HttpUtils {
 	 * @return 响应对象
 	 * @throws IOException
 	 */
-	public HttpRespons sendGet(String urlString) throws IOException {
-		return this.send(urlString, "GET", null, null);
+	public static HttpRespons sendGet(String urlString) throws IOException {
+		return send(urlString, "GET", null, null);
 	}
 
 	/**
@@ -50,8 +54,14 @@ public class HttpUtils {
 	 * @return 响应对象
 	 * @throws IOException
 	 */
-	public HttpRespons sendGet(String urlString, Map<String, String> params) throws IOException {
-		return this.send(urlString, "GET", params, null);
+	public static HttpRespons sendGet(String urlString, Map<String, String> params)  {
+		try {
+			return send(urlString, "GET", params, null);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new BizException("请求失败:",e);
+		}
 	}
 
 	/**
@@ -63,9 +73,9 @@ public class HttpUtils {
 	 * @return 响应对象
 	 * @throws IOException
 	 */
-	public HttpRespons sendGet(String urlString, Map<String, String> params, Map<String, String> propertys)
+	public static HttpRespons sendGet(String urlString, Map<String, String> params, Map<String, String> propertys)
 			throws IOException {
-		return this.send(urlString, "GET", params, propertys);
+		return send(urlString, "GET", params, propertys);
 	}
 
 	/**
@@ -75,8 +85,8 @@ public class HttpUtils {
 	 * @return 响应对象
 	 * @throws IOException
 	 */
-	public HttpRespons sendPost(String urlString) throws IOException {
-		return this.send(urlString, "POST", null, null);
+	public static HttpRespons sendPost(String urlString) throws IOException {
+		return send(urlString, "POST", null, null);
 	}
 
 	/**
@@ -87,8 +97,8 @@ public class HttpUtils {
 	 * @return 响应对象
 	 * @throws IOException
 	 */
-	public HttpRespons sendPost(String urlString, Map<String, String> params) throws IOException {
-		return this.send(urlString, "POST", params, null);
+	public static HttpRespons sendPost(String urlString, Map<String, String> params) throws IOException {
+		return send(urlString, "POST", params, null);
 	}
 
 	/**
@@ -100,9 +110,9 @@ public class HttpUtils {
 	 * @return 响应对象
 	 * @throws IOException
 	 */
-	public HttpRespons sendPost(String urlString, Map<String, String> params, Map<String, String> propertys)
+	public static HttpRespons sendPost(String urlString, Map<String, String> params, Map<String, String> propertys)
 			throws IOException {
-		return this.send(urlString, "POST", params, propertys);
+		return send(urlString, "POST", params, propertys);
 	}
 
 	/**
@@ -115,8 +125,8 @@ public class HttpUtils {
 	 * @return 响映对象
 	 * @throws IOException
 	 */
-	private HttpRespons send(String urlString, String method, Map<String, String> parameters,
-			Map<String, String> propertys) throws IOException {
+	private static HttpRespons send(String urlString, String method, Map<String, String> parameters,
+			Map<String, String> propertys) throws IOException  {
 		HttpURLConnection urlConnection = null;
 
 		if (method.equalsIgnoreCase("GET") && parameters != null) {
@@ -155,7 +165,7 @@ public class HttpUtils {
 			urlConnection.getOutputStream().flush();
 			urlConnection.getOutputStream().close();
 		}
-		return this.makeContent(urlString, urlConnection);
+		return makeContent(urlString, urlConnection);
 	}
 
 	/**
@@ -165,7 +175,7 @@ public class HttpUtils {
 	 * @return 响应对象
 	 * @throws IOException
 	 */
-	private HttpRespons makeContent(String urlString, HttpURLConnection urlConnection) throws IOException {
+	private static HttpRespons makeContent(String urlString, HttpURLConnection urlConnection) throws IOException  {
 		HttpRespons httpResponser = new HttpRespons();
 		try {
 			InputStream in = urlConnection.getInputStream();
@@ -181,7 +191,7 @@ public class HttpUtils {
 			bufferedReader.close();
 			String ecod = urlConnection.getContentEncoding();
 			if (ecod == null)
-				ecod = this.defaultContentEncoding;
+				ecod = defaultContentEncoding;
 			httpResponser.urlString = urlString;
 			httpResponser.defaultPort = urlConnection.getURL().getDefaultPort();
 			httpResponser.file = urlConnection.getURL().getFile();
@@ -201,9 +211,7 @@ public class HttpUtils {
 			httpResponser.connectTimeout = urlConnection.getConnectTimeout();
 			httpResponser.readTimeout = urlConnection.getReadTimeout();
 			return httpResponser;
-		} catch (IOException e) {
-			throw e;
-		} finally {
+		}  finally {
 			if (urlConnection != null)
 				urlConnection.disconnect();
 		}
@@ -212,8 +220,8 @@ public class HttpUtils {
 	/**
 	 * 默认的响应字符集
 	 */
-	public String getDefaultContentEncoding() {
-		return this.defaultContentEncoding;
+	public static String getDefaultContentEncoding() {
+		return defaultContentEncoding;
 	}
 
 	/**
@@ -474,22 +482,22 @@ public class HttpUtils {
 		return null;
 	}
 
-	// 测试函数
-	public static void main(String args[]) throws Exception {
-		Map<String, String> params = new HashMap<String, String>();
-		params.put("name", "xiazdong");
-		params.put("age", "10");
-		HttpURLConnection conn = (HttpURLConnection) sendGetRequest("http://192.168.0.103:8080/Server/PrintServlet",
-				params, null);
-		int code = conn.getResponseCode();
-		InputStream in = conn.getInputStream();
-		byte[] data = read2Byte(in);
-	}
+//	// 测试函数
+//	public static void main(String args[]) throws Exception {
+//		Map<String, String> params = new HashMap<String, String>();
+//		params.put("name", "xiazdong");
+//		params.put("age", "10");
+//		HttpURLConnection conn = (HttpURLConnection) sendGetRequest("http://192.168.0.103:8080/Server/PrintServlet",
+//				params, null);
+//		int code = conn.getResponseCode();
+//		InputStream in = conn.getInputStream();
+//		byte[] data = read2Byte(in);
+//	}
 
-	/**
-	 * 设置默认的响应字符集
-	 */
-	public void setDefaultContentEncoding(String defaultContentEncoding) {
-		this.defaultContentEncoding = defaultContentEncoding;
-	}
+//	/**
+//	 * 设置默认的响应字符集
+//	 */
+//	public static void setDefaultContentEncoding(String defaultContentEncoding) {
+//		this.defaultContentEncoding = defaultContentEncoding;
+//	}
 }
