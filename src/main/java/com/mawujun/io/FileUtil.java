@@ -97,14 +97,15 @@ public class FileUtil {
 	
 	//====================================================
 	/**
-	 * 去掉路径前面的/
+	 * 往地址上添加斜杠/,如果已经存在不不添加了.
+	 * 不区分linux和window，只是/
 	 * @param path
 	 * @return
 	 */
-	public static String stripStartSlash(final String path) {
+	public static String addStartSlash(final String path) {
 		
 		String val = path==null?"":path.trim();
-		return val.startsWith("/") ? path.trim().substring(1) : path.trim();
+		return val.startsWith("/") ? path.trim() : ("/"+path.trim());
 	}
 	
 	/**
@@ -112,7 +113,7 @@ public class FileUtil {
 	 * @param path
 	 * @return
 	 */
-	public static String stripEndSlash(final String path) {
+	public static String removeEndSlash(final String path) {
 
 		String val = path==null?"":path.trim();
 		return val.endsWith("/") ? val.substring(0, path.length() - 1) : val;
@@ -134,7 +135,7 @@ public class FileUtil {
 			return parent1;
 		}
 		
-		return FileUtil.stripEndSlash(parent1) + File.separatorChar + FileUtil.stripStartSlash(child1); 
+		return FileUtil.removeEndSlash(parent1) + File.separatorChar + FileUtil.addStartSlash(child1); 
 	}
 	/**
 	 * 根据一个字符串看路径获取文件的名称
