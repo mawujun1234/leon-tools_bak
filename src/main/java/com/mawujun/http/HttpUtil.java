@@ -42,8 +42,14 @@ public class HttpUtil {
 	 * @return 响应对象
 	 * @throws IOException
 	 */
-	public static HttpRespons sendGet(String urlString) throws IOException {
+	public static HttpRespons sendGet(String urlString)  {
+		try {
 		return send(urlString, "GET", null, null);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new BizException("请求失败:",e);
+		}
 	}
 
 	/**

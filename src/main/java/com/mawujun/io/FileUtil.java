@@ -4,6 +4,8 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -50,6 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.mawujun.collection.CollUtil;
+import com.mawujun.exception.BizException;
 import com.mawujun.io.file.FileCopier;
 import com.mawujun.io.file.FileMode;
 import com.mawujun.io.file.FileReader;
@@ -2478,6 +2481,95 @@ public static void copyStream(Reader in, Writer out) throws IOException {
 			IoUtil.close(in);
 		}
 	}
+	
+	/**
+	 * inputStream转outputStream
+	 * @param in
+	 * @return
+	 * @
+	 */
+    public static ByteArrayOutputStream getOutputStream(final InputStream in)  {
+        final ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
+        int ch;
+        try {
+			while ((ch = in.read()) != -1) {
+			    swapStream.write(ch);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new BizException("转换失败");
+		}
+        return swapStream;
+    }
+
+    /**
+     * outputStream转inputStream
+     * @param out
+     * @return
+     * @
+     */
+    public static ByteArrayInputStream getInputStream(final OutputStream out)  {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        baos = (ByteArrayOutputStream) out;
+        final ByteArrayInputStream swapStream = new ByteArrayInputStream(baos.toByteArray());
+        return swapStream;
+    }
+
+    /**
+     * InputStream转String
+     * @param in
+     * @return
+     * @
+     */
+    public static String readString(final InputStream in)  {
+        final ByteArrayOutputStream swapStream = new ByteArrayOutputStream();
+        int ch;
+        try {
+			while ((ch = in.read()) != -1) {
+			    swapStream.write(ch);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new BizException("读取失败");
+		}
+        return swapStream.toString();
+    }
+
+    /**
+     * OutputStream 转String
+     * @param out
+     * @return
+     * @
+     */
+    public static String readString(final OutputStream out)  {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        baos = (ByteArrayOutputStream) out;
+        final ByteArrayInputStream swapStream = new ByteArrayInputStream(baos.toByteArray());
+        return swapStream.toString();
+    }
+
+    /**
+     * String转inputStream
+     * @param in
+     * @return
+     * @
+     */
+    public static ByteArrayInputStream writeInputStream(final String in)  {
+        final ByteArrayInputStream input = new ByteArrayInputStream(in.getBytes());
+        return input;
+    }
+
+    /**
+     * String 转outputStream
+     * @param in
+     * @return
+     * @
+     */
+    public static ByteArrayOutputStream writeOutputStream(final String in)  {
+        return getOutputStream(writeInputStream(in));
+    }
 
 	/**
 	 * 从文件中读取每一行的UTF-8编码数据
