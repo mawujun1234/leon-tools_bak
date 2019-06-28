@@ -2387,6 +2387,26 @@ public static void copyStream(Reader in, Writer out) throws IOException {
 	public static byte[] readBytes(String filePath) throws IORuntimeException {
 		return readBytes(file(filePath));
 	}
+	/**
+	 * 返回bytes
+	 * @param in
+	 * @return
+	 * @throws IORuntimeException
+	 */
+	public static byte[] readBytes(InputStream in) throws IORuntimeException {
+		try {
+			int count = 0;
+			// 在进行网络操作时往往出错，因为你调用available()方法时，对发发送的数据可能还没有到达，你得到的count是0。
+			while (count == 0) {
+				count = in.available();
+			}
+			byte[] b = new byte[count];
+			in.read(b);
+			return b;
+		} catch(Exception e) {
+			throw new IORuntimeException(e);
+		}
+	}
 
 	/**
 	 * 读取文件内容
