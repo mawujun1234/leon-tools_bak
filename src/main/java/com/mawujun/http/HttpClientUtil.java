@@ -1,19 +1,31 @@
 package com.mawujun.http;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.net.ssl.SSLContext;
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -37,9 +49,12 @@ import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import com.mawujun.exception.BizException;
 import com.mawujun.util.StringUtil;
+import com.mawujun.util.XmlUtil;
 
 public class HttpClientUtil {
 	private static Logger logger=LoggerFactory.getLogger(HttpClientUtil.class);
@@ -97,6 +112,22 @@ public class HttpClientUtil {
      */
     public static String doPostXmlBody(String url,String param){
     	return doPostXmlBody( url,null,  param);
+    }
+    /**
+     * map中只能嵌套map，list，list中也只能放map
+     * @param url
+     * @param rootName
+     * @param data
+     * @return
+     */
+    public static String doPostXmlBody(String url,String rootName,Map<String,Object> data){
+    	try {
+			return doPostXmlBody( url,null,  XmlUtil.mapToXmlStr(data, rootName));
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new BizException("请求失败",e);
+		}
     }
     /**
      * 
@@ -280,6 +311,20 @@ public class HttpClientUtil {
         }
         return respContent;
     }
+    
+    protected static DocumentBuilder newDocumentBuilder() throws ParserConfigurationException {
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        documentBuilderFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        documentBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        documentBuilderFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        documentBuilderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        documentBuilderFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        documentBuilderFactory.setXIncludeAware(false);
+        documentBuilderFactory.setExpandEntityReferences(false);
+
+        return documentBuilderFactory.newDocumentBuilder();
+    }
+ 
 
 
     /**

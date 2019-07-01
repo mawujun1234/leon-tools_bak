@@ -75,4 +75,25 @@ public class HttpClientUtilsTest {
 		Assert.assertEquals("111222HttpClientUtilsTest.java", result);
      
     }
+//	//@Test
+//	public void testmapToXml() throws Exception {
+//		Map<String,Object> map=new HashMap<String,Object>();
+//		map.put("name", "name");
+//		map.put("age", 1);
+//
+//		String xml=HttpClientUtil.mapToXml(map);
+//		System.out.println(xml);
+//		Assert.assertEquals(xml, "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n" + 
+//				"<xml>\n" + 
+//				"<name>name</name>\n" + 
+//				"<age>1</age>\n" + 
+//				"</xml>");
+//		
+//		Map<String,Object> child=new HashMap<String,Object>();
+//		child.put("name", "child_name");
+//		child.put("age", 1);
+//		map.put("child", child);
+//		xml=HttpClientUtil.mapToXml(map);
+//		System.out.println(xml);
+//	}
 }

@@ -13,6 +13,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -49,7 +50,7 @@ import com.mawujun.lang.Assert;
  * 此工具使用w3c dom工具，不需要依赖第三方包。<br>
  * 工具类封装了XML文档的创建、读取、写出和部分XML操作
  * 
- * @author xiaoleilu
+ * @author mawujun
  * 
  */
 public class XmlUtil {
@@ -721,7 +722,13 @@ public class XmlUtil {
 		Element childEle;
 		for (int i = 0; i < length; ++i) {
 			childNode = nodeList.item(i);
-			if (isElement(childNode)) {
+			//System.out.println(childNode.getNodeName()+"=============="+ node.getNodeType());
+			if(childNode.hasChildNodes() && (childNode.getChildNodes().getLength()!=1 || (childNode.getChildNodes().getLength()==1 && !"#text".equals(childNode.getChildNodes().item(0).getNodeName())))) {//System.out.println(childNode.getChildNodes()));
+				//不支持转换为List
+				Map<String,Object> children=new LinkedHashMap<String,Object>();
+				result.put(childNode.getNodeName(), children);
+				xmlToMap(childNode,  children);
+			} else if (isElement(childNode)) {
 				childEle = (Element) childNode;
 				result.put(childEle.getNodeName(), childEle.getTextContent());
 			}
@@ -731,6 +738,7 @@ public class XmlUtil {
 
 	/**
 	 * 将Map转换为XML格式的字符串
+	 * 现在只支持map，list，list里面也只能是map
 	 *
 	 * @param data Map类型数据
 	 * @return XML格式的字符串
@@ -742,7 +750,7 @@ public class XmlUtil {
 
 	/**
 	 * 将Map转换为XML
-	 *
+	 *现在只支持map，list，list里面也只能是map
 	 * @param data Map类型数据
 	 * @return XML
 	 * @since 4.0.9
@@ -805,6 +813,12 @@ public class XmlUtil {
 					if (value instanceof Map) {
 						// 如果值依旧为map，递归继续
 						mapToXml(doc, filedEle, (Map<?, ?>) value);
+						element.appendChild(filedEle);
+					} else if(value instanceof List){
+						List list=(List)value;
+						for(Object obj:list) {
+							mapToXml(doc, filedEle, (Map<?, ?>) obj);
+						}
 						element.appendChild(filedEle);
 					} else {
 						filedEle.appendChild(doc.createTextNode(value.toString()));

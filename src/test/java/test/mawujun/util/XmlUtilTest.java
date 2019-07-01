@@ -1,6 +1,8 @@
 package test.mawujun.util;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.xml.xpath.XPathConstants;
@@ -89,6 +91,24 @@ public class XmlUtilTest {
 		Assert.assertEquals("1490", map.get("remainpoint"));
 		Assert.assertEquals("885", map.get("taskID"));
 		Assert.assertEquals("1", map.get("successCounts"));
+		
+		xml="<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><user><name>张三</name><age>12</age><game><昵称>Looly</昵称><level>14</level></game><child><aaa>1111</aaa></child></user>";
+		map = XmlUtil.xmlToMap(xml);
+		Assert.assertEquals(4, map.size());
+		Assert.assertEquals("张三", map.get("name"));
+		Assert.assertEquals("12", map.get("age"));
+		Assert.assertEquals("Looly", ((Map)map.get("game")).get("昵称"));
+		Assert.assertEquals("14", ((Map)map.get("game")).get("level"));
+		
+		xml="<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><user><name>张三</name><age>12</age><game><昵称>Looly</昵称><level>14</level></game><child><aaa>1111</aaa><aaa>1111</aaa></child></user>";
+		map = XmlUtil.xmlToMap(xml);
+		Assert.assertEquals(4, map.size());
+		Assert.assertEquals("张三", map.get("name"));
+		Assert.assertEquals("12", map.get("age"));
+		Assert.assertEquals("Looly", ((Map)map.get("game")).get("昵称"));
+		Assert.assertEquals("14", ((Map)map.get("game")).get("level"));
+		
+
 	}
 
 	@Test
@@ -110,6 +130,23 @@ public class XmlUtilTest {
 				+ "</game>"//
 				+ "</user>", //
 				XmlUtil.toStr(doc, false));
+		
+		
+		Map<String, Object> child = MapBuilder.create(new LinkedHashMap<String, Object>()).put("aaa", 1111).build();
+		map.put("child", child);
+		
+		doc = XmlUtil.mapToXml(map, "user");
+		System.out.println(XmlUtil.toStr(doc, false));
+		Assert.assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><user><name>张三</name><age>12</age><game><昵称>Looly</昵称><level>14</level></game><child><aaa>1111</aaa></child></user>",XmlUtil.toStr(doc, false));
+		
+		List<Map<String,Object>> children=new ArrayList<Map<String,Object>>();
+		children.add(child);
+		children.add(child);
+		map.put("child", children);
+		doc = XmlUtil.mapToXml(map, "user");
+		System.out.println(XmlUtil.toStr(doc, false));
+		Assert.assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><user><name>张三</name><age>12</age><game><昵称>Looly</昵称><level>14</level></game><child><aaa>1111</aaa><aaa>1111</aaa></child></user>",XmlUtil.toStr(doc, false));
+
 	}
 
 	@Test
