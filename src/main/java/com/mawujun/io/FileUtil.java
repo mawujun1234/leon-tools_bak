@@ -171,7 +171,8 @@ public class FileUtil {
 		String filepath_temp=normalize(filepath);
 		int index=filepath_temp.lastIndexOf("/");
 		if(index==-1) {
-			index=filepath.lastIndexOf("\\");
+			//index=filepath.lastIndexOf("\\");
+			index=filepath.lastIndexOf(File.separatorChar);
 		}
 		return index==-1?"":filepath.substring(0,index);
 	}

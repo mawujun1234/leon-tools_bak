@@ -38,7 +38,7 @@ public class FileUtilTest {
 		Assert.assertEquals("aaa/bbb", filename);
 		
 		filename = FileUtil.getFileParentPath("aaa\\bbb\\cc.jpg");
-		Assert.assertEquals("aaa/bbb", filename);
+		Assert.assertEquals("aaa\\bbb", filename);
 		
 		filename = FileUtil.getFileParentPath("cc.jpg");
 		Assert.assertEquals("", filename);
