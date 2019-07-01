@@ -17,7 +17,7 @@ import com.mawujun.util.CharsetUtil;
 /**
  * {@link FileUtil} 单元测试类
  * 
- * @author Looly
+ * @author mawujun
  */
 public class FileUtilTest {
 	
