@@ -107,7 +107,11 @@ public class XmlUtilTest {
 		Assert.assertEquals("12", map.get("age"));
 		Assert.assertEquals("Looly", ((Map)map.get("game")).get("昵称"));
 		Assert.assertEquals("14", ((Map)map.get("game")).get("level"));
-		
+		Assert.assertEquals(2, ((List<Map>)map.get("child")).size());
+		Assert.assertEquals("1111", ((List<Map>)map.get("child")).get(0).get("aaa"));
+		Assert.assertEquals("1111", ((List<Map>)map.get("child")).get(1).get("aaa"));
+		Document doc = XmlUtil.mapToXml(map, "user");
+		Assert.assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><user><name>张三</name><age>12</age><game><昵称>Looly</昵称><level>14</level></game><child><aaa>1111</aaa><aaa>1111</aaa></child></user>",XmlUtil.toStr(doc, false));
 
 	}
 

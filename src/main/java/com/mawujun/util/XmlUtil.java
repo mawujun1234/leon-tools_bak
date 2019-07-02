@@ -666,29 +666,30 @@ public class XmlUtil {
 
 	/**
 	 * XML格式字符串转换为Map
-	 *
+	 *支持转换成Map，List，list中包含的也是Map
 	 * @param xmlStr XML字符串
 	 * @return XML数据转换后的Map
 	 * @since 4.0.8
 	 */
 	public static Map<String, Object> xmlToMap(String xmlStr) {
-		return xmlToMap(xmlStr, new HashMap<String, Object>());
+		return xmlToMap(xmlStr, new LinkedHashMap<String, Object>());
 	}
 
 	/**
 	 * XML格式字符串转换为Map
-	 *
+	 *支持转换成Map，List，list中包含的也是Map
 	 * @param node XML节点
 	 * @return XML数据转换后的Map
 	 * @since 4.0.8
 	 */
 	public static Map<String, Object> xmlToMap(Node node) {
-		return xmlToMap(node, new HashMap<String, Object>());
+		return xmlToMap(node, new LinkedHashMap<String, Object>());
 	}
 
 	/**
 	 * XML格式字符串转换为Map<br>
 	 * 只支持第一级别的XML，不支持多级XML
+	 * 支持转换成Map，List，list中包含的也是Map
 	 *
 	 * @param xmlStr XML字符串
 	 * @param result 结果Map类型
@@ -705,6 +706,7 @@ public class XmlUtil {
 
 	/**
 	 * XML节点转换为Map
+	 * 支持转换成Map，List，list中包含的也是Map
 	 *
 	 * @param node XML节点
 	 * @param result 结果Map类型
@@ -713,7 +715,7 @@ public class XmlUtil {
 	 */
 	public static Map<String, Object> xmlToMap(Node node, Map<String, Object> result) {
 		if (null == result) {
-			result = new HashMap<>();
+			result = new LinkedHashMap<>();
 		}
 
 		final NodeList nodeList = node.getChildNodes();
@@ -722,16 +724,73 @@ public class XmlUtil {
 		Element childEle;
 		for (int i = 0; i < length; ++i) {
 			childNode = nodeList.item(i);
-			//System.out.println(childNode.getNodeName()+"=============="+ node.getNodeType());
-			if(childNode.hasChildNodes() && (childNode.getChildNodes().getLength()!=1 || (childNode.getChildNodes().getLength()==1 && !"#text".equals(childNode.getChildNodes().item(0).getNodeName())))) {//System.out.println(childNode.getChildNodes()));
-				//不支持转换为List
-				Map<String,Object> children=new LinkedHashMap<String,Object>();
-				result.put(childNode.getNodeName(), children);
-				xmlToMap(childNode,  children);
-			} else if (isElement(childNode)) {
-				childEle = (Element) childNode;
-				result.put(childEle.getNodeName(), childEle.getTextContent());
+			
+            if(childNode.hasChildNodes() && (childNode.getChildNodes().getLength()>1 || (childNode.getChildNodes().getLength()==1 && (childNode.getChildNodes().item(0).getNodeType()!=Node.TEXT_NODE)))) {
+            	//先获取下一个节点的对象
+            	Map<String,Object> children=new LinkedHashMap<String,Object>();
+            	//result.put(childNode.getNodeName(), children);
+            	xmlToMap(childNode,  children);
+            	if(children.containsKey("replace1233466kkk")) {
+            		result.put(childNode.getNodeName(), children.get(childNode.getNodeName()));
+            		children.remove("replace1233466kkk");
+            		continue;
+                }
+            	
+            	Object obj = result.get(childNode.getNodeName());  
+                if (obj!=null && !(obj instanceof List)) {  
+                	List mapList  = new ArrayList();  
+                    mapList.add(obj);  
+                    mapList.add(children);     
+                    result.put(childNode.getNodeName(), mapList);                 
+                } else if (obj instanceof List) {  
+                	List mapList = (List) obj;  
+                	//Map<String,Object> children=xmlToMap(childNode,  result);
+                    mapList.add(children);  
+                } else {
+                	result.put(childNode.getNodeName(), children);
+                }
+                
+                
+            	
+            } else if (isElement(childNode)) {//子节点都是文本节点的情况
+            	Object obj = result.get(childNode.getNodeName());  
+                if (obj!=null && !(obj instanceof List)) {  
+                	List mapList  = new ArrayList();  
+                	Map<String,Object> children=new LinkedHashMap<String,Object>();
+                	children.put(childNode.getNodeName(), obj);
+                    mapList.add(children);  
+                    
+                    Map<String,Object> children1=new LinkedHashMap<String,Object>();
+                    children1.put(childNode.getNodeName(), childNode.getTextContent());
+                    mapList.add(children1);  
+                    
+                    result.put(node.getNodeName(), mapList);
+                    result.remove(childNode.getNodeName());
+                    result.put("replace1233466kkk", true);
+                }  else if (obj instanceof List) {  
+                	List mapList = (List) obj;  
+                	Map<String,Object> children1=new LinkedHashMap<String,Object>();
+                    children1.put(childNode.getNodeName(), childNode.getTextContent());
+                    mapList.add(children1);  
+                	
+                } else {
+                	childEle = (Element) childNode;
+    				result.put(childEle.getNodeName(), childEle.getTextContent());
+                }
+                	
+				
 			}
+			
+//			//System.out.println(childNode.getNodeName()+"=============="+ node.getNodeType());
+//			if(childNode.hasChildNodes() && (childNode.getChildNodes().getLength()!=1 || (childNode.getChildNodes().getLength()==1 && !"#text".equals(childNode.getChildNodes().item(0).getNodeName())))) {//System.out.println(childNode.getChildNodes()));
+////				//不支持转换为List
+////				Map<String,Object> children=new LinkedHashMap<String,Object>();
+////				result.put(childNode.getNodeName(), children);
+////				xmlToMap(childNode,  children);
+//			} else if (isElement(childNode)) {
+//				childEle = (Element) childNode;
+//				result.put(childEle.getNodeName(), childEle.getTextContent());
+//			}
 		}
 		return result;
 	}
