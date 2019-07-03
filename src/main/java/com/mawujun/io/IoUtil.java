@@ -36,7 +36,7 @@ import java.util.zip.CheckedInputStream;
 import java.util.zip.Checksum;
 
 import com.mawujun.convert.Convert;
-import com.mawujun.exceptions.UtilException;
+import com.mawujun.exception.exceptions.UtilException;
 import com.mawujun.lang.Assert;
 import com.mawujun.util.CharsetUtil;
 import com.mawujun.util.HexUtil;

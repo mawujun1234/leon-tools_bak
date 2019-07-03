@@ -1,6 +1,6 @@
 package com.mawujun.lang.caller;
 
-import com.mawujun.exceptions.UtilException;
+import com.mawujun.exception.exceptions.UtilException;
 
 /**
  * 通过StackTrace方式获取调用者。此方式效率最低，不推荐使用

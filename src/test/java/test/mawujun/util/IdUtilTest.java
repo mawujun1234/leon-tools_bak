@@ -11,7 +11,7 @@ import org.junit.Test;
 import com.mawujun.collection.ConcurrentHashSet;
 import com.mawujun.date.DateUtil;
 import com.mawujun.date.TimeInterval;
-import com.mawujun.exceptions.UtilException;
+import com.mawujun.exception.exceptions.UtilException;
 import com.mawujun.lang.Console;
 import com.mawujun.lang.Snowflake;
 import com.mawujun.thread.ThreadUtil;

@@ -2,7 +2,7 @@ package com.mawujun.exception;
 
 
 import com.mawujun.exception.PaymentCode;
-import com.mawujun.exception.BizException;
+import com.mawujun.exception.exceptions.BizException;
 
 public class SystemExceptionExample {
 

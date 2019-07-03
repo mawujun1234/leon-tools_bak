@@ -4,7 +4,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-import com.mawujun.exceptions.UtilException;
+import com.mawujun.exception.exceptions.UtilException;
 
 /**
  * 全局公共线程池<br>

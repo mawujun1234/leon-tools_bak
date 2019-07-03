@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.mawujun.convert.BasicType;
-import com.mawujun.exceptions.UtilException;
+import com.mawujun.exception.exceptions.UtilException;
 import com.mawujun.lang.Assert;
 import com.mawujun.lang.JarClassLoader;
 import com.mawujun.lang.SimpleCache;

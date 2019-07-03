@@ -17,7 +17,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import com.mawujun.date.DateField;
 import com.mawujun.date.DateTime;
 import com.mawujun.date.DateUtil;
-import com.mawujun.exceptions.UtilException;
+import com.mawujun.exception.exceptions.UtilException;
 import com.mawujun.lang.UUID;
 import com.mawujun.lang.WeightRandom;
 import com.mawujun.lang.WeightRandom.WeightObj;

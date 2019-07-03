@@ -40,7 +40,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import com.mawujun.exceptions.UtilException;
+import com.mawujun.exception.exceptions.UtilException;
 import com.mawujun.io.FileUtil;
 import com.mawujun.io.IoUtil;
 import com.mawujun.lang.Assert;

@@ -8,7 +8,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
-import com.mawujun.exceptions.UtilException;
+import com.mawujun.exception.exceptions.UtilException;
 import com.mawujun.img.ImgUtil;
 import com.mawujun.swing.clipboard.ClipboardUtil;
 

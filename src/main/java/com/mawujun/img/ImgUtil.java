@@ -35,7 +35,7 @@ import javax.imageio.stream.ImageOutputStream;
 
 import com.mawujun.codec.Base64;
 import com.mawujun.convert.Convert;
-import com.mawujun.exceptions.UtilException;
+import com.mawujun.exception.exceptions.UtilException;
 import com.mawujun.io.FileUtil;
 import com.mawujun.io.IORuntimeException;
 import com.mawujun.io.IoUtil;

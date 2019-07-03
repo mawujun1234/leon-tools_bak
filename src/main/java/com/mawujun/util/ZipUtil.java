@@ -20,7 +20,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import com.mawujun.exceptions.UtilException;
+import com.mawujun.exception.exceptions.UtilException;
 import com.mawujun.io.FastByteArrayOutputStream;
 import com.mawujun.io.FileUtil;
 import com.mawujun.io.IORuntimeException;

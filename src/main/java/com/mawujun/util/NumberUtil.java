@@ -11,7 +11,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-import com.mawujun.exceptions.UtilException;
+import com.mawujun.exception.exceptions.UtilException;
 import com.mawujun.lang.Assert;
 
 /**

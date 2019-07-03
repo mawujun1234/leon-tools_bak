@@ -1,6 +1,6 @@
 package com.mawujun.io.resource;
 
-import com.mawujun.exceptions.ExceptionUtil;
+import com.mawujun.exception.exceptions.ExceptionUtil;
 import com.mawujun.io.IORuntimeException;
 import com.mawujun.util.StrUtil;
 

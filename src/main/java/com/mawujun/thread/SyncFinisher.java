@@ -5,8 +5,8 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 
-import com.mawujun.exceptions.NotInitedException;
-import com.mawujun.exceptions.UtilException;
+import com.mawujun.exception.exceptions.NotInitedException;
+import com.mawujun.exception.exceptions.UtilException;
 
 /**
  * 线程同步结束器<br>

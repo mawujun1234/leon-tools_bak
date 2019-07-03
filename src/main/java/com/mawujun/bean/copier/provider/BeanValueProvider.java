@@ -7,7 +7,7 @@ import java.util.Map;
 import com.mawujun.bean.BeanDesc.PropDesc;
 import com.mawujun.bean.BeanUtil;
 import com.mawujun.bean.copier.ValueProvider;
-import com.mawujun.exceptions.UtilException;
+import com.mawujun.exception.exceptions.UtilException;
 import com.mawujun.util.StrUtil;
 
 /**

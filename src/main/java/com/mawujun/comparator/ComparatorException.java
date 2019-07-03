@@ -1,6 +1,6 @@
 package com.mawujun.comparator;
 
-import com.mawujun.exceptions.ExceptionUtil;
+import com.mawujun.exception.exceptions.ExceptionUtil;
 import com.mawujun.util.StrUtil;
 
 /**

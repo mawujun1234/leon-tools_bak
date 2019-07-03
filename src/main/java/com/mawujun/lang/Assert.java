@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.mawujun.collection.CollectionUtil;
-import com.mawujun.exception.BizException;
+import com.mawujun.exception.exceptions.BizException;
 import com.mawujun.util.ArrayUtil;
 import com.mawujun.util.StrUtil;
 import com.mawujun.util.StringUtil;

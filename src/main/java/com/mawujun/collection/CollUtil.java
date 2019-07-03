@@ -33,7 +33,7 @@ import com.mawujun.comparator.PinyinComparator;
 import com.mawujun.comparator.PropertyComparator;
 import com.mawujun.convert.Convert;
 import com.mawujun.convert.ConverterRegistry;
-import com.mawujun.exceptions.UtilException;
+import com.mawujun.exception.exceptions.UtilException;
 import com.mawujun.lang.Editor;
 import com.mawujun.lang.Filter;
 import com.mawujun.lang.Matcher;

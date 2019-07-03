@@ -5,7 +5,7 @@ import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.mawujun.exceptions.ExceptionUtil;
+import com.mawujun.exception.exceptions.ExceptionUtil;
 import com.mawujun.io.IORuntimeException;
 
 /**

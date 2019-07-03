@@ -1,9 +1,13 @@
-package com.mawujun.exception;
+package com.mawujun.exception.exceptions;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Map;
 import java.util.TreeMap;
+
+import com.mawujun.exception.DefaulExceptionCode;
+import com.mawujun.exception.ExceptionCode;
+import com.mawujun.exception.IntErrorCode;
 
 /**
  * 真个系统的异常总类，整个系统都可以使用这个异常

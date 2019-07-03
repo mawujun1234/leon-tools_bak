@@ -4,4 +4,4 @@
  * @author looly
  *
  */
-package com.mawujun.exceptions;
+package com.mawujun.exception.exceptions;

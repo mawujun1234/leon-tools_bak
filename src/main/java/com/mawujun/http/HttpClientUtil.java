@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.mawujun.exception.BizException;
+import com.mawujun.exception.exceptions.BizException;
 import com.mawujun.util.StringUtil;
 import com.mawujun.util.XmlUtil;
 

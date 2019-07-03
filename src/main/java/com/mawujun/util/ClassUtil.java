@@ -16,7 +16,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import com.mawujun.convert.BasicType;
-import com.mawujun.exceptions.UtilException;
+import com.mawujun.exception.exceptions.UtilException;
 import com.mawujun.io.FileUtil;
 import com.mawujun.io.IORuntimeException;
 import com.mawujun.io.resource.ResourceUtil;

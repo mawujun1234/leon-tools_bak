@@ -1,4 +1,4 @@
-package com.mawujun.exceptions;
+package com.mawujun.exception.exceptions;
 
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;

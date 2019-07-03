@@ -15,7 +15,7 @@ import java.net.URLStreamHandler;
 import java.nio.charset.Charset;
 import java.util.jar.JarFile;
 
-import com.mawujun.exceptions.UtilException;
+import com.mawujun.exception.exceptions.UtilException;
 import com.mawujun.io.FileUtil;
 import com.mawujun.io.IORuntimeException;
 import com.mawujun.io.IoUtil;

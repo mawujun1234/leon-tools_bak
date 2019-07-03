@@ -17,10 +17,11 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import com.mawujun.exception.exceptions.BizException;
+
 import java.util.Set;
 import java.util.Vector;
-
-import com.mawujun.exception.BizException;
 
 /**
  * java connection的原始封装

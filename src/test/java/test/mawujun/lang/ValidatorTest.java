@@ -3,7 +3,7 @@ package test.mawujun.lang;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.mawujun.exceptions.ValidateException;
+import com.mawujun.exception.exceptions.ValidateException;
 import com.mawujun.lang.PatternPool;
 import com.mawujun.lang.Validator;
 
